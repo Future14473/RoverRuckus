@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class CollectingMechTest extends OpMode {
 
     HardwareTestBot robot = new HardwareTestBot();
-    HardwareMap hwMap;
+    HardwareMap hardwareMap;
 
     @Override
     public void init() {

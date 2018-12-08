@@ -14,29 +14,29 @@ public class HardwareTestBot  {
     //DcMotor Arm;
     //DcMotor Pivot, Succ, Pivot2, Pivot3;
     //public GoldAlignDetector detector;
-    HardwareMap hwMap;
+    HardwareMap hardwareMap;
     //Benjamin Added this
     DriveHandler driveHandler;
     public HardwareTestBot() {
 
     }
 
-    public void init(HardwareMap ahwMap){
+    public void init(HardwareMap hwMap){
 
-        hwMap = ahwMap;
+        this.hardwareMap = hwMap;
 
         leftFront = hwMap.get(DcMotor.class,"FrontLeft");
         rightFront = hwMap.get(DcMotor.class,"FrontRight");
         leftBack = hwMap.get(DcMotor.class,"BackLeft");
         rightBack = hwMap.get(DcMotor.class,"BackRight");
         Hooke = hwMap.get(DcMotor.class, "Hooke");
-        //Arm = hwMap.get(DcMotor.class, "Arm");
+        //Arm = hardwareMap.get(DcMotor.class, "Arm");
 /*
 
-        Pivot = hwMap.get(DcMotor.class, "pivot");
-        Succ = hwMap.get(DcMotor.class, "succ");
-        Pivot2 = hwMap.get(DcMotor.class, "pivot2");
-        //Pivot3 = hwMap.get(DcMotor.class, "pivot3");
+        Pivot = hardwareMap.get(DcMotor.class, "pivot");
+        Succ = hardwareMap.get(DcMotor.class, "succ");
+        Pivot2 = hardwareMap.get(DcMotor.class, "pivot2");
+        //Pivot3 = hardwareMap.get(DcMotor.class, "pivot3");
 */
 
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -57,11 +57,13 @@ public class HardwareTestBot  {
         //Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         Hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        
         driveHandler = new DriveHandler(this);
         /*
 
         detector = new GoldAlignDetector();
-        detector.init(hwMap.appContext, CameraViewDisplay.getInstance());
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         detector.useDefaults();
 
         // Optional Tuning
