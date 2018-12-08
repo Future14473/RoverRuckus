@@ -1,23 +1,18 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.Practice;
 
-import com.disnodeteam.dogecv.CameraViewDisplay;
-import com.disnodeteam.dogecv.DogeCV;
-import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class HardwareTestBot  {
 
-    DcMotor RightFront, RightBack, LeftFront, LeftBack;
+	public DcMotor rightFront, rightBack, leftFront, leftBack; //DEAR BEN: PLEASE MAKE YOUR NAMING
+    //THINGS RIGHT... ONLY CLASSES GET TO BE CAPTALIZED
     DcMotor Hooke;
     //DcMotor Arm;
     //DcMotor Pivot, Succ, Pivot2, Pivot3;
-    public GoldAlignDetector detector;
+    //public GoldAlignDetector detector;
     HardwareMap hwMap;
-    public ElapsedTime period = new ElapsedTime();
 
     public HardwareTestBot() {
 
@@ -27,10 +22,10 @@ public class HardwareTestBot  {
 
         hwMap = ahwMap;
 
-        LeftFront = hwMap.get(DcMotor.class,"FrontLeft");
-        RightFront = hwMap.get(DcMotor.class,"FrontRight");
-        LeftBack = hwMap.get(DcMotor.class,"BackLeft");
-        RightBack = hwMap.get(DcMotor.class,"BackRight");
+        leftFront = hwMap.get(DcMotor.class,"FrontLeft");
+        rightFront = hwMap.get(DcMotor.class,"FrontRight");
+        leftBack = hwMap.get(DcMotor.class,"BackLeft");
+        rightBack = hwMap.get(DcMotor.class,"BackRight");
         Hooke = hwMap.get(DcMotor.class, "Hooke");
         //Arm = hwMap.get(DcMotor.class, "Arm");
 /*
@@ -41,21 +36,21 @@ public class HardwareTestBot  {
         //Pivot3 = hwMap.get(DcMotor.class, "pivot3");
 */
 
-        RightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        RightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         Hooke.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-        LeftFront.setPower(0);
-        RightFront.setPower(0);
-        LeftBack.setPower(0);
-        RightBack.setPower(0);
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
         Hooke.setPower(0);
 
-        LeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
