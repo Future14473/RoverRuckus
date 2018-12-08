@@ -22,18 +22,12 @@ public class MecanumWheelsTest extends OpMode {
 
     @Override
     public void loop() {
-        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-        double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-        double rightX = gamepad1.right_stick_x;
-        final double v1 = r * Math.cos(robotAngle) - rightX;
-        final double v2 = r * Math.sin(robotAngle) + rightX;
-        final double v3 = r * Math.sin(robotAngle) - rightX;
-        final double v4 = r * Math.cos(robotAngle) + rightX;
-
-        robot.leftFront.setPower(v1);
-        robot.rightFront.setPower(v2);
-        robot.leftBack.setPower(v3);
-        robot.rightBack.setPower(v4);
+    	//replaced with drive Handler.
+        float angle = (float)Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
+        float speed = (float)Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        float turnRate = gamepad1.right_stick_x/2;
+        robot.driveHandler.moveAt(angle,speed,turnRate);
+        
         telemetry.update();
         robot.Hooke.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if(gamepad1.dpad_up){

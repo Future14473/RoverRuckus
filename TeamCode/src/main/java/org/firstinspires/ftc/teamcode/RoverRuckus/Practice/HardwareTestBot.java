@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.RoverRuckus.automonous.DriveHandler;
+
 public class HardwareTestBot  {
 
 	public DcMotor rightFront, rightBack, leftFront, leftBack; //DEAR BEN: PLEASE MAKE YOUR NAMING
@@ -13,7 +15,8 @@ public class HardwareTestBot  {
     //DcMotor Pivot, Succ, Pivot2, Pivot3;
     //public GoldAlignDetector detector;
     HardwareMap hwMap;
-
+    //Benjamin Added this
+    DriveHandler driveHandler;
     public HardwareTestBot() {
 
     }
@@ -51,11 +54,10 @@ public class HardwareTestBot  {
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         Hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+        driveHandler = new DriveHandler(this);
         /*
 
         detector = new GoldAlignDetector();
