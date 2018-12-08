@@ -16,11 +16,6 @@ public class MecanumWheelsTest extends OpMode {
     }
 
     @Override
-    public void start() {
-
-    }
-
-    @Override
     public void loop() {
     	//replaced with drive Handler.
         float angle = (float)Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
@@ -28,8 +23,6 @@ public class MecanumWheelsTest extends OpMode {
         float turnRate = gamepad1.right_stick_x/2;
         robot.driveHandler.moveAt(angle,speed,turnRate);
         
-        telemetry.update();
-        robot.Hooke.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if(gamepad1.dpad_up){
             robot.Hooke.setPower(1);
             telemetry.addData("current position",robot.Hooke.getCurrentPosition());

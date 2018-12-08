@@ -14,7 +14,7 @@ public class DriveHandler {
 	public static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
 	//FIXME TODO FIXME TODO: we want to tweak these values.
 	//AND IMPLEMENT THEM FIRST DUH
-	private static final float MOVE_MULT = 3000f; //change to tweak "move x meters" precisely. Degrees wheel turn per meter.
+	public static  float MOVE_MULT = 3000f; //change to tweak "move x meters" precisely. Degrees wheel turn per meter.
 	private static final float TURN_MULT = 10f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per Degrees robot turn
 	private Queue<MoveTask> moveTasks; //the currentPos moveTasks to do;
 	
@@ -70,20 +70,25 @@ public class DriveHandler {
 		runThread = false;
 		moveThread = null;
 	}
-	
+	public boolean noTasks(){
+		return moveTasks.isEmpty();
+	}
 	//adds a MoveTask to move in a straight line a specified direction and distance.
-	public void moveTo(float direction, float distance) {
-		moveTasks.add(new MoveTask(calcPowerSet(direction, 1, 0), distance * MOVE_MULT));
+	public void moveTo(float direction, float speed, float distance) {
+		moveTasks.add(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT));
 	}
 	
 	//ads a move task to rotate in place a specified number of degrees, positive or negative.
 	public void turnTo(float degrees) {
 		moveTasks.add(new MoveTask(calcPowerSet(0, 0, Math.signum(degrees)), degrees * TURN_MULT));
 	}
-	
+	public void cancelTasks(){
+		stop();
+		moveTasks.clear();
+	}
 	//adds a move task to move the robot in such a curve as to Rotate the specified number of degrees
 	//AND land in the correct notation. Moves in a curved path.
-	//maybe i'm too ambitions lets not do this yet unless we need it.
+	//maybe i'm too ambitions lets not do this unless we need it.
 	public void curveTo(float direction, float distance, float degrees) {
 		//TODO: actually do this.
 		
