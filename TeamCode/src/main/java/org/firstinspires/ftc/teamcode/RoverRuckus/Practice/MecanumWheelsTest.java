@@ -11,14 +11,16 @@ public class MecanumWheelsTest extends OpMode {
 	@Override
 	public void init() {
 		robot.init(hardwareMap);
+		robot.driveHandler.setModeEncoder();
 	}
 	
 	@Override
 	public void loop() {
 		//replaced with drive Handler.
-		float angle = (float) Math.atan2(gamepad1.left_stick_x, gamepad1.left_stick_y); //Up is 0, positive is clockwise
+		float angle = (float) Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y); //Up is 0, positive is clockwise
 		float speed = (float) Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-		float turnRate = gamepad1.right_stick_x / 2;
+		float turnRate = gamepad1.right_stick_x;
+		telemetry.addData("Stick angle:",angle);
 		robot.driveHandler.moveAt(angle, speed, turnRate);
 		
 		/*

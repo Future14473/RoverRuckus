@@ -29,7 +29,7 @@ public class HardwareTestBot  {
         rightFront = hwMap.get(DcMotor.class,"FrontRight");
         leftBack = hwMap.get(DcMotor.class,"BackLeft");
         rightBack = hwMap.get(DcMotor.class,"BackRight");
-        Hooke = hwMap.get(DcMotor.class, "Hooke");
+        //Hooke = hwMap.get(DcMotor.class, "Hooke");
         //Arm = hardwareMap.get(DcMotor.class, "Arm");
 /*
 
@@ -38,17 +38,18 @@ public class HardwareTestBot  {
         Pivot2 = hardwareMap.get(DcMotor.class, "pivot2");
         //Pivot3 = hardwareMap.get(DcMotor.class, "pivot3");
 */
-
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        Hooke.setDirection(DcMotorSimple.Direction.REVERSE);
+        //TODO: YOU REVERSED THE WRONG MOTORS!!!!!
+        //I FIXED THAT.
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        //Hooke.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         leftFront.setPower(0);
         rightFront.setPower(0);
         leftBack.setPower(0);
         rightBack.setPower(0);
-        Hooke.setPower(0);
+        //Hooke.setPower(0);
 
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -56,7 +57,7 @@ public class HardwareTestBot  {
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        Hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //Hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
         
         driveHandler = new DriveHandler(this);

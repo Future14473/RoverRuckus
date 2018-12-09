@@ -2,13 +2,15 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.automonous;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RoverRuckus.Practice.HardwareTestBot;
 
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Separate utility class to handle omnidirectional motion.
+ * Separate utility class to handle omnidirectional motion on mecanum wheels.
  */
 public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
@@ -43,7 +45,11 @@ public class DriveHandler {
 			motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		}
 	}
-	
+	public void setModeEncoder(){
+		for (int i = 0; i < 4; i++) {
+			motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		}
+	}
 	/**
 	 * construct by Ben Beilen Code
 	 */
@@ -56,11 +62,11 @@ public class DriveHandler {
 	 */
 	private static MotorPowerSet calcPowerSet(float direction, float speed, float turnRate) {
 		//DO THE MATH
-		float robotAngle = (float) (direction - Math.PI / 4);
-		float v1 = (float) (speed * Math.cos(robotAngle) + turnRate);
-		float v2 = (float) (speed * Math.sin(robotAngle) - turnRate);
-		float v3 = (float) (speed * Math.sin(robotAngle) + turnRate);
-		float v4 = (float) (speed * Math.cos(robotAngle) - turnRate);
+		float robotAngle = (float) (direction + Math.PI / 4);
+		float v1 = (float) (speed * Math.sin(robotAngle) + turnRate);
+		float v2 = (float) (speed * Math.cos(robotAngle) - turnRate);
+		float v3 = (float) (speed * Math.cos(robotAngle) + turnRate);
+		float v4 = (float) (speed * Math.sin(robotAngle) - turnRate);
 		//if any level is greater than 1, scale down to prevent robot going off course
 		//if turnRate is 0 and speed <1, this wont be a problem.
 		float max = Math.max(Math.max(Math.abs(v1), Math.abs(v2)), Math.max(Math.abs(v3), Math.abs(v4)));
@@ -73,8 +79,10 @@ public class DriveHandler {
 	 */
 	public void startMoveThread() {
 		runThread = true;
-		if (moveThread == null)
+		if (moveThread == null) {
 			moveThread = new Thread(new MoveThread());
+			moveThread.start();
+		}
 	}
 	
 	/**
@@ -163,13 +171,19 @@ public class DriveHandler {
 			power[3] = backRight;
 			this.power = power;
 		}
-		
+		MotorPowerSet(){
+			this.power = new float[4];
+		}
 	}
 	
 	/**
 	 * a task that handles making the robot uniformly turn its motors a specified number of
 	 * degrees.
 	 */
+	public Telemetry telemetry;
+	public void setTelemetry(Telemetry telemetry){
+		this.telemetry= telemetry;
+	}
 	private class MoveTask { //NOT STATIC, to access DCmotors
 		//dont want to spam new, so I have fields instead of vars.
 		private MotorPowerSet targetPower, actualPower;
@@ -179,7 +193,7 @@ public class DriveHandler {
 		MoveTask(MotorPowerSet targetPower, float multiplier) {
 			this.targetPower = targetPower;
 			this.multiplier = multiplier;
-			this.actualPower = new MotorPowerSet(0, 0, 0, 0);
+			this.actualPower = new MotorPowerSet();
 			progress = new float[4];
 		}
 		
@@ -188,8 +202,10 @@ public class DriveHandler {
 				motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 				motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
 				motors[i].setTargetPosition((int) (multiplier * targetPower.power[i]));
-				setPower(targetPower);
 			}
+			setPower(targetPower);
+			telemetry.addLine("STARTED!!!");
+			telemetry.addData("Target Power:", Arrays.toString(targetPower.power));
 		}
 		
 		//read motor positions and adjust them as necessary if they go off track.
@@ -199,12 +215,15 @@ public class DriveHandler {
 			for (int i = 0; i < 4; i++) {
 				progress[i] = (float) motors[i].getCurrentPosition() / motors[i].getTargetPosition();
 				avgProgress += progress[i];
-				
+				telemetry.addData("","Motor %d: currentPos: %d, targetPos: %d, progress: %f",i, motors[i].getCurrentPosition(),motors[i].getTargetPosition(), progress[i]);
 			}
 			avgProgress /= 4.000000000000000001; //so it cant be exactly equal to 1, so no divide by 0.
+			telemetry.addData("Average Progress:",avgProgress);
 			//adjust power as necessary..
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < 4; i++) {
 				actualPower.power[i] = targetPower.power[i] * (1 - progress[i]) / (1 - avgProgress);
+				telemetry.addData("","Motor %d: Target power: %f, Actual power: %f", i, targetPower.power[i], actualPower.power[i]);
+			}
 			
 			setPower(actualPower);
 			return Math.abs(avgProgress - 1) < 0.02;
@@ -215,18 +234,26 @@ public class DriveHandler {
 	private class MoveThread implements Runnable {
 		private boolean isFirstTime;
 		
+		
+		
 		//continually run moveTasks;
 		@Override
 		public void run() {
 			isFirstTime = true;
+			telemetry.addLine("I STARTED!!!!");
+			telemetry.update();
 			while (true) {
 				if (!runThread) return;
 				if (!moveTasks.isEmpty()) {
 					if (isFirstTime) {
+						telemetry.addLine("FIRST TIME!!!!!");
+						telemetry.update();
 						isFirstTime = false;
 						moveTasks.element().start();
 					}
 					if (moveTasks.element().process()) {
+						telemetry.addLine("DONE");
+						telemetry.update();
 						moveTasks.remove();
 						isFirstTime = true;
 						if (moveTasks.isEmpty()) {
