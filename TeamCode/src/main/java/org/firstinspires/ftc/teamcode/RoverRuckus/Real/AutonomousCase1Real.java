@@ -24,21 +24,21 @@ public class AutonomousCase1Real extends LinearOpMode {
             robot.RightBack.setPower(-0.4);
             sleep(1000);
 
-            if (robot.detector.getXPosition() > 280) {
-                robot.LeftFront.setPower(0.4);
-                robot.RightBack.setPower(0.4);
-                robot.LeftBack.setPower(-0.4);
-                robot.RightFront.setPower(-0.4);
-            }
-            else if (robot.detector.getXPosition() < 180) {
-                robot.RightFront.setPower(0.4);
-                robot.LeftBack.setPower(0.4);
-                robot.LeftFront.setPower(-0.4);
-                robot.RightBack.setPower(-0.4);
-            }
-            else{
-                break;
-            }
+//            if (robot.detector.getXPosition() > 280) {
+//                robot.LeftFront.setPower(0.4);
+//                robot.RightBack.setPower(0.4);
+//                robot.LeftBack.setPower(-0.4);
+//                robot.RightFront.setPower(-0.4);
+//            }
+//            else if (robot.detector.getXPosition() < 180) {
+//                robot.RightFront.setPower(0.4);
+//                robot.LeftBack.setPower(0.4);
+//                robot.LeftFront.setPower(-0.4);
+//                robot.RightBack.setPower(-0.4);
+//            }
+//            else{
+//                break;
+//            }
             robot.RightFront.setPower(-0.4);
             robot.LeftBack.setPower(-0.4);
             robot.LeftFront.setPower(-0.4);
