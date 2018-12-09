@@ -16,7 +16,7 @@ public class HardwareTestBot  {
     //public GoldAlignDetector detector;
     HardwareMap hardwareMap;
     //Benjamin Added this
-    DriveHandler driveHandler;
+    DriveHandler drive;
     public HardwareTestBot() {
 
     }
@@ -38,29 +38,27 @@ public class HardwareTestBot  {
         Pivot2 = hardwareMap.get(DcMotor.class, "pivot2");
         //Pivot3 = hardwareMap.get(DcMotor.class, "pivot3");
 */
-        //TODO: YOU REVERSED THE WRONG MOTORS!!!!!
-        //I FIXED THAT.
+        //Reversed the LEFT, not RIGHT, motors. Then added a negative sign. Then things made sense.
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        //Hooke.setDirection(DcMotorSimple.Direction.REVERSE);
-
-
-        leftFront.setPower(0);
-        rightFront.setPower(0);
-        leftBack.setPower(0);
-        rightBack.setPower(0);
+        //Hooke.setDirection(DcMotorSimple.Direction.REVE   RSE);
+	
+	
+	    leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+	    rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+	    leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+	    rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+	    //Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+	
+	    //Hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		
+	    
+	    drive = new DriveHandler(this);
+        drive.stop();
         //Hooke.setPower(0);
 
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //Hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
         
-        driveHandler = new DriveHandler(this);
         /*
 
         detector = new GoldAlignDetector();

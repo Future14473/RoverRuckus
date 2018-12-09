@@ -144,6 +144,8 @@ public class DriveHandler {
 	
 	/**
 	 * Tells the robot to move in a specied direction and turnRate.
+	 * Can handle motor power levels greater than 1 -- it will scale them down.
+	 * If you're not turning and moving at the same time, and speed <=1, that wont be a problem
 	 */
 	public void moveAt(float direction, float speed, float turnRate) {
 		setPower(calcPowerSet(direction, speed, turnRate));
