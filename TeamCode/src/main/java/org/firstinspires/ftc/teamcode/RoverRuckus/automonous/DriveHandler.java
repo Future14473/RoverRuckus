@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.automonous;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RoverRuckus.Practice.HardwareTestBot;
 
-import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -18,16 +18,20 @@ public class DriveHandler {
 	//AND IMPLEMENT THEM FIRST DUH
 	public static float MOVE_MULT = 3000f; //change to tweak "move x meters" precisely. Degrees wheel turn per meter.
 	public static float TURN_MULT = 10f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per Degrees robot turn
+	/**
+	 * a task that handles making the robot uniformly turn its motors a specified number of
+	 * degrees.
+	 */
+	private Telemetry telemetry;
+	private Gamepad gamepad;
 	private Queue<MoveTask> moveTasks; //the currentPos moveTasks to do;
-	
 	//NOW THE FUN STUFF, FOR AUTONOMOUS MOTION.
 	//the motors
 	//[ FL, FR, BL, BR ]
 	private DcMotor[] motors;
 	//we have a separate thread handling moveTasks. This is so the robot can still do other stuff
 	//while this is happening at the same time.
-	private boolean runThread;
-	private Thread moveThread;
+	private MoveThread moveThread;
 	
 	/**
 	 * construct by motors
@@ -38,18 +42,13 @@ public class DriveHandler {
 		motors[1] = rightFront;
 		motors[2] = backLeft;
 		motors[3] = backRight;
-		runThread = false;
 		moveThread = null;
 		moveTasks = new ConcurrentLinkedQueue<>();
 		for (int i = 0; i < 4; i++) {
 			motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		}
 	}
-	public void setModeEncoder(){
-		for (int i = 0; i < 4; i++) {
-			motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		}
-	}
+	
 	/**
 	 * construct by Ben Beilen Code
 	 */
@@ -74,13 +73,18 @@ public class DriveHandler {
 		return new MotorPowerSet(v1 / max, v2 / max, v3 / max, v4 / max);
 	}
 	
+	public void setModeEncoder() {
+		for (int i = 0; i < 4; i++) {
+			motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		}
+	}
+	
 	/**
 	 * starts the MoveTasks handling thread. A new thread might be created.
 	 */
 	public void startMoveThread() {
-		runThread = true;
 		if (moveThread == null) {
-			moveThread = new Thread(new MoveThread());
+			moveThread = new MoveThread();
 			moveThread.start();
 		}
 	}
@@ -89,7 +93,7 @@ public class DriveHandler {
 	 * stops the MoveTasks handling thread.
 	 */
 	public void stopMoveThread() {
-		runThread = false;
+		moveThread.exit();
 		moveThread = null;
 	}
 	
@@ -107,6 +111,17 @@ public class DriveHandler {
 		moveTasks.add(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT));
 	}
 	
+	/*
+	adds a move task to move the robot in such a curve as to Rotate the specified number of degrees
+	AND land in the correct notation. Moves in a curved path.
+	maybe i'm too ambitions lets not do this unless we need it.
+	*/
+//	public void curveTo(float direction, float distance, float degrees) {
+//		//TODO: actually do this.
+//
+//	}
+//
+	
 	/**
 	 * ads a move task to rotate in place a specified number of degrees, positive or negative.
 	 */
@@ -118,20 +133,9 @@ public class DriveHandler {
 	 * cancels all tasks and stops robot.
 	 */
 	public void cancelTasks() {
-		stop();
 		moveTasks.clear();
+		stop();
 	}
-	
-	/*
-	adds a move task to move the robot in such a curve as to Rotate the specified number of degrees
-	AND land in the correct notation. Moves in a curved path.
-	maybe i'm too ambitions lets not do this unless we need it.
-	*/
-//	public void curveTo(float direction, float distance, float degrees) {
-//		//TODO: actually do this.
-//
-//	}
-//
 	
 	/**
 	 * set motors to given powerSet.
@@ -158,8 +162,24 @@ public class DriveHandler {
 		setPower(ZERO);
 	}
 	
+	/*
+	 * debug utils
+	 */
+	public void setStuff(Telemetry telemetry, Gamepad gamepad) {
+		this.telemetry = telemetry;
+		this.gamepad = gamepad;
+	}
+	
+	private void waitForY() {
+		boolean pastY = true;
+		while (true) {
+			if (gamepad.y && !pastY) return;
+			pastY = gamepad.y;
+		}
+	}
+	
 	/**
-	 * a set of power levels for all 4 motors;
+	 * a set of power levels for algit rm --cached -r .ideal 4 motors;
 	 * just a container around float[][]
 	 */
 	public static class MotorPowerSet {
@@ -173,19 +193,12 @@ public class DriveHandler {
 			power[3] = backRight;
 			this.power = power;
 		}
-		MotorPowerSet(){
+		
+		MotorPowerSet() {
 			this.power = new float[4];
 		}
 	}
 	
-	/**
-	 * a task that handles making the robot uniformly turn its motors a specified number of
-	 * degrees.
-	 */
-	public Telemetry telemetry;
-	public void setTelemetry(Telemetry telemetry){
-		this.telemetry= telemetry;
-	}
 	private class MoveTask { //NOT STATIC, to access DCmotors
 		//dont want to spam new, so I have fields instead of vars.
 		private MotorPowerSet targetPower, actualPower;
@@ -206,8 +219,6 @@ public class DriveHandler {
 				motors[i].setTargetPosition((int) (multiplier * targetPower.power[i]));
 			}
 			setPower(targetPower);
-			telemetry.addLine("STARTED!!!");
-			telemetry.addData("Target Power:", Arrays.toString(targetPower.power));
 		}
 		
 		//read motor positions and adjust them as necessary if they go off track.
@@ -217,14 +228,16 @@ public class DriveHandler {
 			for (int i = 0; i < 4; i++) {
 				progress[i] = (float) motors[i].getCurrentPosition() / motors[i].getTargetPosition();
 				avgProgress += progress[i];
-				telemetry.addData("","Motor %d: currentPos: %d, targetPos: %d, progress: %f",i, motors[i].getCurrentPosition(),motors[i].getTargetPosition(), progress[i]);
+				telemetry.addData("", "Motor %d: currentPos: %d, targetPos: %d, progress: %f",
+						i, motors[i].getCurrentPosition(), motors[i].getTargetPosition(), progress[i]);
 			}
 			avgProgress /= 4.000000000000000001; //so it cant be exactly equal to 1, so no divide by 0.
-			telemetry.addData("Average Progress:",avgProgress);
+			telemetry.addData("Average Progress:", avgProgress);
 			//adjust power as necessary..
 			for (int i = 0; i < 4; i++) {
 				actualPower.power[i] = targetPower.power[i] * (1 - progress[i]) / (1 - avgProgress);
-				telemetry.addData("","Motor %d: Target power: %f, Actual power: %f", i, targetPower.power[i], actualPower.power[i]);
+				telemetry.addData("", "Motor %d: Target power: %f, Actual power: %f",
+						i, targetPower.power[i], actualPower.power[i]);
 			}
 			
 			setPower(actualPower);
@@ -233,11 +246,15 @@ public class DriveHandler {
 		
 	}
 	
-	private class MoveThread implements Runnable {
+	private class MoveThread extends Thread {
 		private boolean isFirstTime;
-		
-		
-		
+		private boolean exitFlag;
+		void exit(){
+			exitFlag = true;
+		}
+		MoveThread(){
+		exitFlag = false;
+		}
 		//continually run moveTasks;
 		@Override
 		public void run() {
@@ -245,25 +262,31 @@ public class DriveHandler {
 			telemetry.addLine("I STARTED!!!!");
 			telemetry.update();
 			while (true) {
-				if (!runThread) return;
-				if (!moveTasks.isEmpty()) {
-					if (isFirstTime) {
-						telemetry.addLine("FIRST TIME!!!!!");
-						telemetry.update();
-						isFirstTime = false;
-						moveTasks.element().start();
-					}
-					if (moveTasks.element().process()) {
-						telemetry.addLine("DONE");
-						telemetry.update();
-						moveTasks.remove();
+				if (exitFlag) return;
+				try {
+					if (moveTasks.isEmpty()) {
 						isFirstTime = true;
-						if (moveTasks.isEmpty()) {
-							for (int i = 0; i < 4; i++) {
-								motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+					} else {
+						if (isFirstTime) {
+							telemetry.addLine("FIRST TIME!!!!!");
+							telemetry.update();
+							waitForY();
+							isFirstTime = false;
+							moveTasks.element().start();
+						}
+						if (moveTasks.element().process()) {
+							telemetry.addLine("DONE");
+							telemetry.update();
+							moveTasks.remove();
+							isFirstTime = true;
+							if (moveTasks.isEmpty()) {
+								for (int i = 0; i < 4; i++) {
+									motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+								}
 							}
 						}
 					}
+				} catch (NullPointerException e){ //Has been removed by outside Thread. Do nothing.
 				}
 			}
 		}

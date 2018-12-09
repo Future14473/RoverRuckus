@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "DriveTweak", group = "Test")
 public class DriveHandlerTweak extends OpMode {
 	HardwareTestBot robot = new HardwareTestBot();
+	boolean wait = false;
 	private float angle, speed, distance; // = 0
 	
 	@Override
@@ -18,20 +19,39 @@ public class DriveHandlerTweak extends OpMode {
 		telemetry.addLine("Press A to start");
 		telemetry.update();
 		robot.drive.startMoveThread();
-		robot.drive.setTelemetry(telemetry);
+		robot.drive.setStuff(telemetry, gamepad1);
 	}
 	
 	@Override
 	public void stop() {
+		robot.drive.cancelTasks();
 		robot.drive.stopMoveThread();
 		super.stop();
 	}
-	boolean wait = false;
+	public void showNums(){
+		telemetry.addData("Distance, arbitrary units: ", distance);
+		telemetry.addData("Speed (0-1):", speed);
+		telemetry.addData("Direction (deg):", Math.toDegrees(angle));
+		telemetry.addData("MOVE_MULT:", robot.drive.MOVE_MULT);
+		telemetry.addData("TURN_MULT:", robot.drive.TURN_MULT);
+		telemetry.addLine("Left stick up/down is distance, right/left is speed");
+		telemetry.addLine("Right stick is direction");
+		telemetry.addLine("Left/right bumpers to change MOVE_MULT");
+		telemetry.addLine("Left/right dpad to change TURN_MULT");
+		telemetry.addLine("Press A to start");
+	}
 	@Override
 	public void loop() {
-		if(wait){
-			if(!robot.drive.hasTasks()) wait = false;
-			 return;
+		if (wait) {
+			if(gamepad1.x){
+				robot.drive.cancelTasks();
+			}
+			if (!robot.drive.hasTasks()) {
+				wait = false;
+				showNums();
+				telemetry.update();
+			}
+			return;
 		}
 		boolean changed = false;
 		if (!robot.drive.hasTasks()) {
@@ -44,8 +64,8 @@ public class DriveHandlerTweak extends OpMode {
 				changed = true;
 			}
 			if (Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y) > 0.5) {
+				angle = (float) Math.atan2(gamepad1.right_stick_x, -gamepad1.right_stick_y);
 				changed = true;
-				angle = (float) Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y); //0 is up, + right, - left, theoretically.
 			}
 			if (gamepad1.left_bumper) {
 				robot.drive.MOVE_MULT -= 0.5;
@@ -64,11 +84,7 @@ public class DriveHandlerTweak extends OpMode {
 				changed = true;
 			}
 			if (changed) {
-				telemetry.addData("Distance, arbitrary units: ", distance);
-				telemetry.addData("Speed (0-1):", speed);
-				telemetry.addData("Direction (deg):", Math.toDegrees(angle));
-				telemetry.addData("CURRENT EFFECTIVE MOVE_MULT:", robot.drive.MOVE_MULT);
-				telemetry.addData("CURRENT EFFECTIVE TURN_MULT:", robot.drive.TURN_MULT);
+				showNums();
 				telemetry.update();
 			}
 			//*
@@ -86,14 +102,6 @@ public class DriveHandlerTweak extends OpMode {
 				wait = true;
 			}
 			//*/
-		} else {
-			while (robot.drive.hasTasks()) ; //wait to finish;
-			telemetry.addLine("Left stick up/down is distance, right/left is speed");
-			telemetry.addLine("Right stick is direction");
-			telemetry.addLine("Left/right bumpers to change MOVE_MULT");
-			telemetry.addLine("Left/right dpad to change TURN_MULT");
-			telemetry.addLine("Press A to start");
-			telemetry.update();
 		}
 	}
 }
