@@ -4,7 +4,8 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.Practice;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.RoverRuckus.assets.HardwareTestBot;
 
 @TeleOp(name = "MecanumWheelsTest", group = "Test")
 public class MecanumWheelsTest extends OpMode {
@@ -31,10 +32,10 @@ public class MecanumWheelsTest extends OpMode {
         final double v3 = r * Math.sin(robotAngle) - rightX;
         final double v4 = r * Math.cos(robotAngle) + rightX;
 
-        robot.LeftFront.setPower(v1);
-        robot.RightFront.setPower(v2);
-        robot.LeftBack.setPower(v3);
-        robot.RightBack.setPower(v4);
+        robot.leftFront.setPower(v1);
+        robot.rightFront.setPower(v2);
+        robot.leftBack.setPower(v3);
+        robot.rightBack.setPower(v4);
         telemetry.update();
         robot.Hooke.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if(gamepad1.dpad_up){
