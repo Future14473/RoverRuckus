@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.Practice;
+package org.firstinspires.ftc.teamcode.RoverRuckus.assets;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -13,9 +13,9 @@ public class HardwareTestBot  {
     DcMotor rightFront, rightBack, leftFront, leftBack;
 
     //Expansion Hub 2
-    DcMotor Hooke,Arm;
-    Servo Marker;
-    DistanceSensor CensorRage;
+    public DcMotor Hooke, Arm;
+    public Servo Marker;
+    public DistanceSensor CensorRage;
 
     HardwareMap hwMap;
     public ElapsedTime period = new ElapsedTime();

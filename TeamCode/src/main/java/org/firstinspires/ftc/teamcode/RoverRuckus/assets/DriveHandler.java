@@ -1,10 +1,7 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.automonous;
+package org.firstinspires.ftc.teamcode.RoverRuckus.assets;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.RoverRuckus.Practice.HardwareTestBot;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
