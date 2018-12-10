@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
 	//FIXME TODO FIXME TODO: we want to tweak these values.
-	public static float MOVE_MULT = 4450f; //change to tweak "move x meters" precisely. Degrees wheel turn per meter.
-	public static float TURN_MULT = 10f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per Degrees robot turn
+	public static float MOVE_MULT = 4450f; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
+	public static float TURN_MULT = 1205f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per radians robot turn
 	/**
 	 * a task that handles making the robot uniformly turn its motors a specified number of
 	 * degrees.
@@ -249,8 +249,6 @@ public class DriveHandler {
 		@Override
 		public void run() {
 			isFirstTime = true;
-			telemetry.addLine("I STARTED!!!!");
-			telemetry.update();
 			while (true) {
 				if (exitFlag) return;
 				try {
@@ -258,14 +256,10 @@ public class DriveHandler {
 						isFirstTime = true;
 					} else {
 						if (isFirstTime) {
-							telemetry.addLine("FIRST TIME!!!!!");
-							telemetry.update();
 							isFirstTime = false;
 							moveTasks.element().start();
 						}
 						if (moveTasks.element().process()) {
-							telemetry.addLine("DONE");
-							telemetry.update();
 							stopRobot();
 							moveTasks.remove();
 							isFirstTime = true;
