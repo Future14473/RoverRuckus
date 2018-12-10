@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
-	//FIXME TODO FIXME TODO: we want to tweak these values.
+	//Decent values acheived.
 	public static float MOVE_MULT = 4505f; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
 	public static float TURN_MULT = 1230f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per radian robot turn
 	/**
@@ -105,8 +105,8 @@ public class DriveHandler {
 	/**
 	 * adds a MoveTask to move in a straight line a specified direction and distance.
 	 */
-	public void move(float direction, float speed, float distance) {
-		moveTasks.add(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT / speed));
+	public void move(float degrees, float speed, float distance) {
+		moveTasks.add(new MoveTask(calcPowerSet((float)Math.toRadians(degrees), speed, 0), distance * MOVE_MULT / speed));
 	}
 	
 	/*
@@ -203,14 +203,14 @@ public class DriveHandler {
 		}
 		
 		void start() {
-			telemetry.addData("Multiplier:", multiplier);
+			//telemetry.addData("Multiplier:", multiplier);
 			for (int i = 0; i < 4; i++) {
 				motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 				motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
 				motors[i].setTargetPosition((int) (multiplier * targetPower.power[i]));
-				telemetry.addData("Motor", "%d, TargetPower: %f, Targ. Pos: %d", i, targetPower.power[i], motors[i].getTargetPosition());
+				//telemetry.addData("Motor", "%d, TargetPower: %f, Targ. Pos: %d", i, targetPower.power[i], motors[i].getTargetPosition());
 			}
-			telemetry.update();
+			//telemetry.update();
 			setPower(targetPower);
 		}
 		
