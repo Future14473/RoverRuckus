@@ -22,6 +22,8 @@ public class DriveHandlerTweak extends OpMode {
 		telemetry.update();
 		robot.drive.startMoveThread();
 		robot.drive.setStuff(telemetry, gamepad1);
+		speed = 1;
+		distance = 1;
 	}
 	
 	@Override
@@ -61,6 +63,7 @@ public class DriveHandlerTweak extends OpMode {
 				distance += -(Math.abs(gamepad1.left_stick_y) - 0.4) * Math.signum(gamepad1.left_stick_y) / 200;
 				changed = true;
 			}
+			
 			if (Math.abs(gamepad1.left_stick_x) > 0.4) {
 				speed += (Math.abs(gamepad1.left_stick_x) - 0.4) * Math.signum(gamepad1.left_stick_x) / 200;
 				changed = true;
@@ -94,7 +97,7 @@ public class DriveHandlerTweak extends OpMode {
 				robot.drive.move(angle, speed, distance);
 				wait = true;
 			} else if (gamepad1.b) {
-				robot.drive.turn(angle, speed);
+				robot.drive.turn((float)Math.toDegrees(angle), speed);
 				wait = true;
 			}
 			//*/

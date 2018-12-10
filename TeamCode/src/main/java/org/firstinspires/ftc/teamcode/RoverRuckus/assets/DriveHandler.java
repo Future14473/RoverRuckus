@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
 	//FIXME TODO FIXME TODO: we want to tweak these values.
-	public static float MOVE_MULT = 4450f; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
-	public static float TURN_MULT = 1205f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per radians robot turn
+	public static float MOVE_MULT = 4505f; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
+	public static float TURN_MULT = 1230f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per radian robot turn
 	/**
 	 * a task that handles making the robot uniformly turn its motors a specified number of
 	 * degrees.
@@ -124,7 +124,7 @@ public class DriveHandler {
 	 * ads a move task to rotate in place a specified number of degrees, positive or negative.
 	 */
 	public void turn(float degrees, float speed) {
-		moveTasks.add(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)), degrees * TURN_MULT / speed));
+		moveTasks.add(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)), Math.abs((float)Math.toRadians(degrees)) * TURN_MULT / speed));
 	}
 	
 	/**
@@ -203,11 +203,14 @@ public class DriveHandler {
 		}
 		
 		void start() {
+			telemetry.addData("Multiplier:", multiplier);
 			for (int i = 0; i < 4; i++) {
 				motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 				motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
 				motors[i].setTargetPosition((int) (multiplier * targetPower.power[i]));
+				telemetry.addData("Motor", "%d, TargetPower: %f, Targ. Pos: %d", i, targetPower.power[i], motors[i].getTargetPosition());
 			}
+			telemetry.update();
 			setPower(targetPower);
 		}
 		
@@ -218,18 +221,16 @@ public class DriveHandler {
 			for (int i = 0; i < 4; i++) {
 				progress[i] = (float) motors[i].getCurrentPosition() / motors[i].getTargetPosition();
 				avgProgress += progress[i];
-				telemetry.addData("", "Motor %d: currentPos: %d, targetPos: %d, progress: %f",
-						i, motors[i].getCurrentPosition(), motors[i].getTargetPosition(), progress[i]);
+				//telemetry.addData("", "Motor %d: currentPos: %d, targetPos: %d, progress: %f",
+				//		i, motors[i].getCurrentPosition(), motors[i].getTargetPosition(), progress[i]);
 			}
 			avgProgress /= 4.000000000000000001; //so it cant be exactly equal to 1, so no divide by 0.
-			telemetry.addData("Average Progress:", avgProgress);
+			//telemetry.addData("Average Progress:", avgProgress);
 			//adjust power as necessary..
 			for (int i = 0; i < 4; i++) {
-				actualPower.power[i] = targetPower.power[i] * (1 - progress[i]) / (1 - avgProgress);
-				telemetry.addData("", "Motor %d: Target power: %f, Actual power: %f",
-						i, targetPower.power[i], actualPower.power[i]);
+				actualPower.power[i] = targetPower.power[i] * (1 - 3*(progress[i] - avgProgress));
 			}
-			telemetry.update();
+			//telemetry.update();
 			setPower(actualPower);
 			return Math.abs(avgProgress - 1) < 0.02;
 		}
@@ -239,12 +240,15 @@ public class DriveHandler {
 	private class MoveThread extends Thread {
 		private boolean isFirstTime;
 		private boolean exitFlag;
-		void exit(){
+		
+		MoveThread() {
+			exitFlag = false;
+		}
+		
+		void exit() {
 			exitFlag = true;
 		}
-		MoveThread(){
-		exitFlag = false;
-		}
+		
 		//continually run moveTasks;
 		@Override
 		public void run() {
@@ -270,7 +274,7 @@ public class DriveHandler {
 							}
 						}
 					}
-				} catch (NullPointerException e){ //Has been removed by outside Thread. Do nothing.
+				} catch (NullPointerException e) { //Has been removed by outside Thread. Do nothing.
 				}
 			}
 		}
