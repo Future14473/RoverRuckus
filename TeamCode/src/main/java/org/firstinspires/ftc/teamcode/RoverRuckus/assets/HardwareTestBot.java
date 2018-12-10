@@ -34,27 +34,22 @@ public class HardwareTestBot  {
         leftBack = hwMap.get(DcMotor.class,"BackLeft");
         rightBack = hwMap.get(DcMotor.class,"BackRight");
 
-        Hooke = hwMap.get(DcMotor.class, "Hooke");
-        Arm = hwMap.get(DcMotor.class, "Arm");
-        Marker = hwMap.get(Servo.class,"Marker");
+        //Hooke = hwMap.get(DcMotor.class, "Hooke");
+        //Arm = hwMap.get(DcMotor.class, "Arm");
+        //Marker = hwMap.get(Servo.class,"Marker");
 
-        CensorRage = hwMap.get(DistanceSensor.class, "SensorRange");
+        //CensorRage = hwMap.get(DistanceSensor.class, "SensorRange");
 
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        Hooke.setDirection(DcMotorSimple.Direction.REVERSE);
+        //Hooke.setDirection(DcMotorSimple.Direction.REVERSE);
 
         drive = new DriveHandler(this);
-		drive.stop();
 		
-        Hooke.setPower(0);
 
-	    leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-	    rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-	    leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-	    rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+	    drive.setModeEncoder();
         //Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        Hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //Hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }

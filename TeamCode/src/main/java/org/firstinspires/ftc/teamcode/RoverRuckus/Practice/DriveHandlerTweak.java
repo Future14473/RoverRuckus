@@ -92,15 +92,9 @@ public class DriveHandlerTweak extends OpMode {
 			//*
 			if (gamepad1.a) {
 				robot.drive.move(angle, speed, distance);
-				telemetry.addLine("Moving....");
-				telemetry.addLine("X to cancel");
-				telemetry.update();
 				wait = true;
 			} else if (gamepad1.b) {
 				robot.drive.turn(angle, speed);
-				telemetry.addLine("Moving....");
-				telemetry.addLine("X to cancel");
-				telemetry.update();
 				wait = true;
 			}
 			//*/

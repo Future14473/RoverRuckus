@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
 	//FIXME TODO FIXME TODO: we want to tweak these values.
-	public static float MOVE_MULT = 3000f; //change to tweak "move x meters" precisely. Degrees wheel turn per meter.
+	public static float MOVE_MULT = 4450f; //change to tweak "move x meters" precisely. Degrees wheel turn per meter.
 	public static float TURN_MULT = 10f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per Degrees robot turn
 	/**
 	 * a task that handles making the robot uniformly turn its motors a specified number of
@@ -106,7 +106,7 @@ public class DriveHandler {
 	 * adds a MoveTask to move in a straight line a specified direction and distance.
 	 */
 	public void move(float direction, float speed, float distance) {
-		moveTasks.add(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT));
+		moveTasks.add(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT / speed));
 	}
 	
 	/*
@@ -124,7 +124,7 @@ public class DriveHandler {
 	 * ads a move task to rotate in place a specified number of degrees, positive or negative.
 	 */
 	public void turn(float degrees, float speed) {
-		moveTasks.add(new MoveTask(calcPowerSet(0, speed, Math.signum(degrees)), degrees * TURN_MULT));
+		moveTasks.add(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)), degrees * TURN_MULT / speed));
 	}
 	
 	/**
@@ -132,7 +132,7 @@ public class DriveHandler {
 	 */
 	public void cancelTasks() {
 		moveTasks.clear();
-		stop();
+		stopRobot();
 	}
 	
 	/**
@@ -156,7 +156,7 @@ public class DriveHandler {
 	/**
 	 * Stops robot, i.e., set motor power levels to zero.
 	 */
-	public void stop() {
+	public void stopRobot() {
 		setPower(ZERO);
 	}
 	
@@ -166,14 +166,6 @@ public class DriveHandler {
 	public void setStuff(Telemetry telemetry, Gamepad gamepad) {
 		this.telemetry = telemetry;
 		this.gamepad = gamepad;
-	}
-	
-	private void waitForY() {
-		boolean pastY = true;
-		while (true) {
-			if (gamepad.y && !pastY) return;
-			pastY = gamepad.y;
-		}
 	}
 	
 	/**
@@ -237,7 +229,7 @@ public class DriveHandler {
 				telemetry.addData("", "Motor %d: Target power: %f, Actual power: %f",
 						i, targetPower.power[i], actualPower.power[i]);
 			}
-			
+			telemetry.update();
 			setPower(actualPower);
 			return Math.abs(avgProgress - 1) < 0.02;
 		}
@@ -268,13 +260,13 @@ public class DriveHandler {
 						if (isFirstTime) {
 							telemetry.addLine("FIRST TIME!!!!!");
 							telemetry.update();
-							waitForY();
 							isFirstTime = false;
 							moveTasks.element().start();
 						}
 						if (moveTasks.element().process()) {
 							telemetry.addLine("DONE");
 							telemetry.update();
+							stopRobot();
 							moveTasks.remove();
 							isFirstTime = true;
 							if (moveTasks.isEmpty()) {
