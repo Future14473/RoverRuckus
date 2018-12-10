@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.assets;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
