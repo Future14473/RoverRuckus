@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class HardwareTestBot  {
 
     //Expansion Hub 1
-    DcMotor RightFront, RightBack, LeftFront, LeftBack;
+    DcMotor rightFront, rightBack, leftFront, leftBack;
 
     //Expansion Hub 2
     DcMotor Hooke,Arm;
@@ -19,7 +19,8 @@ public class HardwareTestBot  {
 
     HardwareMap hwMap;
     public ElapsedTime period = new ElapsedTime();
-
+	
+	DriveHandler drive;
     public HardwareTestBot() {
 
     }
@@ -28,10 +29,10 @@ public class HardwareTestBot  {
 
         hwMap = ahwMap;
 
-        LeftFront = hwMap.get(DcMotor.class,"FrontLeft");
-        RightFront = hwMap.get(DcMotor.class,"FrontRight");
-        LeftBack = hwMap.get(DcMotor.class,"BackLeft");
-        RightBack = hwMap.get(DcMotor.class,"BackRight");
+        leftFront = hwMap.get(DcMotor.class,"FrontLeft");
+        rightFront = hwMap.get(DcMotor.class,"FrontRight");
+        leftBack = hwMap.get(DcMotor.class,"BackLeft");
+        rightBack = hwMap.get(DcMotor.class,"BackRight");
 
         Hooke = hwMap.get(DcMotor.class, "Hooke");
         Arm = hwMap.get(DcMotor.class, "Arm");
@@ -39,22 +40,19 @@ public class HardwareTestBot  {
 
         CensorRage = hwMap.get(DistanceSensor.class, "SensorRange");
 
-        RightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        RightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         Hooke.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
-        LeftFront.setPower(0);
-        RightFront.setPower(0);
-        LeftBack.setPower(0);
-        RightBack.setPower(0);
+        drive = new DriveHandler(this);
+		drive.stop();
+		
         Hooke.setPower(0);
 
-        LeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+	    leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+	    rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+	    leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+	    rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         Hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
