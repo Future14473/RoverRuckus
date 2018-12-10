@@ -15,7 +15,7 @@ public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
 	//FIXME TODO FIXME TODO: we want to tweak these values.
 	public static float MOVE_MULT = 4450f; //change to tweak "move x meters" precisely. Degrees wheel turn per meter.
-	public static float TURN_MULT = 10f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per Degrees robot turn
+	public static float TURN_MULT = 10f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per radians robot turns
 	/**
 	 * a task that handles making the robot uniformly turn its motors a specified number of
 	 * degrees.
