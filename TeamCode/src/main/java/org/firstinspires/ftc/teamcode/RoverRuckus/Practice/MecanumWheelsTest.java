@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.Practice;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @TeleOp(name = "MecanumWheelsTest", group = "Test")
 public class MecanumWheelsTest extends OpMode {
@@ -16,13 +17,26 @@ public class MecanumWheelsTest extends OpMode {
     }
 
     @Override
+    public void start() {
+
+    }
+
+    @Override
     public void loop() {
-    	//replaced with drive Handler.
-        float angle = (float)Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-        float speed = (float)Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-        float turnRate = gamepad1.right_stick_x/2;
-        robot.driveHandler.moveAt(angle,speed,turnRate);
-        
+        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+        double rightX = gamepad1.right_stick_x;
+        final double v1 = r * Math.cos(robotAngle) - rightX;
+        final double v2 = r * Math.sin(robotAngle) + rightX;
+        final double v3 = r * Math.sin(robotAngle) - rightX;
+        final double v4 = r * Math.cos(robotAngle) + rightX;
+
+        robot.LeftFront.setPower(v1);
+        robot.RightFront.setPower(v2);
+        robot.LeftBack.setPower(v3);
+        robot.RightBack.setPower(v4);
+        telemetry.update();
+        robot.Hooke.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if(gamepad1.dpad_up){
             robot.Hooke.setPower(1);
             telemetry.addData("current position",robot.Hooke.getCurrentPosition());
