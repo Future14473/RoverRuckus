@@ -20,7 +20,7 @@ public class HardwareTestBot  {
     HardwareMap hwMap;
     public ElapsedTime period = new ElapsedTime();
 	
-	DriveHandler drive;
+	public DriveHandler drive;
     public HardwareTestBot() {
 
     }
