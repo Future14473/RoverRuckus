@@ -20,11 +20,11 @@ Thumbs.db
 
 # Android Studio
 *.iml
-.idea/
-.gradle/
+.idea
+.gradle
 build/
 
 *ASUS_PC_01*
-
-#doc files
 doc/
+.idea/workspace.xml
+#WILL YOU WORK NOW, GIT IGNORE?
