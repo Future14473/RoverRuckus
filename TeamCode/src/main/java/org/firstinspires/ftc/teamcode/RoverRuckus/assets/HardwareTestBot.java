@@ -13,9 +13,9 @@ public class HardwareTestBot  {
     DcMotor rightFront, rightBack, leftFront, leftBack;
 
     //Expansion Hub 2
-    public DcMotor Hooke, Arm;
+    public DcMotor Hooke, Arm, Collection;
     public Servo Marker;
-    public DistanceSensor CensorRage;
+    public DistanceSensor SensorRange;
 
     HardwareMap hwMap;
     public ElapsedTime period = new ElapsedTime();
@@ -37,6 +37,7 @@ public class HardwareTestBot  {
         //Hooke = hwMap.get(DcMotor.class, "Hooke");
         //Arm = hwMap.get(DcMotor.class, "Arm");
         //Marker = hwMap.get(Servo.class,"Marker");
+        //Collection = hwMap.get(Servo.class, "Collection");
 
         //CensorRage = hwMap.get(DistanceSensor.class, "SensorRange");
 
