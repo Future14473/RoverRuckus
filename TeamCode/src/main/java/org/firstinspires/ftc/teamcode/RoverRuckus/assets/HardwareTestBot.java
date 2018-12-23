@@ -17,7 +17,7 @@ public class HardwareTestBot  {
     //Expansion Hub 2
     public DcMotor Hooke, Arm, Collection;
     public Servo Marker, Flicker;
-    public DistanceSensor SensorRange;
+    //public DistanceSensor SensorRange;
 
     HardwareMap hwMap;
     public ElapsedTime period = new ElapsedTime();
@@ -43,7 +43,7 @@ public class HardwareTestBot  {
         Marker = hwMap.get(Servo.class,"Marker");
         Flicker = hwMap.get(Servo.class, "Flicker");
 
-        SensorRange = hwMap.get(DistanceSensor.class, "SensorRange");
+        //SensorRange = hwMap.get(DistanceSensor.class, "SensorRange");
 
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
