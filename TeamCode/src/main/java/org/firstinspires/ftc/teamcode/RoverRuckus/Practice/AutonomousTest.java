@@ -6,21 +6,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.assets.HardwareTestBot;
 
-import java.awt.Color;
 
 @Autonomous(name = "AutonomousTest", group = "Test")
 public class AutonomousTest extends LinearOpMode{
 
     HardwareTestBot robot = new HardwareTestBot();
-    ColorVisionTest asdf = new ColorVisionTest();
-
+    
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
         while(opModeIsActive()) {
             waitForStart();
             DropFromLander();
-            KnockOffGold(asdf);
         }
     }
 
