@@ -14,7 +14,7 @@ public class HardwareTestBot  {
 
     //Expansion Hub 2
     public DcMotor Hooke, Arm, Collection;
-    public Servo Marker;
+    public Servo Marker, Flicker;
     public DistanceSensor SensorRange;
 
     HardwareMap hwMap;
@@ -34,23 +34,24 @@ public class HardwareTestBot  {
         leftBack = hwMap.get(DcMotor.class,"BackLeft");
         rightBack = hwMap.get(DcMotor.class,"BackRight");
 
-        //Hooke = hwMap.get(DcMotor.class, "Hooke");
-        //Arm = hwMap.get(DcMotor.class, "Arm");
-        //Marker = hwMap.get(Servo.class,"Marker");
-        //Collection = hwMap.get(Servo.class, "Collection");
+        Hooke = hwMap.get(DcMotor.class, "Hooke");
+        Arm = hwMap.get(DcMotor.class, "Arm");
+        Collection = hwMap.get(DcMotor.class, "Collection");
 
-        //CensorRage = hwMap.get(DistanceSensor.class, "SensorRange");
+        Marker = hwMap.get(Servo.class,"Marker");
+        Flicker = hwMap.get(Servo.class, "Flicker");
+
+        SensorRange = hwMap.get(DistanceSensor.class, "SensorRange");
 
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        //Hooke.setDirection(DcMotorSimple.Direction.REVERSE);
+        Hooke.setDirection(DcMotorSimple.Direction.REVERSE);
 
         drive = new DriveHandler(this);
 		
 
 	    drive.setModeEncoder();
-        //Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //Hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
