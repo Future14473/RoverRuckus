@@ -40,9 +40,21 @@ public class AutonomousTest extends LinearOpMode{
 	    int goldPos = goldFinder.goldPosition();
 	    telemetry.addData("The gold is at position ", goldPos);
 	    if(goldPos == 0) robot.drive.move(-90, 1, (float) 0.6);
-	    if(goldPos == 0) robot.drive.move(0,0,0);
-	    if(goldPos == 0) robot.drive.move(90,1, (float) 0.6);
+	    if(goldPos == 1) robot.drive.move(0,0,0);
+	    if(goldPos == 2) robot.drive.move(90,1, (float) 0.6);
 
 	    robot.drive.move(0,1, 1);
+    }
+
+    public void AlignWithPicture() {
+
+    }
+
+    public void PutMarkerInDepot() {
+
+    }
+
+    public void ParkInCrater() {
+
     }
 }
