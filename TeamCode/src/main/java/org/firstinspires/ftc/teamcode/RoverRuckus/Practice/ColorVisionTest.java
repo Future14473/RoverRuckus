@@ -97,11 +97,6 @@ public class ColorVisionTest {
             telemetry.addData("Sorry!", "This device is not compatible with TFOD");
         }
 
-        /** Wait for the game to begin */
-        telemetry.addData(">", "Press Play to start tracking");
-        telemetry.update();
-
-
         /** Activate Tensor Flow Object Detection. */
         if (tfod != null) {
             tfod.activate();
