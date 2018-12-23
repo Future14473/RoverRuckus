@@ -15,7 +15,7 @@ public class HardwareTestBot  {
     DcMotor rightFront, rightBack, leftFront, leftBack;
 
     //Expansion Hub 2
-    public DcMotor Hooke, Arm, Collection;
+    public DcMotor Hooke, Arm, Rotation, Collection;
     public Servo Marker, Flicker;
     //public DistanceSensor SensorRange;
 
@@ -38,6 +38,7 @@ public class HardwareTestBot  {
 
         Hooke = hwMap.get(DcMotor.class, "Hooke");
         Arm = hwMap.get(DcMotor.class, "Arm");
+        Rotation = hwMap.get(DcMotor.class, "Rotation");
         Collection = hwMap.get(DcMotor.class, "Collection");
 
         Marker = hwMap.get(Servo.class,"Marker");
