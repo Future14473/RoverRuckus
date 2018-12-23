@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.assets.HardwareTestBot;
 public class AutonomousTest extends LinearOpMode{
 
     HardwareTestBot robot = new HardwareTestBot();
-    ColorVisionTest GoldDetector = new ColorVisionTest();
 	GoldFinder goldFinder;
     @Override
     public void runOpMode() throws InterruptedException {
