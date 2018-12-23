@@ -12,16 +12,9 @@ public class AutonomousTest extends LinearOpMode{
 
     HardwareTestBot robot = new HardwareTestBot();
 	GoldFinder goldFinder;
-    @Override
-    public void runOpMode() throws InterruptedException {
-        robot.init(hardwareMap);
-        goldFinder = new GoldFinder(hardwareMap);
-        goldFinder.start();
-        while(opModeIsActive()) {
-            waitForStart();
-            DropFromLander();
-            KnockOffGold();
-        }
+	
+	@Override
+    public void runOpMode(){
     }
 
     public void DropFromLander() {

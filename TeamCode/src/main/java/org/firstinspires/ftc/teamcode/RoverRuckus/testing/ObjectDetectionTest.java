@@ -27,26 +27,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.RoverRuckus.assets;
+package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-
-public class GoldFinder {
+/**
+ * This 2018-2019 OpMode illustrates the basics of using the TensorFlow Object Detection API to
+ * determine the position of the gold and silver minerals.
+ * <p>
+ * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
+ * <p>
+ * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
+ * is explained below.
+ */
+@TeleOp(name = "Test: TensorFlow Object Detection1", group = "Test")
+public class ObjectDetectionTest extends LinearOpMode {
 	private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 	
+	/*
+	 * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
+	 * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
+	 * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
+	 * web site at https://developer.vuforia.com/license-manager.
+	 *
+	 * Vuforia license keys are always 380 characters long, and look as if they contain mostly
+	 * random data. As an example, here is a example of a fragment of a valid key:
+	 *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
+	 * Once you've obtained a license key, copy the string from the Vuforia web site
+	 * and paste it in to your code on the next line, between the double quotes.
+	 */
 	private static final String VUFORIA_KEY = "Aavay7//////AAABmS26wV70nE/XoqC91tMM/rlwbqInv/YUads4QRll085q/yT" +
 		                                          "+qW0qdyrUwXPXbvwDkGhnffFMGIizzvfrXviNCbfAAgJzSwDJuL0MJl3LRE2FU4JMKKU2v7V+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz/LaIEh4phJs35awBUu+g+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG/jRUsWLH1cs35/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT+485YdwnaxuS8K9";
 	
@@ -55,134 +77,110 @@ public class GoldFinder {
 	 * localization engine.
 	 */
 	private VuforiaLocalizer vuforia;
+	private static final int maxDiff = 20;
 	
-	/**
-	 * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
-	 * Detection engine.
-	 */
-	private TFObjectDetector tfod;
-	
-	private static int maxDiff = 50;
-	private DetectorThread detectorThread;
-	
-	public GoldFinder(HardwareMap hardwareMap) {
-		initVuforia();
+	private static class RecognitionComparator implements Comparator<Recognition> {
 		
-		if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
-			initTfod(hardwareMap);
-		} else {
-			throw new RuntimeException("This device is not compatable with TFOD");
-		}
-	}
-	
-	private boolean detected = false;
-	private int goldPos;
-	
-	private static class ByBottom implements Comparator<Recognition> {
 		@Override
 		public int compare(Recognition lhs, Recognition rhs) {
 			return (int) (lhs.getBottom() - rhs.getBottom());
 		}
 	}
 	
-	private static class ByLeft implements Comparator<Recognition> {
-		@Override
-		public int compare(Recognition lhs, Recognition rhs) {
-			return (int) (lhs.getLeft() - rhs.getLeft());
+	RecognitionComparator recognitionComparator = new RecognitionComparator();
+	/**
+	 * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
+	 * Detection engine.
+	 */
+	private TFObjectDetector tfod;
+	
+	@Override
+	public void runOpMode() {
+		// The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
+		// first.
+		/*
+		 * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+		 */
+		VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+		
+		parameters.vuforiaLicenseKey = VUFORIA_KEY;
+		parameters.cameraDirection = CameraDirection.BACK;
+		
+		//  Instantiate the Vuforia engine
+		vuforia = ClassFactory.getInstance().createVuforia(parameters);
+		telemetry.addLine("hello worod");
+		telemetry.update();
+		// Loading trackables is not necessary for the Tensor Flow Object Detection engine.
+		//*
+		if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
+			initTfod();
+		} else {
+			telemetry.addData("Sorry!", "This device is not compatible with TFOD");
 		}
-	}
-	
-	private static ByBottom byBottom = new ByBottom();
-	private static ByLeft byLeft = new ByLeft();
-	
-	private class DetectorThread extends Thread {
-		@Override
-		public void run() {
+		
+		//** Wait for the game to begin *//*
+		telemetry.addData(">", "Press Play to start tracking");
+		telemetry.update();
+		waitForStart();
+		
+		if (opModeIsActive()) {
+			//** Activate Tensor Flow Object Detection. *//*
 			if (tfod != null) {
 				tfod.activate();
 			}
-			Recognition[] chainedRecognitions = new Recognition[3];
-			int consecutive = 0;
-			//break;
-			while (!detected) if (tfod != null) {
+			
+			while (opModeIsActive()) if (tfod != null) {
 				// getUpdatedRecognitions() will return null if no new information is available since
 				// the last time that call was made.
 				List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-				if (updatedRecognitions == null || updatedRecognitions.size() < 3) {continue;}
-				Collections.sort(updatedRecognitions, byLeft);
-				int numValid = 0; float prevLeft = 0;
-				for (Recognition recognition : updatedRecognitions) {
-					if (recognition.getConfidence() < 0.7) continue;
-					if (numValid == 0) {
-						prevLeft = recognition.getLeft();
-					} else if (Math.abs(recognition.getLeft() - prevLeft) > maxDiff) {
-						numValid = 0;
-						continue;
-					} else prevLeft = recognition.getLeft();
-					//recog is valid.
-					chainedRecognitions[numValid] = recognition;
-					if (++numValid == 3) break;
+				if (updatedRecognitions != null) {
+					telemetry.addData("# Object Detected", updatedRecognitions.size());
+					Collections.sort(updatedRecognitions, recognitionComparator);
+					int numValid = 0;
+					float prevTop = 0;
+					int goldOccur = -1;
+					for (Recognition recognition : updatedRecognitions) {
+						if (recognition.getConfidence() < 0.7) continue;
+						if (numValid == 0) {
+							numValid++;
+							prevTop = recognition.getTop();
+						} else if (Math.abs(recognition.getTop() - prevTop) > maxDiff) {
+							numValid = 0;
+							goldOccur = -1;
+							continue;
+						} else prevTop = recognition.getTop();
+						//recog is valid.
+						if (recognition.getLabel().equals(LABEL_GOLD_MINERAL))
+							if (goldOccur >= 0) {
+								numValid = 0;
+								goldOccur = -1;
+							} else
+								goldOccur = numValid - 1;
+						if (++numValid == 3) break;
+					}
+					if (numValid == 3) {
+						//celebrate!!!!
+					}
 				}
-				if (numValid != 3) {continue;}
-				int curGoldPos = -1;
-				Arrays.sort(chainedRecognitions, byBottom);
-				for (int i = 0; i < 3; i++) {
-					if (curGoldPos == -1) {
-						if (chainedRecognitions[i].getLabel().equals(LABEL_GOLD_MINERAL)) {
-							curGoldPos = i;
-						}
-					} else curGoldPos = -2;
-				}
-				if (curGoldPos > 0) {
-					//if (curGoldPos == goldPos && ++consecutive == 3) {
-					goldPos = curGoldPos;
-					detected = true;
-					break;
-					//}
-				}// else {
-				//	consecutive = 0;
-				//	goldPos = curGoldPos;
-				//}
-			}
-			if (tfod != null) {
-				tfod.shutdown();
 			}
 		}
-	}
-	
-	public void start() {
-		detectorThread = new DetectorThread();
-		detectorThread.start();
-	}
-	
-	public boolean hasDetected() {
-		return detected;
-	}
-	
-	public int goldPosition() {
-		if (!detected) return -1;
-		return goldPos;
+		
+		if (tfod != null) {
+			tfod.shutdown();
+		}
 	}
 	
 	/**
 	 * Initialize the Vuforia localization engine.
 	 */
 	private void initVuforia() {
-		/*
-		 * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-		 */
-		VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-		parameters.vuforiaLicenseKey = VUFORIA_KEY;
-		parameters.cameraDirection = CameraDirection.BACK;
-		//  Instantiate the Vuforia engine
-		vuforia = ClassFactory.getInstance().createVuforia(parameters);
-		// Loading trackables is not necessary for the Tensor Flow Object Detection engine.
+	
 	}
 	
 	/**
 	 * Initialize the Tensor Flow Object Detection engine.
 	 */
-	private void initTfod(HardwareMap hardwareMap) {
+	private void initTfod() {
 		int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
 			"tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 		TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
