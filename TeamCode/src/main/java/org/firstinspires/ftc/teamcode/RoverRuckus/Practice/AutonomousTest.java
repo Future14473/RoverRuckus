@@ -12,7 +12,8 @@ import java.awt.Color;
 public class AutonomousTest extends LinearOpMode{
 
     HardwareTestBot robot = new HardwareTestBot();
-    ColorVisionTest asdf = new ColorVisionTest();
+    ColorVisionTest GoldDetector = new ColorVisionTest();
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -20,7 +21,7 @@ public class AutonomousTest extends LinearOpMode{
         while(opModeIsActive()) {
             waitForStart();
             DropFromLander();
-            KnockOffGold(asdf);
+            KnockOffGold(GoldDetector);
         }
     }
 
@@ -37,6 +38,6 @@ public class AutonomousTest extends LinearOpMode{
     }
 
     public void KnockOffGold(ColorVisionTest c) {
-        
+        c.run();
     }
 }
