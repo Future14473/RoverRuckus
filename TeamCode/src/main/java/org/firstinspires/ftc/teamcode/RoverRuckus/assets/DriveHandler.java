@@ -48,7 +48,7 @@ public class DriveHandler {
 	}
 	
 	/**
-	 * construct by Ben Beilen Code
+	 * construct by Ben Bielin Code
 	 */
 	public DriveHandler(HardwareTestBot r) {
 		this(r.leftFront, r.rightFront, r.leftBack, r.rightBack);
