@@ -46,8 +46,18 @@ public class MecanumWheelsTest extends OpMode {
 		}
 */
 
-        /*if(gamepad2.dpad_up) {robot.Arm.setPower(1);}
+        /*
+        if(gamepad2.dpad_up) {robot.Arm.setPower(1);}
         else if(gamepad2.dpad_down) {robot.Arm.setPower(-1);}
-        else {robot.Arm.setPower(0);}*/
+        else {robot.Arm.setPower(0);}
+        */
+
+       	/*
+        if(gamepad2.a) {
+        	robot.Collection.setPower(1);
+		} else if(gamepad2.b) {
+        	robot.Collection.setPower(-1);
+		}
+		*/
 	}
 }
