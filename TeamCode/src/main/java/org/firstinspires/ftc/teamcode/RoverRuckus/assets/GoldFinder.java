@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.assets;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -50,9 +49,8 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
-//@Disabled
-public class GoldDetector {
+
+public class GoldFinder {
 	private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
@@ -82,14 +80,9 @@ public class GoldDetector {
 	 * Detection engine.
 	 */
 	private TFObjectDetector tfod;
-	private Telemetry telemetry;
 	private DetectorThread detectorThread;
 	
-	public void setTelemetry(Telemetry telemetry) {
-		this.telemetry = telemetry;
-	}
-	
-	public void init(HardwareMap hardwareMap) {
+	public GoldFinder(HardwareMap hardwareMap) {
 		initVuforia();
 		
 		if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
@@ -98,8 +91,10 @@ public class GoldDetector {
 			throw new RuntimeException("This device is not compatable with TFOD");
 		}
 	}
+	
 	private boolean detected = false;
 	private int goldPos;
+	
 	private class DetectorThread extends Thread {
 		@Override
 		public void run() {
@@ -134,15 +129,18 @@ public class GoldDetector {
 	
 	public void start() {
 		detectorThread = new DetectorThread();
-		detectorThread.run();
+		detectorThread.start();
 	}
+	
 	public boolean hasDetected() {
 		return detected;
 	}
-	public int goldPosition(){
-		if(!detected)return -1;
+	
+	public int goldPosition() {
+		if (!detected) return -1;
 		return goldPos;
 	}
+	
 	/**
 	 * Initialize the Vuforia localization engine.
 	 */
@@ -151,13 +149,10 @@ public class GoldDetector {
 		 * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
 		 */
 		VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-		
 		parameters.vuforiaLicenseKey = VUFORIA_KEY;
 		parameters.cameraDirection = CameraDirection.BACK;
-		
 		//  Instantiate the Vuforia engine
 		vuforia = ClassFactory.getInstance().createVuforia(parameters);
-		
 		// Loading trackables is not necessary for the Tensor Flow Object Detection engine.
 	}
 	
