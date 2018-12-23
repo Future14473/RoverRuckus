@@ -81,7 +81,7 @@ public class ColorVisionTest extends LinearOpMode {
      * Detection engine.
      */
     private TFObjectDetector tfod;
-
+    
     HardwareTestBot robot = new HardwareTestBot();
 
     @Override

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.assets;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Queue;
@@ -15,7 +14,8 @@ public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
 	//Decent values acheived.
 	public static float MOVE_MULT = 4505f; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
-	public static float TURN_MULT = 1230f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per radian robot turn
+	public static float TURN_MULT = 1230f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per radian
+	// robot turn
 	/**
 	 * a task that handles making the robot uniformly turn its motors a specified number of
 	 * degrees.
@@ -106,7 +106,8 @@ public class DriveHandler {
 	 * adds a MoveTask to move in a straight line a specified direction and distance.
 	 */
 	public void move(float degrees, float speed, float distance) {
-		moveTasks.add(new MoveTask(calcPowerSet((float)Math.toRadians(degrees), speed, 0), distance * MOVE_MULT / speed));
+		moveTasks.add(new MoveTask(calcPowerSet((float) Math.toRadians(degrees), speed, 0),
+			distance * MOVE_MULT / speed));
 	}
 	
 	/*
@@ -124,7 +125,8 @@ public class DriveHandler {
 	 * ads a move task to rotate in place a specified number of degrees, positive or negative.
 	 */
 	public void turn(float degrees, float speed) {
-		moveTasks.add(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)), Math.abs((float)Math.toRadians(degrees)) * TURN_MULT / speed));
+		moveTasks.add(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)),
+			Math.abs((float) Math.toRadians(degrees)) * TURN_MULT / speed));
 	}
 	
 	/**
@@ -208,7 +210,8 @@ public class DriveHandler {
 				motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 				motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
 				motors[i].setTargetPosition((int) (multiplier * targetPower.power[i]));
-				//telemetry.addData("Motor", "%d, TargetPower: %f, Targ. Pos: %d", i, targetPower.power[i], motors[i].getTargetPosition());
+				//telemetry.addData("Motor", "%d, TargetPower: %f, Targ. Pos: %d", i, targetPower.power[i], motors[i]
+				// .getTargetPosition());
 			}
 			//telemetry.update();
 			setPower(targetPower);
@@ -228,7 +231,7 @@ public class DriveHandler {
 			//telemetry.addData("Average Progress:", avgProgress);
 			//adjust power as necessary..
 			for (int i = 0; i < 4; i++) {
-				actualPower.power[i] = targetPower.power[i] * (1 - 3*(progress[i] - avgProgress));
+				actualPower.power[i] = targetPower.power[i] * (1 - 3 * (progress[i] - avgProgress));
 			}
 			//telemetry.update();
 			setPower(actualPower);
