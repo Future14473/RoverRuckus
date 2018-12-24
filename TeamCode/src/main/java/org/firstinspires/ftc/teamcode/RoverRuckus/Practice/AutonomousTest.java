@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.assets.GoldFinder;
-import org.firstinspires.ftc.teamcode.RoverRuckus.assets.HardwareTestBot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldFinder;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
 @Autonomous(name = "AutonomousTest", group = "Test")
 public class AutonomousTest extends LinearOpMode{
