@@ -36,7 +36,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Came
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -62,16 +61,14 @@ public class GoldFinder {
 	 */
 	private TFObjectDetector tfod;
 	
-	private static int maxDiff = 50;
-	private DetectorThread detectorThread;
+	private static int MAX_DIFF = 40;
 	
 	public GoldFinder(HardwareMap hardwareMap) {
 		initVuforia();
-		
 		if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
 			initTfod(hardwareMap);
 		} else {
-			throw new RuntimeException("This device is not compatable with TFOD");
+			throw new UnsupportedOperationException("This device is not compatibles with TFOD");
 		}
 	}
 	
@@ -96,62 +93,97 @@ public class GoldFinder {
 	private static ByLeft byLeft = new ByLeft();
 	
 	private class DetectorThread extends Thread {
+		
+		private final Recognition[] chainedRecognitions = new Recognition[3];
+		
 		@Override
 		public void run() {
-			if (tfod != null) {
-				tfod.activate();
-			}
-			Recognition[] chainedRecognitions = new Recognition[3];
+			tfod.activate();
 			int consecutive = 0;
 			//break;
-			while (!detected) if (tfod != null) {
-				// getUpdatedRecognitions() will return null if no new information is available since
-				// the last time that call was made.
+			while (!detected) {
 				List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-				if (updatedRecognitions == null || updatedRecognitions.size() < 3) {continue;}
-				Collections.sort(updatedRecognitions, byLeft);
-				int numValid = 0; float prevLeft = 0;
-				for (Recognition recognition : updatedRecognitions) {
-					if (recognition.getConfidence() < 0.7) continue;
-					if (numValid == 0) {
-						prevLeft = recognition.getLeft();
-					} else if (Math.abs(recognition.getLeft() - prevLeft) > maxDiff) {
-						numValid = 0;
-						continue;
-					} else prevLeft = recognition.getLeft();
-					//recog is valid.
-					chainedRecognitions[numValid] = recognition;
-					if (++numValid == 3) break;
+				if (getChainedRecognitions(updatedRecognitions)) {
+					//now we have three horizontally level recognitions
+					int curGoldPos = findGoldPos(); //find gold position.
+					if (curGoldPos == -1) continue; //gold position could not be determined.
+					if (goldPos == -1) goldPos = curGoldPos;
+					if (goldPos == curGoldPos) { //if matches previous recognition, increase consecutive counter.
+						consecutive++;
+					} else { //otherwise, reset counter
+						goldPos = curGoldPos;
+						consecutive = 0;
+					}
 				}
-				if (numValid != 3) {continue;}
-				int curGoldPos = -1;
-				Arrays.sort(chainedRecognitions, byBottom);
-				for (int i = 0; i < 3; i++) {
-					if (curGoldPos == -1) {
-						if (chainedRecognitions[i].getLabel().equals(LABEL_GOLD_MINERAL)) {
-							curGoldPos = i;
-						}
-					} else curGoldPos = -2;
-				}
-				if (curGoldPos > 0) {
-					//if (curGoldPos == goldPos && ++consecutive == 3) {
-					goldPos = curGoldPos;
+				// if the goldPos is NOT determined, no need to reset consecutive.
+				// we only care about possible mis-recognitions.
+				if (consecutive == 3) //if 3 in a row, then can determine with confidence.
 					detected = true;
-					break;
-					//}
-				}// else {
-				//	consecutive = 0;
-				//	goldPos = curGoldPos;
-				//}
 			}
-			if (tfod != null) {
-				tfod.shutdown();
+			tfod.shutdown();
+		}
+		
+		private int findGoldPos() {
+			int theGoldOne = -1;
+			for (int i = 0; i < 3; i++) {
+				if (chainedRecognitions[i].getLabel().equals(LABEL_GOLD_MINERAL)) {
+					if (theGoldOne == -1) {
+						theGoldOne = i;
+					} else {//if there is more than one gold one, is indeterminate.
+						theGoldOne = -1;
+						break;
+					}
+				}
 			}
+			if (theGoldOne == -1) return -1;
+			int curGoldPos = -1;
+			//How many the gold one is further left to, is also its position.
+			for (int i = 0; i < 3; i++) {
+				if (chainedRecognitions[theGoldOne].getBottom() >= chainedRecognitions[i].getBottom())
+					curGoldPos++;
+			}
+			return curGoldPos;
+		}
+		
+		//find 3 horizontally chained recognitions, returns true if successful
+		private boolean getChainedRecognitions(List<Recognition> recognitions) {
+			if (recognitions == null || recognitions.size() < 3) return false;
+			int numValid = 0;
+			float prevLeft = 0;
+			//sort, actually by the bottom (orientation issues?). The bottommost will be processed first.
+			Collections.sort(recognitions, byLeft);
+			RecognitionsLoop:
+			for (Recognition curRecognition : recognitions) {
+				//ignore weak recognitions.
+				if (curRecognition.getConfidence() < 0.7) continue;
+				//restart chain if a recognition is too far off from the previous.
+				//remember, sorted already sorted by Left first.
+				if (numValid != 0 && Math.abs(curRecognition.getLeft() - prevLeft) > MAX_DIFF) {
+					numValid = 0;
+					continue;
+				}
+				prevLeft = curRecognition.getLeft();
+				//if it overlaps closely with other recognitions and is silver, override it with silver.
+				// since the square on floor is somehow recognized as a gold.
+				for (int i = 0; i < numValid; i++)
+					if (
+						Math.hypot(curRecognition.getTop() - chainedRecognitions[i].getTop(),
+							curRecognition.getBottom() - chainedRecognitions[i].getBottom()) < MAX_DIFF &&
+							curRecognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
+						chainedRecognitions[i] = curRecognition;
+						continue RecognitionsLoop;
+					}
+				//this one works, store.
+				chainedRecognitions[numValid] = curRecognition;
+				//we have all 3, proceed.
+				if (++numValid == 3) return true;
+			}
+			return false;
 		}
 	}
-	
+	//Start the gold recognitions thread.
 	public void start() {
-		detectorThread = new DetectorThread();
+		DetectorThread detectorThread = new DetectorThread();
 		detectorThread.start();
 	}
 	
@@ -168,9 +200,6 @@ public class GoldFinder {
 	 * Initialize the Vuforia localization engine.
 	 */
 	private void initVuforia() {
-		/*
-		 * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-		 */
 		VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 		parameters.vuforiaLicenseKey = VUFORIA_KEY;
 		parameters.cameraDirection = CameraDirection.BACK;
