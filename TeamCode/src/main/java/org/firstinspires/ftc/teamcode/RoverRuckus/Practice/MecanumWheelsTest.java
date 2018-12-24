@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.Practice;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.assets.HardwareTestBot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
 @TeleOp(name = "MecanumWheelsTest", group = "Test")
 public class MecanumWheelsTest extends OpMode {
