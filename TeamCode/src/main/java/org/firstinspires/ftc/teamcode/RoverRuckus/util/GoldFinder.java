@@ -36,7 +36,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Came
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -46,22 +46,14 @@ public class GoldFinder {
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 	
+	@SuppressWarnings("SpellCheckingInspection")
 	private static final String VUFORIA_KEY = "Aavay7//////AAABmS26wV70nE/XoqC91tMM/rlwbqInv/YUads4QRll085q/yT" +
 		                                          "+qW0qdyrUwXPXbvwDkGhnffFMGIizzvfrXviNCbfAAgJzSwDJuL0MJl3LRE2FU4JMKKU2v7V+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz/LaIEh4phJs35awBUu+g+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG/jRUsWLH1cs35/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT+485YdwnaxuS8K9";
 	
-	/**
-	 * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-	 * localization engine.
-	 */
 	private VuforiaLocalizer vuforia;
-	
-	/**
-	 * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
-	 * Detection engine.
-	 */
 	private TFObjectDetector tfod;
 	
-	private static int MAX_DIFF = 40;
+	private static final int MAX_DIFF = 40;
 	
 	public GoldFinder(HardwareMap hardwareMap) {
 		initVuforia();
@@ -73,14 +65,7 @@ public class GoldFinder {
 	}
 	
 	private boolean detected = true;
-	private int goldPos;
-	
-	private static class ByBottom implements Comparator<Recognition> {
-		@Override
-		public int compare(Recognition lhs, Recognition rhs) {
-			return (int) (lhs.getBottom() - rhs.getBottom());
-		}
-	}
+	private int goldPos = -1;
 	
 	private static class ByLeft implements Comparator<Recognition> {
 		@Override
@@ -89,7 +74,6 @@ public class GoldFinder {
 		}
 	}
 	
-	private static ByBottom byBottom = new ByBottom();
 	private static ByLeft byLeft = new ByLeft();
 	
 	private class DetectorThread extends Thread {
@@ -146,49 +130,65 @@ public class GoldFinder {
 		}
 		
 		//find 3 horizontally chained recognitions, returns true if successful
-		private boolean getChainedRecognitions(List<Recognition> recognitions) {
-			if (recognitions == null || recognitions.size() < 3) return false;
+		private boolean getChainedRecognitions(List<Recognition> recognitionsList) {
+			if (recognitionsList == null || recognitionsList.size() < 3) return false;
 			int numValid = 0;
 			float prevLeft = 0;
+			Recognition[] recognitions = (Recognition[]) recognitionsList.toArray();
 			//sort, actually by the bottom (orientation issues?). The bottommost will be processed first.
-			Collections.sort(recognitions, byLeft);
-			RecognitionsLoop:
+			Arrays.sort(recognitions, byLeft);
+			//Step one: ignore weak recognitions.
+			for (int i = 0; i < recognitions.length; i++) {
+				if (recognitions[i].getConfidence() < 0.7) {
+					recognitions[i] = null;
+				}
+			}
+			//Step two: if any recognitions overlap, prioritize the silver one (delete the gold one).
+			// since the square on floor is somehow recognized as a gold.
+			for (int i = 0; i < recognitions.length; i++) {
+				if (recognitions[i] == null) continue;
+				//if it overlaps closely with other recognitions and is silver, override it with silver.
+				for (int j = i + 1; j < recognitions.length; j++) {
+					if (recognitions[j] == null) continue;
+					if (Math.hypot(recognitions[j].getTop() - recognitions[i].getTop(),
+						recognitions[j].getBottom() - chainedRecognitions[i].getBottom()) < MAX_DIFF) {
+						boolean iGold = recognitions[i].getLabel().equals(LABEL_GOLD_MINERAL);
+						if (iGold) recognitions[i] = null;
+						else recognitions[j] = null;
+						break;
+					}
+				}
+			}
+			//Step 3: actually process recognitions.
 			for (Recognition curRecognition : recognitions) {
-				//ignore weak recognitions.
-				if (curRecognition.getConfidence() < 0.7) continue;
+				if (curRecognition == null) continue;
+				
 				//restart chain if a recognition is too far off from the previous.
 				//remember, sorted already sorted by Left first.
 				if (numValid != 0 && Math.abs(curRecognition.getLeft() - prevLeft) > MAX_DIFF) {
 					numValid = 0;
 					continue;
 				}
-				prevLeft = curRecognition.getLeft();
-				//if it overlaps closely with other recognitions and is silver, override it with silver.
-				// since the square on floor is somehow recognized as a gold.
-				for (int i = 0; i < numValid; i++)
-					if (
-						Math.hypot(curRecognition.getTop() - chainedRecognitions[i].getTop(),
-							curRecognition.getBottom() - chainedRecognitions[i].getBottom()) < MAX_DIFF &&
-							curRecognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
-						chainedRecognitions[i] = curRecognition;
-						continue RecognitionsLoop;
-					}
-				//this one works, store.
-				chainedRecognitions[numValid] = curRecognition;
-				//we have all 3, proceed.
-				if (++numValid == 3) return true;
+				if (numValid < 3) {//still keep checking for overlaps -- not immediate exit.
+					prevLeft = curRecognition.getLeft();
+					chainedRecognitions[numValid] = curRecognition;
+					numValid++;
+				}
 			}
-			return false;
+			return numValid == 3;
 		}
 	}
+	
 	//Start the gold recognitions thread.
 	public void start() {
-		if(!detected) return;
+		if (!detected) return;
 		detected = false;
+		goldPos = -1;
 		DetectorThread detectorThread = new DetectorThread();
 		detectorThread.start();
 	}
 	
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public boolean hasDetected() {
 		return detected;
 	}
