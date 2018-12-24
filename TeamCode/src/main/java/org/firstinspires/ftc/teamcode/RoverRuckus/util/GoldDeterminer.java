@@ -41,7 +41,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class GoldFinder {
+public class GoldDeterminer {
 	private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
@@ -55,7 +55,7 @@ public class GoldFinder {
 	
 	private static final int MAX_DIFF = 40;
 	
-	public GoldFinder(HardwareMap hardwareMap) {
+	public GoldDeterminer(HardwareMap hardwareMap) {
 		initVuforia();
 		if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
 			initTfod(hardwareMap);
@@ -134,48 +134,42 @@ public class GoldFinder {
 			if (recognitionsList == null || recognitionsList.size() < 3) return false;
 			int numValid = 0;
 			float prevLeft = 0;
-			Recognition[] recognitions = (Recognition[]) recognitionsList.toArray();
+			Recognition[] recognitions = new Recognition[recognitionsList.size()];
+			recognitionsList.toArray(recognitions);
 			//sort, actually by the bottom (orientation issues?). The bottommost will be processed first.
 			Arrays.sort(recognitions, byLeft);
-			//Step one: ignore weak recognitions.
-			for (int i = 0; i < recognitions.length; i++) {
-				if (recognitions[i].getConfidence() < 0.7) {
-					recognitions[i] = null;
-				}
-			}
-			//Step two: if any recognitions overlap, prioritize the silver one (delete the gold one).
+			//if any recognitions overlap, prioritize the silver one (delete the gold one).gf`
 			// since the square on floor is somehow recognized as a gold.
-			for (int i = 0; i < recognitions.length; i++) {
+			for (int i = 0; i < Math.min(recognitions.length, 6); i++) {
 				if (recognitions[i] == null) continue;
 				//if it overlaps closely with other recognitions and is silver, override it with silver.
-				for (int j = i + 1; j < recognitions.length; j++) {
+				for (int j = i + 1; j < Math.min(recognitions.length, 6); j++) {
 					if (recognitions[j] == null) continue;
 					if (Math.hypot(recognitions[j].getTop() - recognitions[i].getTop(),
-						recognitions[j].getBottom() - chainedRecognitions[i].getBottom()) < MAX_DIFF) {
-						boolean iGold = recognitions[i].getLabel().equals(LABEL_GOLD_MINERAL);
-						if (iGold) recognitions[i] = null;
-						else recognitions[j] = null;
+						recognitions[j].getBottom() - recognitions[i].getBottom()) <
+						    Math.max(recognitions[i].getHeight(), recognitions[j].getHeight())) {
+						boolean jGold = recognitions[j].getLabel().equals(LABEL_GOLD_MINERAL);
+						if (jGold) recognitions[j] = null;
+						else recognitions[i] = null;
 						break;
 					}
 				}
 			}
-			//Step 3: actually process recognitions.
+			//process (remaining) recognitions.
 			for (Recognition curRecognition : recognitions) {
 				if (curRecognition == null) continue;
-				
 				//restart chain if a recognition is too far off from the previous.
 				//remember, sorted already sorted by Left first.
 				if (numValid != 0 && Math.abs(curRecognition.getLeft() - prevLeft) > MAX_DIFF) {
 					numValid = 0;
 					continue;
 				}
-				if (numValid < 3) {//still keep checking for overlaps -- not immediate exit.
-					prevLeft = curRecognition.getLeft();
-					chainedRecognitions[numValid] = curRecognition;
-					numValid++;
-				}
+				prevLeft = curRecognition.getLeft();
+				chainedRecognitions[numValid] = curRecognition;
+				numValid++;
+				if (numValid == 3) return true;
 			}
-			return numValid == 3;
+			return false;
 		}
 	}
 	

@@ -21,7 +21,7 @@ public class DriveHandlerTweak extends OpMode {
 		telemetry.addLine("Press A to start");
 		telemetry.update();
 		robot.drive.startMoveThread();
-		robot.drive.setStuff(telemetry, gamepad1);
+		robot.drive.setStuff(telemetry);
 	}
 	
 	@Override
