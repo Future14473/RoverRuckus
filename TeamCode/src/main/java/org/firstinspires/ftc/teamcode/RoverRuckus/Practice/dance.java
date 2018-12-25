@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.Practice;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.assets.HardwareTestBot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
 @TeleOp(name = "DANCE!!!", group = "Test")
 public class dance extends OpMode {
@@ -15,7 +15,6 @@ public class dance extends OpMode {
 	public void init() {
 		robot.init(hardwareMap);
 		robot.drive.startMoveThread();
-		robot.drive.setStuff(telemetry, gamepad1);
 	}
 	
 	@Override
