@@ -47,11 +47,9 @@ public class GoldLooker {
 	@SuppressWarnings("SpellCheckingInspection")
 	private static final String VUFORIA_KEY = "Aavay7//////AAABmS26wV70nE/XoqC91tMM/rlwbqInv/YUads4QRll085q/yT" +
 		                                          "+qW0qdyrUwXPXbvwDkGhnffFMGIizzvfrXviNCbfAAgJzSwDJuL0MJl3LRE2FU4JMKKU2v7V+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz/LaIEh4phJs35awBUu+g+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG/jRUsWLH1cs35/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT+485YdwnaxuS8K9";
-	
+	private static final int MAX_DIFF = 40;
 	private VuforiaLocalizer vuforia;
 	private TFObjectDetector tfod;
-	
-	private static final int MAX_DIFF = 40;
 	
 	public GoldLooker(HardwareMap hardwareMap) {
 		initVuforia();
@@ -69,19 +67,21 @@ public class GoldLooker {
 	public void stop() {
 		tfod.shutdown();
 	}
+	
 	/**
-	returns 1 if current screen is gold, 0 if is white, -1 if none detected.
+	 * returns 1 if current screen is gold, 0 if is white, -1 if none detected.
 	 */
-	public int look(){
+	public int look() {
 		List<Recognition> recognitions = tfod.getUpdatedRecognitions();
-		if(recognitions == null) return -1;
-		for(Recognition recognition : recognitions){
-			if(recognition.getConfidence() < 0.8)continue;
-			if(recognition.getLabel().equals(LABEL_GOLD_MINERAL))return 1;
+		if (recognitions == null) return -1;
+		for (Recognition recognition : recognitions) {
+			if (recognition.getConfidence() < 0.8) continue;
+			if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) return 1;
 			else return 0;
 		}
 		return -1;
 	}
+	
 	/**
 	 * Initialize the Vuforia localization engine.
 	 */

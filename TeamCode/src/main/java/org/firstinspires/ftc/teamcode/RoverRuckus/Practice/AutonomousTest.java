@@ -48,6 +48,7 @@ public class AutonomousTest extends LinearOpMode {
 			robot.drive.waitForDone();
 		}
 		robot.drive.move(90, .8f, (1 - i) * 15f / 36);
+	
 	}
 	
 	public void AlignWithPicture() {

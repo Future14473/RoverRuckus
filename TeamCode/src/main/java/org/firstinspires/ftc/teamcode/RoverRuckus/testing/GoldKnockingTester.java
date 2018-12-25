@@ -28,7 +28,7 @@ public class GoldKnockingTester extends OpMode {
 		int i;
 		for (i = 0; i < 3; i++) {
 			int look = -1;
-			while(look == -1){
+			while (look == -1) {
 				look = goldLooker.look();
 			}
 			if (look == 1) {

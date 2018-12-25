@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.Practice;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.DriveHandler;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
@@ -28,7 +27,8 @@ public class DriveHandlerTweak extends OpMode {
 		robot.drive.cancelTasks();
 		super.stop();
 	}
-	public void showNums(){
+	
+	public void showNums() {
 		telemetry.addData("Distance, arbitrary units: ", distance);
 		telemetry.addData("Speed (0-1):", speed);
 		telemetry.addData("Direction (deg):", Math.toDegrees(angle));
@@ -40,10 +40,11 @@ public class DriveHandlerTweak extends OpMode {
 		telemetry.addLine("Left/right dpad to change TURN_MULT");
 		telemetry.addLine("Press A to start");
 	}
+	
 	@Override
 	public void loop() {
 		if (wait) {
-			if(gamepad1.x){
+			if (gamepad1.x) {
 				robot.drive.cancelTasks();
 			}
 			if (!robot.drive.hasTasks()) {
@@ -92,7 +93,7 @@ public class DriveHandlerTweak extends OpMode {
 				robot.drive.move(angle, speed, distance);
 				wait = true;
 			} else if (gamepad1.b) {
-				robot.drive.turn((float)Math.toDegrees(angle), speed);
+				robot.drive.turn((float) Math.toDegrees(angle), speed);
 				wait = true;
 			}
 			//*/
