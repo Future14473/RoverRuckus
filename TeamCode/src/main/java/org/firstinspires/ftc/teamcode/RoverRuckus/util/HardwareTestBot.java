@@ -9,11 +9,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class HardwareTestBot  {
 
     //Expansion Hub 1
-    DcMotor rightFront, rightBack, leftFront, leftBack;
+    public DcMotor rightFront, rightBack, leftFront, leftBack;
 
     //Expansion Hub 2
     public DcMotor Hooke, Arm, Rotation, Collection;
-    public Servo Marker, Flicker;
+    //public Servo Marker, Flicker;
     //public DistanceSensor SensorRange;
 
     HardwareMap hwMap;
@@ -38,8 +38,8 @@ public class HardwareTestBot  {
         Rotation = hwMap.get(DcMotor.class, "Rotation");
         Collection = hwMap.get(DcMotor.class, "Collection");
 
-        Marker = hwMap.get(Servo.class,"Marker");
-        Flicker = hwMap.get(Servo.class, "Flicker");
+        //Marker = hwMap.get(Servo.class,"Marker");
+        //Flicker = hwMap.get(Servo.class, "Flicker");
 
         //SensorRange = hwMap.get(DistanceSensor.class, "SensorRange");
 

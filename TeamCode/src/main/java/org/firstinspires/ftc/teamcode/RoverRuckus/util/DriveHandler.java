@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -11,26 +10,20 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
-	private static final int DEFAULT_WAITTIME = 200;
-	//FIXME TODO FIXME TODO: we want to tweak these values.
+	private static final int DEFAULT_WAIT_TIME = 200;
+	private static final Object lock = new Object();
 	public static float MOVE_MULT = 4450f; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
 	public static float TURN_MULT = 1205f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
+	//we have a separate thread handling moveTasks. This is so the robot can still do other stuff
+	//while this is happening at the same time.
+	private static MoveThread moveThread;
+	public boolean moveEndFlag = false;
 	// radians robot turn
-	/**
-	 * a task that handles making the robot uniformly turn its motors a specified number of
-	 * degrees.
-	 */
-	private Telemetry telemetry;
 	private Queue<MoveTask> moveTasks; //the currentPos moveTasks to do;
 	//NOW THE FUN STUFF, FOR AUTONOMOUS MOTION.
 	//the motors
 	//[ FL, FR, BL, BR ]
 	private DcMotor[] motors;
-	//we have a separate thread handling moveTasks. This is so the robot can still do other stuff
-	//while this is happening at the same time.
-	private MoveThread moveThread;
-	private final Object moveLock = new Object();
-	public boolean moveEndFlag = false;
 	//keeping track of location.
 	private float curX, curY;
 	
@@ -48,12 +41,13 @@ public class DriveHandler {
 		for (int i = 0; i < 4; i++) {
 			motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		}
+		startMoveThread();
 	}
 	
 	/**
 	 * construct by Ben Bielin Code
 	 */
-	public DriveHandler(HardwareTestBot r) {
+	DriveHandler(HardwareTestBot r) {
 		this(r.leftFront, r.rightFront, r.leftBack, r.rightBack);
 	}
 	
@@ -95,20 +89,12 @@ public class DriveHandler {
 	/**
 	 * starts the MoveTasks handling thread. A new thread might be created.
 	 */
-	public void startMoveThread() {
+	private void startMoveThread() {
 		if (moveThread == null) {
 			moveThread = new MoveThread();
+			moveThread.setName("MoveThread");
 			moveThread.start();
 		}
-	}
-	
-	/**
-	 * stops the MoveTasks handling thread.
-	 */
-	public void stopMoveThread() {
-		cancelTasks();
-		moveThread.exit();
-		moveThread = null;
 	}
 	
 	/**
@@ -122,30 +108,33 @@ public class DriveHandler {
 	 * adds a MoveTask to move in a straight line a specified direction and distance.
 	 */
 	public void move(float direction, float speed, float distance) {
-		move(direction, speed, distance, DEFAULT_WAITTIME);
+		move(direction, speed, distance, DEFAULT_WAIT_TIME);
 	}
 	
 	public void move(float direction, float speed, float distance, int waitTime) {
-		moveTasks.add(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT / speed, distance,
+		direction = (float) Math.toRadians(direction);
+		addTask(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT / speed, distance,
 			direction, waitTime));
-		synchronized (moveLock) {
-			moveLock.notify();
-		}
 	}
 	
 	/**
 	 * ads a move task to rotate in place a specified number of degrees, positive or negative.
 	 */
 	public void turn(float degrees, float speed) {
-		turn(degrees, speed, DEFAULT_WAITTIME);
+		turn(degrees, speed, DEFAULT_WAIT_TIME);
 	}
 	
 	public void turn(float degrees, float speed, int waitTime) {
-		moveTasks.add(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)),
+		degrees = (float) Math.toRadians(degrees);
+		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)),
 			degrees * TURN_MULT / speed,
 			0, 0, waitTime));
-		synchronized (moveLock) {
-			moveLock.notify();
+	}
+	
+	private void addTask(MoveTask task) {
+		moveTasks.add(task);
+		synchronized (lock) {
+			lock.notify();
 		}
 	}
 	
@@ -157,9 +146,6 @@ public class DriveHandler {
 		move(angle, speed, distance);
 	}
 	
-	public void waitForDone() {
-		while (hasTasks()) ;
-	}
 	
 	/**
 	 * cancels all tasks and stops robot.
@@ -191,6 +177,10 @@ public class DriveHandler {
 	 */
 	public void stopRobot() {
 		setPower(ZERO);
+	}
+	
+	public void waitForDone() {
+		while (hasTasks()) ;
 	}
 	
 	/**
@@ -247,19 +237,14 @@ public class DriveHandler {
 			float avgProgress = 0;
 			for (int i = 0; i < 4; i++) {
 				progress[i] = (float) motors[i].getCurrentPosition() / motors[i].getTargetPosition();
+				if (Float.isNaN(progress[i])) progress[i] = 1;
 				avgProgress += progress[i];
-				telemetry.addData("", "Motor %d: currentPos: %d, targetPos: %d, progress: %f",
-					i, motors[i].getCurrentPosition(), motors[i].getTargetPosition(), progress[i]);
 			}
-			avgProgress /= 4; //so it cant be exactly equal to 1, so no divide by 0.
-			telemetry.addData("Average Progress:", avgProgress);
+			avgProgress /= 4;
 			//adjust power as necessary..
 			for (int i = 0; i < 4; i++) {
-				actualPower.power[i] = targetPower.power[i] * (1 - progress[i]) / (1 - avgProgress);
-				telemetry.addData("", "Motor %d: Target power: %f, Actual power: %f",
-					i, targetPower.power[i], actualPower.power[i]);
+				actualPower.power[i] = Math.abs(targetPower.power[i] * (1 - 3 * (progress[i] - avgProgress)));
 			}
-			telemetry.update();
 			setPower(actualPower);
 			return Math.abs(avgProgress - 1) < 0.03;
 		}
@@ -270,12 +255,12 @@ public class DriveHandler {
 		private boolean isFirstTime;
 		private boolean exitFlag;
 		
-		void exit() {
-			exitFlag = true;
-		}
-		
 		MoveThread() {
 			exitFlag = false;
+		}
+		
+		void exit() {
+			exitFlag = true;
 		}
 		
 		//continually run moveTasks;
@@ -285,9 +270,9 @@ public class DriveHandler {
 			while (true) {
 				if (exitFlag) return;
 				try {
-					synchronized (moveLock) {
+					synchronized (lock) {
 						while (moveTasks.isEmpty()) {
-							moveLock.wait();
+							lock.wait();
 						}
 					}
 					MoveTask curTask = moveTasks.element();
@@ -305,12 +290,11 @@ public class DriveHandler {
 						moveTasks.remove();
 						isFirstTime = true;
 						moveEndFlag = true;
-						if (moveTasks.isEmpty()) {
-							setModeEncoder();
-						}
 						Thread.sleep(waitTime);
 					}
-				} catch (NullPointerException | InterruptedException ignored) { }
+				} catch (NullPointerException | InterruptedException ignored) {
+					return;
+				}
 			}
 		}
 	}

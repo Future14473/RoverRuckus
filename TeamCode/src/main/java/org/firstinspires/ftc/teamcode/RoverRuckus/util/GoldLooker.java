@@ -74,6 +74,7 @@ public class GoldLooker {
 	 */
 	public int look(){
 		List<Recognition> recognitions = tfod.getUpdatedRecognitions();
+		if(recognitions == null) return -1;
 		for(Recognition recognition : recognitions){
 			if(recognition.getConfidence() < 0.8)continue;
 			if(recognition.getLabel().equals(LABEL_GOLD_MINERAL))return 1;

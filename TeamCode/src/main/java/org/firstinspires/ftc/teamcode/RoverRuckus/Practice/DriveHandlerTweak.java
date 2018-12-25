@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.Practice;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.DriveHandler;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
 @TeleOp(name = "DriveTweak", group = "Test")
 public class DriveHandlerTweak extends OpMode {
 	private HardwareTestBot robot = new HardwareTestBot();
 	private boolean wait = false;
-	private float angle, speed, distance; // = 0
+	private float angle, speed = 1, distance = 1; // = 0
 	
 	@Override
 	public void init() {
@@ -20,21 +21,19 @@ public class DriveHandlerTweak extends OpMode {
 		telemetry.addLine("Left/right dpad to change TURN_MULT");
 		telemetry.addLine("Press A to start");
 		telemetry.update();
-		robot.drive.startMoveThread();
 	}
 	
 	@Override
 	public void stop() {
 		robot.drive.cancelTasks();
-		robot.drive.stopMoveThread();
 		super.stop();
 	}
 	public void showNums(){
 		telemetry.addData("Distance, arbitrary units: ", distance);
 		telemetry.addData("Speed (0-1):", speed);
 		telemetry.addData("Direction (deg):", Math.toDegrees(angle));
-		telemetry.addData("MOVE_MULT:", robot.drive.MOVE_MULT);
-		telemetry.addData("TURN_MULT:", robot.drive.TURN_MULT);
+		telemetry.addData("MOVE_MULT:", DriveHandler.MOVE_MULT);
+		telemetry.addData("TURN_MULT:", DriveHandler.TURN_MULT);
 		telemetry.addLine("Left stick up/down is distance, right/left is speed");
 		telemetry.addLine("Right stick is direction");
 		telemetry.addLine("Left/right bumpers to change MOVE_MULT");
@@ -69,19 +68,19 @@ public class DriveHandlerTweak extends OpMode {
 				changed = true;
 			}
 			if (gamepad1.left_bumper) {
-				robot.drive.MOVE_MULT -= 0.5;
+				DriveHandler.MOVE_MULT -= 0.5;
 				changed = true;
 			}
 			if (gamepad1.right_bumper) {
-				robot.drive.MOVE_MULT += 0.5;
+				DriveHandler.MOVE_MULT += 0.5;
 				changed = true;
 			}
 			if (gamepad1.dpad_left) {
-				robot.drive.TURN_MULT -= 0.02;
+				DriveHandler.TURN_MULT -= 0.02;
 				changed = true;
 			}
 			if (gamepad1.dpad_right) {
-				robot.drive.TURN_MULT += 0.02;
+				DriveHandler.TURN_MULT += 0.02;
 				changed = true;
 			}
 			if (changed) {
@@ -93,7 +92,7 @@ public class DriveHandlerTweak extends OpMode {
 				robot.drive.move(angle, speed, distance);
 				wait = true;
 			} else if (gamepad1.b) {
-				robot.drive.turn(angle, speed);
+				robot.drive.turn((float)Math.toDegrees(angle), speed);
 				wait = true;
 			}
 			//*/
