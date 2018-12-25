@@ -16,7 +16,7 @@ public class HardwareTestBot  {
     //public Servo Marker, Flicker;
     //public DistanceSensor SensorRange;
 
-    HardwareMap hwMap;
+    private HardwareMap hwMap;
     public ElapsedTime period = new ElapsedTime();
 	
 	public DriveHandler drive;

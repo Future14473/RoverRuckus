@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Separate utility class to handle omnidirectional motion on mecanum wheels.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
 	private static final int DEFAULT_WAIT_TIME = 200;
@@ -70,14 +71,6 @@ public class DriveHandler {
 	
 	public void resetCoords() {
 		curX = curY = 0;
-	}
-	
-	public float getCurX() {
-		return curX;
-	}
-	
-	public float getCurY() {
-		return curY;
 	}
 	
 	public void setModeEncoder() {
@@ -179,6 +172,7 @@ public class DriveHandler {
 		setPower(ZERO);
 	}
 	
+	@SuppressWarnings("StatementWithEmptyBody")
 	public void waitForDone() {
 		while (hasTasks()) ;
 	}
@@ -257,10 +251,6 @@ public class DriveHandler {
 		
 		MoveThread() {
 			exitFlag = false;
-		}
-		
-		void exit() {
-			exitFlag = true;
 		}
 		
 		//continually run moveTasks;

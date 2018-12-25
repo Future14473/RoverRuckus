@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
 @TeleOp(name = "MecanumWheelsTest", group = "Test")
 public class MecanumWheelsTest extends OpMode {
-	HardwareTestBot robot = new HardwareTestBot();
+	private HardwareTestBot robot = new HardwareTestBot();
 	//boolean a = false;
 	
 	@Override
