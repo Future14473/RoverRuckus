@@ -251,7 +251,7 @@ public class DriveHandler {
 				telemetry.addData("", "Motor %d: currentPos: %d, targetPos: %d, progress: %f",
 					i, motors[i].getCurrentPosition(), motors[i].getTargetPosition(), progress[i]);
 			}
-			avgProgress /= 4.000000000000000001; //so it cant be exactly equal to 1, so no divide by 0.
+			avgProgress /= 4; //so it cant be exactly equal to 1, so no divide by 0.
 			telemetry.addData("Average Progress:", avgProgress);
 			//adjust power as necessary..
 			for (int i = 0; i < 4; i++) {
@@ -261,7 +261,7 @@ public class DriveHandler {
 			}
 			telemetry.update();
 			setPower(actualPower);
-			return Math.abs(avgProgress - 1) < 0.02;
+			return Math.abs(avgProgress - 1) < 0.03;
 		}
 		
 	}

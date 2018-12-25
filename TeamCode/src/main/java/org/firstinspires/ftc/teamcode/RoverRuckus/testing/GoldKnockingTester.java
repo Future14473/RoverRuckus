@@ -16,12 +16,13 @@ public class GoldKnockingTester extends LinearOpMode {
 	public void runOpMode() {
 		robot.init(hardwareMap);
 		goldLooker = new GoldLooker(hardwareMap);
+		robot.drive.startMoveThread();
 		waitForStart();
 		goldLooker.start();
-		robot.drive.startMoveThread();
-		robot.drive.move(90, 0.2f, 15f / 36, 500);
-		robot.drive.move(-90, 0.2f, 15f / 36, 500);
-		robot.drive.move(-90, 0.2f, 15f / 36, 500);
+		robot.drive.move(90, 1f, 1, 500);
+		//robot.drive.move(-90, 0.2f, 15f / 36, 500);
+		//robot.drive.move(-90, 0.2f, 15f / 36, 500);
+/*
 		while (opModeIsActive()) {
 			if (stop) {
 				if (!robot.drive.hasTasks()) break;
@@ -38,5 +39,6 @@ public class GoldKnockingTester extends LinearOpMode {
 				}
 			}
 		}
+*/
 	}
 }

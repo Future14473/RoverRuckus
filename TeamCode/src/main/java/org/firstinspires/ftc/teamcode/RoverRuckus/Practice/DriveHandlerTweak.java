@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
 @TeleOp(name = "DriveTweak", group = "Test")
 public class DriveHandlerTweak extends OpMode {
-	HardwareTestBot robot = new HardwareTestBot();
-	boolean wait = false;
+	private HardwareTestBot robot = new HardwareTestBot();
+	private boolean wait = false;
 	private float angle, speed, distance; // = 0
 	
 	@Override
