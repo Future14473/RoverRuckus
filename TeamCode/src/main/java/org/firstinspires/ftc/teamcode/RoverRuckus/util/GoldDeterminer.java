@@ -49,12 +49,11 @@ public class GoldDeterminer {
 	@SuppressWarnings("SpellCheckingInspection")
 	private static final String VUFORIA_KEY = "Aavay7//////AAABmS26wV70nE/XoqC91tMM/rlwbqInv/YUads4QRll085q/yT" +
 		                                          "+qW0qdyrUwXPXbvwDkGhnffFMGIizzvfrXviNCbfAAgJzSwDJuL0MJl3LRE2FU4JMKKU2v7V+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz/LaIEh4phJs35awBUu+g+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG/jRUsWLH1cs35/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT+485YdwnaxuS8K9";
-	private static final int MAX_DIFF = 40;
-	private static ByLeft byLeft = new ByLeft();
+	
 	private VuforiaLocalizer vuforia;
 	private TFObjectDetector tfod;
-	private boolean detected = true;
-	private int goldPos = -1;
+	
+	private static final int MAX_DIFF = 40;
 	
 	public GoldDeterminer(HardwareMap hardwareMap) {
 		initVuforia();
@@ -106,6 +105,8 @@ public class GoldDeterminer {
 		tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 		tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
 	}
+	private boolean detected = true;
+	private int goldPos = -1;
 	
 	private static class ByLeft implements Comparator<Recognition> {
 		@Override
