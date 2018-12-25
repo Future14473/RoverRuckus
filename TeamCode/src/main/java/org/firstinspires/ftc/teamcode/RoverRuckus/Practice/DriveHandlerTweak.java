@@ -29,7 +29,7 @@ public class DriveHandlerTweak extends OpMode {
 		super.stop();
 	}
 	
-	public void showNums() {
+	private void showNums() {
 		telemetry.addData("Distance, arbitrary units: ", distance);
 		telemetry.addData("Speed (0-1):", speed);
 		telemetry.addData("Direction (deg):", Math.toDegrees(angle));

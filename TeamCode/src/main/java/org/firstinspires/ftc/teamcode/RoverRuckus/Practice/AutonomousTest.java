@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 @Autonomous(name = "AutonomousTest", group = "Test")
 public class AutonomousTest extends LinearOpMode {
 	
-	HardwareTestBot robot = new HardwareTestBot();
-	GoldLooker goldLooker;
+	private HardwareTestBot robot = new HardwareTestBot();
+	private GoldLooker goldLooker;
 	
 	@Override
 	public void runOpMode() {

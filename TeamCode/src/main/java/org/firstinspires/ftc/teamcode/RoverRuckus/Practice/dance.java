@@ -7,9 +7,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
 @TeleOp(name = "DANCE!!!", group = "Test")
 public class dance extends OpMode {
-	HardwareTestBot robot = new HardwareTestBot();
-	boolean wait = false;
-	private float angle, speed, distance; // = 0
+	private HardwareTestBot robot = new HardwareTestBot();
 	
 	@Override
 	public void init() {
