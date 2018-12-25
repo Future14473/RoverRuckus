@@ -19,8 +19,10 @@ public class MecanumWheelsTest extends OpMode {
 	@Override
 	public void loop() {
 		//replaced with drive Handler.
-		float angle = (float) Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y); //Up is 0, positive is clockwise
-		float speed = (float) Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y)*1.42f; //allow going a bit faster, if possible.
+		float angle = (float) Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y); //Up is 0, positive is
+		// clockwise
+		float speed = (float) Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * 1.42f; //allow going a bit
+		// faster, if possible.
 		float turnRate = gamepad1.right_stick_x * 2; //prioritize turning over moving.
 		//telemetry.addData("Stick angle:",angle);
 		robot.drive.moveAt(angle, speed, turnRate);
@@ -51,17 +53,16 @@ public class MecanumWheelsTest extends OpMode {
         else if(gamepad2.dpad_down) {robot.Arm.setPower(-1);}
         else {robot.Arm.setPower(0);}
         */
-
-
-        if(gamepad2.a) {
-        	robot.Collection.setPower(1);
-		} else if(gamepad2.b) {
-        	robot.Collection.setPower(-1);
+		
+		
+		if (gamepad2.a) {
+			robot.Collection.setPower(1);
+		} else if (gamepad2.b) {
+			robot.Collection.setPower(-1);
 		} else {
-		    robot.Collection.setPower(0);
+			robot.Collection.setPower(0);
 		}
-
-
-
+		
+		
 	}
 }

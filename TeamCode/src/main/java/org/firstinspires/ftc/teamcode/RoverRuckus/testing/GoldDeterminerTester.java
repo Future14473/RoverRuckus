@@ -23,6 +23,6 @@ public class GoldDeterminerTester extends OpMode {
 		if (!goldDeterminer.hasDetected()) return;
 		telemetry.addData("Gold location is:", goldDeterminer.goldPosition());
 		telemetry.update();
-		if(gamepad1.a) goldDeterminer.start();
+		if (gamepad1.a) goldDeterminer.start();
 	}
 }
