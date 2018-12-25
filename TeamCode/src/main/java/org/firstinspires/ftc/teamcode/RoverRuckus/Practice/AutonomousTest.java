@@ -29,25 +29,7 @@ public class AutonomousTest extends LinearOpMode {
 	}
 	
 	public void KnockOffGold() {
-		goldLooker.start();
-		robot.drive.move(0, .8f, .5f);
-		robot.drive.move(-90, .8f, 15f / 36);
-		robot.drive.waitForDone();
-		robot.drive.resetCoords();
-		int i;
-		for (i = 0; i < 3; i++) {
-			int look = goldLooker.look();
-			if (look == 1) {
-				robot.drive.move(0, .5f, .5f);
-				robot.drive.move(180, .5f, .5f);
-				robot.drive.waitForDone();
-				break;
-			}
-			if (i != 2)
-				robot.drive.move(90, .8f, 15f / 36);
-			robot.drive.waitForDone();
-		}
-		robot.drive.move(90, .8f, (1 - i) * 15f / 36);
+	
 	}
 	
 	public void AlignWithPicture() {

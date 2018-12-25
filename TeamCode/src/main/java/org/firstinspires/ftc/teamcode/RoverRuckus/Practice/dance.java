@@ -14,13 +14,11 @@ public class dance extends OpMode {
 	@Override
 	public void init() {
 		robot.init(hardwareMap);
-		robot.drive.startMoveThread();
 	}
 	
 	@Override
 	public void stop() {
 		robot.drive.cancelTasks();
-		robot.drive.stopMoveThread();
 		super.stop();
 	}
 	

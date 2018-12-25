@@ -21,13 +21,11 @@ public class DriveHandlerTweak extends OpMode {
 		telemetry.addLine("Left/right dpad to change TURN_MULT");
 		telemetry.addLine("Press A to start");
 		telemetry.update();
-		robot.drive.startMoveThread();
 	}
 	
 	@Override
 	public void stop() {
 		robot.drive.cancelTasks();
-		robot.drive.stopMoveThread();
 		super.stop();
 	}
 	public void showNums(){
