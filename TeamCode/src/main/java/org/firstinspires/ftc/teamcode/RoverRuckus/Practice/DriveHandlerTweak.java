@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.Practice;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.DriveHandler;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @TeleOp(name = "DriveTweak", group = "Test")
 public class DriveHandlerTweak extends OpMode {
-	private HardwareTestBot robot = new HardwareTestBot();
+	private Robot robot = new Robot();
 	private boolean wait = false;
 	private float angle, speed = 1, distance = 1; // = 0
 	

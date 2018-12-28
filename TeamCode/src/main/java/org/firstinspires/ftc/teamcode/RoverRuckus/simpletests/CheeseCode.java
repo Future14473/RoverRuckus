@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.simpletests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 
 @Autonomous(name = "Cheese", group = "Test")
 public class CheeseCode extends LinearOpMode {
 	
-	private HardwareTestBot robot = new HardwareTestBot();
+	private Robot robot = new Robot();
 	
 	
 	@Override

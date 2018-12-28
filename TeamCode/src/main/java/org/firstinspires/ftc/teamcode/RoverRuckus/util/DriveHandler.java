@@ -42,7 +42,7 @@ public class DriveHandler {
 	/**
 	 * construct by Ben Bielin Code
 	 */
-	DriveHandler(HardwareTestBot r) {
+	DriveHandler(Robot r) {
 		this(r.leftFront, r.rightFront, r.leftBack, r.rightBack);
 	}
 	

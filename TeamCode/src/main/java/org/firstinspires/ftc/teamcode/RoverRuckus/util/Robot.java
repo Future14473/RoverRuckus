@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class HardwareTestBot {
+public class Robot {
 	//Expansion Hub 2
 	public DcMotor Hooke, Arm, Rotation, Collection;
 	public Servo Marker, Flicker;
@@ -14,7 +14,7 @@ public class HardwareTestBot {
 	public DcMotor rightFront, rightBack, leftFront, leftBack;
 	private HardwareMap hwMap;
 	
-	public HardwareTestBot() {
+	public Robot() {
 	
 	}
 	

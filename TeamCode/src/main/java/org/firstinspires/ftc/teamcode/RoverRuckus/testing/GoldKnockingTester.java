@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLooker;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "Gold Knocking Tester", group = "Test")
 public class GoldKnockingTester extends LinearOpMode {
 	
 	private GoldLooker goldLooker;
-	private HardwareTestBot robot = new HardwareTestBot();
+	private Robot robot = new Robot();
 	private boolean found = false;
 	//private int pos = -1;
 	
@@ -67,7 +67,7 @@ public class GoldKnockingTester extends LinearOpMode {
 		}
 	}
 	
-	public static int closerLook(HardwareTestBot robot, GoldLooker goldLooker) {
+	public static int closerLook(Robot robot, GoldLooker goldLooker) {
 		int look;
 		robot.drive.move(0, 0.3f, 2f / 36);
 		look = goldLooker.look();

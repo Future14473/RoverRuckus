@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.simpletests;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "Up100", group = "Test")
 public class HookeUp100 extends LinearOpMode {
-	private HardwareTestBot robot = new HardwareTestBot();
+	private Robot robot = new Robot();
 	
 	@Override
 	public void runOpMode() {

@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLooker;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @TeleOp(name = "AutonomousTest", group = "Test")
 public class AutonomousTest extends LinearOpMode {
 	
-	private HardwareTestBot robot = new HardwareTestBot();
+	private Robot robot = new Robot();
 	private GoldLooker goldLooker;
 	private boolean found = false;
 	
