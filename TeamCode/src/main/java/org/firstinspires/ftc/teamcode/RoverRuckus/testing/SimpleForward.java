@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
 @TeleOp(name = "Forward Test", group = "Test")
 public class SimpleForward extends OpMode {

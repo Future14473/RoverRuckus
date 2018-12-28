@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.DriveHandler;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
 @TeleOp(name = "DriveTweak", group = "Test")
 public class DriveHandlerTweak extends OpMode {

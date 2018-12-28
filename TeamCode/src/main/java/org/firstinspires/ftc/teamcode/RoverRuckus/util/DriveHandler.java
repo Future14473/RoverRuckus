@@ -11,10 +11,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
-	private static final int DEFAULT_WAIT_TIME = 200;
 	private static final Object lock = new Object();
-	public static float MOVE_MULT = 4450f; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
-	public static float TURN_MULT = 1205f; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
+	public static double MOVE_MULT = 4450; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
+	public static double TURN_MULT = 1205; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
 	//we have a separate thread handling moveTasks. This is so the robot can still do other stuff
 	//while this is happening at the same time.
 	private static MoveThread moveThread;
@@ -25,8 +24,6 @@ public class DriveHandler {
 	//the motors
 	//[ FL, FR, BL, BR ]
 	private DcMotor[] motors;
-	//keeping track of location.
-	private float curX, curY;
 	
 	/**
 	 * construct by motors
@@ -55,22 +52,24 @@ public class DriveHandler {
 	/**
 	 * Generates a MotorPowerSet that corresponds to turning the robot in the specified direction
 	 */
-	private static MotorPowerSet calcPowerSet(float direction, float speed, float turnRate) {
+	private static MotorPowerSet calcPowerSet(double direction, double speed, double turnRate) {
 		//DO THE MATH
-		float robotAngle = (float) (direction + Math.PI / 4);
-		float v1 = (float) (speed * Math.sin(robotAngle) + turnRate);
-		float v2 = (float) (speed * Math.cos(robotAngle) - turnRate);
-		float v3 = (float) (speed * Math.cos(robotAngle) + turnRate);
-		float v4 = (float) (speed * Math.sin(robotAngle) - turnRate);
+       /* assert (speed >= 0 && speed <= 1);
+        speed = Math.abs(speed);
+        if(speed > 1f) {
+            speed = 1f;
+        }
+        */
+		double robotAngle = direction + Math.PI / 4;
+		double v1 = speed * Math.sin(robotAngle) + turnRate;
+		double v2 = speed * Math.cos(robotAngle) - turnRate;
+		double v3 = speed * Math.cos(robotAngle) + turnRate;
+		double v4 = speed * Math.sin(robotAngle) - turnRate;
 		//if any level is greater than 1, scale down to prevent robot going off course
 		//if turnRate is 0 and speed <1, this wont be a problem.
-		float max = Math.max(Math.max(Math.abs(v1), Math.abs(v2)), Math.max(Math.abs(v3), Math.abs(v4)));
+		double max = Math.max(Math.max(Math.abs(v1), Math.abs(v2)), Math.max(Math.abs(v3), Math.abs(v4)));
 		if (max < 1) max = 1;
 		return new MotorPowerSet(v1 / max, v2 / max, v3 / max, v4 / max);
-	}
-	
-	public void resetCoords() {
-		curX = curY = 0;
 	}
 	
 	public void setModeEncoder() {
@@ -82,10 +81,9 @@ public class DriveHandler {
 	/**
 	 * starts the MoveTasks handling thread. A new thread might be created.
 	 */
-	private void startMoveThread() {
+	public void startMoveThread() {
 		if (moveThread == null) {
 			moveThread = new MoveThread();
-			moveThread.setName("MoveThread");
 			moveThread.start();
 		}
 	}
@@ -100,45 +98,29 @@ public class DriveHandler {
 	/**
 	 * adds a MoveTask to move in a straight line a specified direction and distance.
 	 */
-	public void move(float direction, float speed, float distance) {
-		move(direction, speed, distance, DEFAULT_WAIT_TIME);
-	}
-	
-	public void move(float direction, float speed, float distance, int waitTime) {
-		direction = (float) Math.toRadians(direction);
-		addTask(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT / speed, distance,
-			direction, waitTime));
+	public void move(double direction, double speed, double distance) { // maybe has some problems here
+		direction = Math.toRadians(direction);
+		addTask(new MoveTask(calcPowerSet(direction, speed, 0),
+			distance * MOVE_MULT / speed, distance,
+			direction));
 	}
 	
 	/**
 	 * ads a move task to rotate in place a specified number of degrees, positive or negative.
 	 */
-	public void turn(float degrees, float speed) {
-		turn(degrees, speed, DEFAULT_WAIT_TIME);
-	}
-	
-	public void turn(float degrees, float speed, int waitTime) {
-		degrees = (float) Math.toRadians(degrees);
+	public void turn(double degrees, double speed) {
+		degrees = Math.toRadians(degrees);
 		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)),
 			degrees * TURN_MULT / speed,
-			0, 0, waitTime));
+			0, 0));
 	}
 	
 	private void addTask(MoveTask task) {
 		moveTasks.add(task);
 		synchronized (lock) {
-			lock.notify();
+			lock.notifyAll();
 		}
 	}
-	
-	//measured in given arbitrary units
-	public void moveTo(float x, float y, float speed) {
-		float dx = curX - x, dy = curY - y;
-		float angle = (float) Math.atan2(x, y);
-		float distance = (float) Math.hypot(dx, dy);
-		move(angle, speed, distance);
-	}
-	
 	
 	/**
 	 * cancels all tasks and stops robot.
@@ -161,7 +143,7 @@ public class DriveHandler {
 	 * Can handle motor power levels greater than 1 -- it will scale them down.
 	 * If you're not turning and moving at the same time, and speed <=1, that wont be a problem
 	 */
-	public void moveAt(float direction, float speed, float turnRate) {
+	public void moveAt(double direction, double speed, double turnRate) {
 		setPower(calcPowerSet(direction, speed, turnRate));
 	}
 	
@@ -179,13 +161,13 @@ public class DriveHandler {
 	
 	/**
 	 * a set of power levels for algit rm --cached -r .ideal 4 motors;
-	 * just a container around float[][]
+	 * just a container around double[][]
 	 */
 	public static class MotorPowerSet {
-		float[] power;
+		double[] power;
 		
-		MotorPowerSet(float leftFront, float rightFront, float backLeft, float backRight) {
-			float[] power = new float[4];
+		MotorPowerSet(double leftFront, double rightFront, double backLeft, double backRight) {
+			double[] power = new double[4];
 			power[0] = leftFront;
 			power[1] = rightFront;
 			power[2] = backLeft;
@@ -194,26 +176,21 @@ public class DriveHandler {
 		}
 		
 		MotorPowerSet() {
-			this.power = new float[4];
+			this.power = new double[4];
 		}
 	}
 	
 	private class MoveTask { //NOT STATIC, to access DCmotors
 		//dont want to spam new, so I have fields instead of vars.
 		private MotorPowerSet targetPower, actualPower;
-		private float multiplier;
-		private float[] progress;
-		private int waitTime;
-		private float dx, dy;
+		private double multiplier;
+		private double[] progress = new double[4];
+		private double[] curPos = new double[4];
 		
-		MoveTask(MotorPowerSet targetPower, float multiplier, float distance, float angle, int waitTime) {
+		MoveTask(MotorPowerSet targetPower, double multiplier, double distance, double angle) {
 			this.targetPower = targetPower;
 			this.multiplier = multiplier;
-			this.waitTime = waitTime;
-			this.dx = (float) (distance * Math.sin(angle));
-			this.dy = (float) (distance * Math.cos(angle));
 			this.actualPower = new MotorPowerSet();
-			progress = new float[4];
 		}
 		
 		void start() {
@@ -228,10 +205,11 @@ public class DriveHandler {
 		//read motor positions and adjust them as necessary if they go off track.
 		//supposed to make all the motors turn in unison.
 		boolean process() {
-			float avgProgress = 0;
+			double avgProgress = 0, totalOff = 0;
 			for (int i = 0; i < 4; i++) {
-				progress[i] = (float) motors[i].getCurrentPosition() / motors[i].getTargetPosition();
-				if (Float.isNaN(progress[i])) progress[i] = 1;
+				progress[i] = (double) motors[i].getCurrentPosition() / motors[i].getTargetPosition();
+				totalOff = Math.abs(motors[i].getCurrentPosition() - motors[i].getTargetPosition());
+				if (Double.isNaN(progress[i])) progress[i] = 1;
 				avgProgress += progress[i];
 			}
 			avgProgress /= 4;
@@ -240,7 +218,7 @@ public class DriveHandler {
 				actualPower.power[i] = Math.abs(targetPower.power[i] * (1 - 3 * (progress[i] - avgProgress)));
 			}
 			setPower(actualPower);
-			return Math.abs(avgProgress - 1) < 0.03;
+			return totalOff < 100;
 		}
 		
 	}
@@ -251,6 +229,7 @@ public class DriveHandler {
 		
 		MoveThread() {
 			exitFlag = false;
+			this.setName("MoveThread");
 		}
 		
 		//continually run moveTasks;
@@ -274,13 +253,9 @@ public class DriveHandler {
 					if (exitFlag) return;
 					if (curTask.process()) {
 						stopRobot();
-						int waitTime = curTask.waitTime;
-						curX += curTask.dx;
-						curY += curTask.dy;
 						moveTasks.remove();
 						isFirstTime = true;
 						moveEndFlag = true;
-						Thread.sleep(waitTime);
 					}
 				} catch (NullPointerException | InterruptedException ignored) {
 					return;
