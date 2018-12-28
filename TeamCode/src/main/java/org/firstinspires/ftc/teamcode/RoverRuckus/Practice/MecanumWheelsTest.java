@@ -19,9 +19,9 @@ public class MecanumWheelsTest extends OpMode {
 	public void loop() {
 		//replaced with drive Handler.
 		float angle = (float) Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y); //Up is 0, positive is
-        // clockwise
+		// clockwise
 		float speed = (float) Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * 1.4f; //allow going a bit
-        // faster, if possible.
+		// faster, if possible.
 		float turnRate = gamepad1.right_stick_x * 2; //prioritize turning over moving.
 		//telemetry.addData("Stick angle:",angle);
 		robot.drive.moveAt(angle, speed, turnRate);
