@@ -123,7 +123,9 @@ public class DriveHandler {
 	 * cancels all tasks and stops robot.
 	 */
 	public void cancelTasks() {
-		moveTasks.clear();
+		synchronized (lock) {
+			moveTasks.clear();
+		}
 		stopRobot();
 	}
 	
@@ -226,6 +228,7 @@ public class DriveHandler {
 		MoveThread() {
 			exitFlag = false;
 			this.setName("MoveThread");
+			this.setPriority(Thread.currentThread().getPriority() - 1);
 		}
 		
 		//continually run moveTasks;
@@ -237,24 +240,23 @@ public class DriveHandler {
 				try {
 					synchronized (lock) {
 						while (moveTasks.isEmpty()) {
+							stopRobot();
 							lock.wait();
 						}
+						MoveTask curTask = moveTasks.element();
+						if (exitFlag) return;
+						if (isFirstTime) {
+							isFirstTime = false;
+							curTask.start();
+						}
+						if (exitFlag) return;
+						if (curTask.process()) {
+							stopRobot();
+							moveTasks.remove();
+							isFirstTime = true;
+						}
 					}
-					MoveTask curTask = moveTasks.element();
-					if (exitFlag) return;
-					if (isFirstTime) {
-						isFirstTime = false;
-						curTask.start();
-					}
-					if (exitFlag) return;
-					if (curTask.process()) {
-						stopRobot();
-						moveTasks.remove();
-						isFirstTime = true;
-					}
-				} catch (NullPointerException | InterruptedException ignored) {
-					return;
-				}
+				} catch (NullPointerException | InterruptedException ignored) { }
 			}
 		}
 	}

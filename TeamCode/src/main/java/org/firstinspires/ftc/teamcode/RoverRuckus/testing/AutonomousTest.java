@@ -16,7 +16,7 @@ public class AutonomousTest extends LinearOpMode {
 	@Override
 	public void runOpMode() {
 		telemetry.addLine("Init started...");
-		telemetry.addLine("Pls wate thx");
+		telemetry.addLine("Pls wait thx");
 		telemetry.update();
 		robot.init(hardwareMap);
 		goldLooker = new GoldLooker(hardwareMap);
@@ -28,11 +28,10 @@ public class AutonomousTest extends LinearOpMode {
 		//runto(-32000);
 		goldLooker.start();
 		
-		robot.drive.move(270, 1, .1);
-		robot.drive.move(55, 1, .57); //move forwards
+		robot.drive.move(290, 1, .1);
+		robot.drive.move(55, 1, .57);
 		robot.drive.waitForDone();
-		int i;
-		int look; // -1 means nothing, 0 means white, 1 means gold
+		int i, look; // -1 means nothing, 0 means white, 1 means gold
 		for (i = 1; i >= -1; i--) {// -1 is left, 0 is center, 1 is right position
 			telemetry.addData("i is:", i);
 			telemetry.addLine("looking...");
@@ -58,8 +57,6 @@ public class AutonomousTest extends LinearOpMode {
 			telemetry.update();
 		}
 		
-		//robot.drive.move(90, 1, (1 - i) * 17.0 / 36);
-		
 		if (i == 1) {
 			robot.drive.move(270, 1, 34.0 / 36);
 		} else if (i == 0) {
@@ -68,6 +65,7 @@ public class AutonomousTest extends LinearOpMode {
 		robot.drive.move(260f, 1, 2f);
 		robot.drive.turn(80, 0.5f);
 		robot.drive.waitForDone();
+		
 		robot.Marker.setPosition(0.84);
 		sleep(2000);
 		robot.Flicker.setPosition(0.65);
@@ -108,5 +106,4 @@ public class AutonomousTest extends LinearOpMode {
 		robot.drive.cancelTasks();
 		return look;
 	}
-	
 }
