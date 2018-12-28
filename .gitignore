@@ -22,11 +22,10 @@ Thumbs.db
 *.iml
 .gradle
 build/
-
+.idea/*
+.idea/*/
+!.idea/codeStyles/
+!.idea/dictionaries/
 *ASUS_PC_01*
 doc/
-.idea/workspace.xml
-.idea/caches
-.idea/*.*
-.idea/libraries
 

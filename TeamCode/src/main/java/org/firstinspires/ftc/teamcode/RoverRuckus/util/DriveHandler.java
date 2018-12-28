@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
-	private static final Object lock = new Object();
+	private static final Object movingLock = new Object();
 	private static final Object doneLock = new Object();
 	//change to tweak "move x meters" precisely. Degrees wheel turn per unit.
 	public static final double MOVE_MULT = 4450;
@@ -97,9 +97,9 @@ public class DriveHandler {
 	}
 	
 	private void addTask(MoveTask task) {
-		moveTasks.add(task);
-		synchronized (lock) {
-			lock.notifyAll();
+		synchronized (movingLock) {
+			moveTasks.add(task);
+			movingLock.notifyAll();
 		}
 	}
 	
@@ -107,7 +107,7 @@ public class DriveHandler {
 	 * cancels all tasks and stops robot.
 	 */
 	public void cancelTasks() {
-		synchronized (lock) {
+		synchronized (movingLock) {
 			moveTasks.clear();
 		}
 		synchronized (doneLock) {
@@ -239,9 +239,9 @@ public class DriveHandler {
 		@Override
 		public void run() {
 			while (!exitFlag) try {
-				synchronized (lock) {
+				synchronized (movingLock) {
 					while (moveTasks.isEmpty()) {
-						lock.wait();
+						movingLock.wait();
 					}
 					MoveTask curTask = moveTasks.element();
 					if (curTask.process()) {
@@ -254,7 +254,7 @@ public class DriveHandler {
 						}
 					}
 				}
-				Thread.sleep(0, 1);
+				Thread.sleep(1);
 			} catch (InterruptedException ignored) {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
