@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
+package org.firstinspires.ftc.teamcode.RoverRuckus.simpletests;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
