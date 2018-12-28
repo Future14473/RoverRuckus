@@ -82,7 +82,7 @@ public class GoldDeterminer {
 		if (!detected) return -1;
 		return goldPos;
 	}
-
+	
 	/**
 	 * Initialize the Vuforia localization engine.
 	 */

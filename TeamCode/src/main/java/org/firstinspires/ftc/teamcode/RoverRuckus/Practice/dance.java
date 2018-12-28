@@ -21,12 +21,12 @@ public class dance extends OpMode {
 	@Override
 	public void start() {
 		super.start();
-		robot.drive.move(0,1,1.4f);
-		robot.drive.move(-90f,1, 0.5f);
-		robot.drive.turn(45,1);
-		robot.drive.move(135,1,1.4f);
-		robot.drive.move(45,1,0.4f);
-		robot.drive.turn(315,1);
+		robot.drive.move(0, 1, 1.4f);
+		robot.drive.move(-90f, 1, 0.5f);
+		robot.drive.turn(45, 1);
+		robot.drive.move(135, 1, 1.4f);
+		robot.drive.move(45, 1, 0.4f);
+		robot.drive.turn(315, 1);
 	}
 	
 	@Override
