@@ -13,9 +13,9 @@ public class DriveHandler {
 	private static final Object movingLock = new Object();
 	private static final Object doneLock = new Object();
 	//change to tweak "move x meters" precisely. Degrees wheel turn per unit.
-	public static final double MOVE_MULT = 4450;
+	public static double MOVE_MULT = 4450;
 	//change to tweak "rotate x deg" precisely. Degrees wheel turn per degrees robot turn.
-	public static final double TURN_MULT = 1205;
+	public static double TURN_MULT = 1205;
 	/**
 	 * we have a separate thread handling moveTasks. This is so the robot can still do other stuff
 	 * while this is happening at the same time.
