@@ -7,10 +7,10 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
 @Autonomous(name = "Up100", group = "Test")
 public class HookeUp100 extends LinearOpMode {
-	HardwareTestBot robot = new HardwareTestBot();
+	private HardwareTestBot robot = new HardwareTestBot();
 	
 	@Override
-	public void runOpMode() throws InterruptedException {
+	public void runOpMode() {
 		waitForStart();
 		robot.init(hardwareMap);
 		
@@ -20,7 +20,7 @@ public class HookeUp100 extends LinearOpMode {
 		runto(robot.Hooke.getCurrentPosition() - 1000, robot.Hooke);
 	}
 	
-	public boolean runto(int encoder, DcMotor motor) {
+	private boolean runto(int encoder, DcMotor motor) {
 		int dir = 0;
 		
 		if (motor.getCurrentPosition() > encoder) dir = 1;

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.HardwareTestBot;
 
 @Autonomous(name = "DropFromLander", group = "Test")
 public class DropFromLander extends LinearOpMode {
-	HardwareTestBot robot = new HardwareTestBot();
+	private HardwareTestBot robot = new HardwareTestBot();
 	
 	@Override
 	public void runOpMode() throws InterruptedException {

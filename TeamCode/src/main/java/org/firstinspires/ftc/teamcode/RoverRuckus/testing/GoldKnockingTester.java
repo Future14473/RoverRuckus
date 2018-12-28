@@ -10,7 +10,6 @@ public class GoldKnockingTester extends LinearOpMode {
 	
 	private GoldLooker goldLooker;
 	private HardwareTestBot robot = new HardwareTestBot();
-	private boolean stop = false;
 	private boolean found = false;
 	//private int pos = -1;
 	

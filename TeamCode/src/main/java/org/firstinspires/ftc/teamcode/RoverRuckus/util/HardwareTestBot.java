@@ -11,8 +11,8 @@ public class HardwareTestBot {
 	public ElapsedTime period = new ElapsedTime();
 	public DriveHandler drive;
 	//Expansion Hub 1
-	DcMotor rightFront, rightBack, leftFront, leftBack;
-	HardwareMap hwMap;
+	public DcMotor rightFront, rightBack, leftFront, leftBack;
+	private HardwareMap hwMap;
 	
 	public HardwareTestBot() {
 	

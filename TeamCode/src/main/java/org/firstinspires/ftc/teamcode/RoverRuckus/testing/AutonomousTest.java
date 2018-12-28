@@ -27,16 +27,12 @@ public class AutonomousTest extends LinearOpMode {
 		waitForStart();
 		//runto(-32000);
 		goldLooker.start();
-		telemetry.addLine("Point A");
-		telemetry.update();
 		
 		robot.drive.move(270, 1, .1);
 		robot.drive.move(55, 1, .57); //move forwards
 		robot.drive.waitForDone();
-		telemetry.addLine("Done initial move");
-		telemetry.update();
 		int i;
-		int look = -1; // -1 means nothing, 0 means white, 1 means gold
+		int look; // -1 means nothing, 0 means white, 1 means gold
 		for (i = 1; i >= -1; i--) {// -1 is left, 0 is center, 1 is right position
 			telemetry.addData("i is:", i);
 			telemetry.addLine("looking...");
@@ -51,21 +47,21 @@ public class AutonomousTest extends LinearOpMode {
 				found = true;
 				break;
 			}
-			
+			//is white.
 			if (i != -1) {// has not traverse the 3 positions yet
 				robot.drive.move(270, 1, 17.0 / 36);
 				robot.drive.waitForDone();
 			}
 		}
 		if (!found) {
-			telemetry.addData("NOT FOUND", "NOT FOUND");
+			telemetry.addLine("NOT FOUND, MOVING ON WITH LIFE");
 			telemetry.update();
 		}
 		
 		//robot.drive.move(90, 1, (1 - i) * 17.0 / 36);
 		
 		if (i == 1) {
-			robot.drive.move(270, 1, 34 / 36);
+			robot.drive.move(270, 1, 34.0 / 36);
 		} else if (i == 0) {
 			robot.drive.move(270, 1, 17.0 / 36);
 		}
@@ -84,8 +80,6 @@ public class AutonomousTest extends LinearOpMode {
 		robot.Rotation.setPower(1);
 		sleep(1000);
 		robot.Rotation.setPower(0);
-		while (opModeIsActive()) {
-		}
 	}
 	
 	private void runto(int encoder) {

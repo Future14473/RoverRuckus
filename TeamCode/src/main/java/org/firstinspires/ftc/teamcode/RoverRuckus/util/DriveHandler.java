@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Separate utility class to handle omnidirectional motion on mecanum wheels.
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
 public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
 	private static final Object lock = new Object();
@@ -17,8 +16,6 @@ public class DriveHandler {
 	//we have a separate thread handling moveTasks. This is so the robot can still do other stuff
 	//while this is happening at the same time.
 	private static MoveThread moveThread;
-	public boolean moveEndFlag = false;
-	// radians robot turn
 	private Queue<MoveTask> moveTasks; //the currentPos moveTasks to do;
 	//NOW THE FUN STUFF, FOR AUTONOMOUS MOTION.
 	//the motors
@@ -81,7 +78,7 @@ public class DriveHandler {
 	/**
 	 * starts the MoveTasks handling thread. A new thread might be created.
 	 */
-	public void startMoveThread() {
+	private void startMoveThread() {
 		if (moveThread == null) {
 			moveThread = new MoveThread();
 			moveThread.start();
@@ -101,8 +98,8 @@ public class DriveHandler {
 	public void move(double direction, double speed, double distance) { // maybe has some problems here
 		direction = Math.toRadians(direction);
 		addTask(new MoveTask(calcPowerSet(direction, speed, 0),
-			distance * MOVE_MULT / speed, distance,
-			direction));
+			distance * MOVE_MULT / speed
+		));
 	}
 	
 	/**
@@ -111,8 +108,8 @@ public class DriveHandler {
 	public void turn(double degrees, double speed) {
 		degrees = Math.toRadians(degrees);
 		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)),
-			degrees * TURN_MULT / speed,
-			0, 0));
+			degrees * TURN_MULT / speed
+		));
 	}
 	
 	private void addTask(MoveTask task) {
@@ -180,14 +177,13 @@ public class DriveHandler {
 		}
 	}
 	
-	private class MoveTask { //NOT STATIC, to access DCmotors
-		//dont want to spam new, so I have fields instead of vars.
+	private class MoveTask { //NOT STATIC, to access DC motors
+		//don't want to spam new, so I have fields instead of vars.
 		private MotorPowerSet targetPower, actualPower;
 		private double multiplier;
 		private double[] progress = new double[4];
-		private double[] curPos = new double[4];
 		
-		MoveTask(MotorPowerSet targetPower, double multiplier, double distance, double angle) {
+		MoveTask(MotorPowerSet targetPower, double multiplier) {
 			this.targetPower = targetPower;
 			this.multiplier = multiplier;
 			this.actualPower = new MotorPowerSet();
@@ -255,7 +251,6 @@ public class DriveHandler {
 						stopRobot();
 						moveTasks.remove();
 						isFirstTime = true;
-						moveEndFlag = true;
 					}
 				} catch (NullPointerException | InterruptedException ignored) {
 					return;
