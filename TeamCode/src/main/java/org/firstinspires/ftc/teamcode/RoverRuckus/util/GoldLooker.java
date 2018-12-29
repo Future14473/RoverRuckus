@@ -25,7 +25,7 @@ public class GoldLooker {
 	private VuforiaLocalizer vuforia;
 	private TFObjectDetector tfod;
 	
-	public GoldLooker(HardwareMap hardwareMap) {
+	public void init(HardwareMap hardwareMap) {
 		initVuforia();
 		if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
 			initTfod(hardwareMap);

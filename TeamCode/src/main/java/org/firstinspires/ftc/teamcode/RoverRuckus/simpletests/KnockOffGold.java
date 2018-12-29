@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "KnockOffGoldDiagonal", group = "Test")
 public class KnockOffGold extends LinearOpMode {
-	private GoldLooker goldLooker;
+	private GoldLooker goldLooker = new GoldLooker();
 	private Robot robot = new Robot();
 	private boolean stop = false;
 	private boolean found = false;
@@ -15,8 +15,8 @@ public class KnockOffGold extends LinearOpMode {
 	@Override
 	public void runOpMode() throws InterruptedException {
 		robot.init(hardwareMap);
-		goldLooker = new GoldLooker(hardwareMap);
-		
+		goldLooker.init(hardwareMap);
+		robot.drive.addLinearOpMode(this);
 		waitForStart();
 		//while (opModeIsActive()) {//why while loop?
 		goldLooker.start();

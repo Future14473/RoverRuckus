@@ -39,4 +39,9 @@ public class SimpleForward extends OpMode {
 	public void loop() {
 	
 	}
+	
+	@Override
+	public void stop() {
+		robot.drive.stop();
+	}
 }

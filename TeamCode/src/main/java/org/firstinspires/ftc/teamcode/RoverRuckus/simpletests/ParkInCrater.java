@@ -10,6 +10,7 @@ public class ParkInCrater extends LinearOpMode {
 	
 	@Override
 	public void runOpMode() throws InterruptedException {
+		robot.drive.addLinearOpMode(this);
 		waitForStart();
 		robot.init(hardwareMap);
 		robot.drive.move(0, 1f, 2f);

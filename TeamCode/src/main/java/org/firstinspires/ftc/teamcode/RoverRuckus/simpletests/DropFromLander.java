@@ -11,10 +11,11 @@ public class DropFromLander extends LinearOpMode {
 	
 	@Override
 	public void runOpMode() throws InterruptedException {
-		waitForStart();
 		robot.init(hardwareMap);
+		robot.drive.addLinearOpMode(this);
 		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		waitForStart();
 		
 		runTo(robot.Hooke.getCurrentPosition() - 31000, robot.Hooke);
 		

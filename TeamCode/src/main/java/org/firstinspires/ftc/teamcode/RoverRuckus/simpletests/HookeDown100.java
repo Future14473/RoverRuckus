@@ -11,6 +11,7 @@ public class HookeDown100 extends LinearOpMode {
 	
 	@Override
 	public void runOpMode() throws InterruptedException {
+		robot.drive.addLinearOpMode(this);
 		waitForStart();
 		robot.init(hardwareMap);
 		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

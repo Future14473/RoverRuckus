@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,8 +15,8 @@ public class Robot {
 	public DcMotor rightFront, rightBack, leftFront, leftBack;
 	private HardwareMap hwMap;
 	
-	public Robot() {
 	
+	public Robot() {
 	}
 	
 	public void init(HardwareMap ahwMap) {
@@ -42,7 +43,6 @@ public class Robot {
 		//Hooke.setDirection(DcMotorSimple.Direction.REVERSE);
 		
 		drive = new DriveHandler(this);
-		
 		
 		drive.setModeEncoder();
 		Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

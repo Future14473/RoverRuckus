@@ -24,8 +24,7 @@ public class DriveHandlerTweak extends OpMode {
 	
 	@Override
 	public void stop() {
-		robot.drive.cancelTasks();
-		super.stop();
+		robot.drive.stop();
 	}
 	
 	private void showNums() {
@@ -99,4 +98,5 @@ public class DriveHandlerTweak extends OpMode {
 			//*/
 		}
 	}
+	
 }

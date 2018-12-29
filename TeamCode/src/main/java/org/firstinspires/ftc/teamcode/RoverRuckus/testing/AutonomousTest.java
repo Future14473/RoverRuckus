@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 public class AutonomousTest extends LinearOpMode {
 	
 	private Robot robot = new Robot();
-	private GoldLooker goldLooker;
+	private GoldLooker goldLooker = new GoldLooker();
 	private boolean found = false;
 	
 	@Override
@@ -90,7 +90,8 @@ public class AutonomousTest extends LinearOpMode {
 		telemetry.addLine("Pls wait thx");
 		telemetry.update();
 		robot.init(hardwareMap);
-		goldLooker = new GoldLooker(hardwareMap);
+		robot.drive.addLinearOpMode(this);
+		goldLooker.init(hardwareMap);
 		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		telemetry.addLine("Init done");

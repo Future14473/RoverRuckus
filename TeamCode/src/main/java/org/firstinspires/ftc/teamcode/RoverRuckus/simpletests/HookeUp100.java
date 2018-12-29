@@ -11,6 +11,7 @@ public class HookeUp100 extends LinearOpMode {
 	
 	@Override
 	public void runOpMode() throws InterruptedException {
+		robot.drive.addLinearOpMode(this);
 		waitForStart();
 		robot.init(hardwareMap);
 		
