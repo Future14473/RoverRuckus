@@ -47,13 +47,13 @@ public class AutoTestNew extends LinearOpMode {
 		robot.drive.turn(-20, 1);
 		switch (look) {
 			case 0:
-				robot.drive.move(-45, 1, .6);
+				robot.drive.move(-30, 1, .7);
 				break;
 			case 1:
-				robot.drive.move(0, 1, .3);
+				robot.drive.move(10, 1, .4);
 				break;
 			case 2:
-				robot.drive.move(45, 1, .6);
+				robot.drive.move(60, 1, .7);
 				break;
 			default:
 				throw new RuntimeException("This shouldn't happen");
@@ -64,34 +64,6 @@ public class AutoTestNew extends LinearOpMode {
 		robot.drive.waitForDone();
 		
 	}
-	
-/*
-	private int closerLook() {
-		int look = -1;
-		while (look == -1) {
-			look = goldLooker.look();
-		}
-		return look;
-		*/
-/*
-		robot.drive.move(0, 0.8, 2f / 36);
-		robot.drive.move(180, 0.8, 2f / 36);
-		robot.drive.move(270, 0.8, 2f / 36);
-		robot.drive.move(0, 0.8, 2f / 36);
-		robot.drive.waitForDone();
-		look = goldLooker.look();
-		if (look != -1) {
-			return look;
-		}
-		robot.drive.move(180, 0.8, 2f / 36);
-		robot.drive.move(90, 0.8, 4f / 36);
-		robot.drive.move(0, 0.8, 2f / 36);
-		robot.drive.waitForDone();
-		look = goldLooker.look();
-		return look;*//*
-
-	}
-*/
 	
 	private void initialize() {
 		telemetry.addLine("Init started...");
@@ -107,9 +79,11 @@ public class AutoTestNew extends LinearOpMode {
 	}
 	
 	private void PutMarkerInDepot() {
-		robot.drive.move(260, 0.8, 1.05);
-		robot.drive.turn(40, 0.5);
-		robot.drive.move(180, 0.8, 1);
+		robot.drive.move(260, 1, 1.05);
+		robot.drive.turn(40, 1);
+		robot.drive.move(-90, 0.3, 0.4);
+		robot.drive.move(180, 1, 1);
+		robot.drive.waitForDone();
 		robot.Marker.setPosition(0.9);
 		sleep(500);
 		robot.Flicker.setPosition(0.65);
