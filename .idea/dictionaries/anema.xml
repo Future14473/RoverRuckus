@@ -2,6 +2,8 @@
   <dictionary name="anema">
     <words>
       <w>mecanum</w>
+      <w>tfod</w>
+      <w>vuforia</w>
     </words>
   </dictionary>
 </component>

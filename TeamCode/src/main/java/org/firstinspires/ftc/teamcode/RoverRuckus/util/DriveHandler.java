@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.testing.AutoTestNew;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -25,6 +25,11 @@ public class DriveHandler {
 	private DcMotor[] motors;
 	private LinearOpMode mode;
 	private boolean running = true;
+	private Telemetry telemetry;
+	
+	public void setTelemetry(Telemetry telemetry) {
+		this.telemetry = telemetry;
+	}
 	
 	/**
 	 * construct by motors
@@ -78,11 +83,13 @@ public class DriveHandler {
 			motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		}
 	}
-	public void stop(){
+	
+	public void stop() {
 		running = false;
 		cancelTasks();
 		moveThread = null;
 	}
+	
 	/**
 	 * starts the MoveTasks handling thread. A new thread might be created.
 	 */
@@ -92,9 +99,11 @@ public class DriveHandler {
 			moveThread.start();
 		}
 	}
-	private boolean isRunning(){
+	
+	private boolean isRunning() {
 		return mode != null ? (!mode.isStarted() || mode.opModeIsActive()) : running;
 	}
+	
 	/**
 	 * returns if there are any move tasks currently
 	 */
@@ -116,8 +125,7 @@ public class DriveHandler {
 	 */
 	public void turn(double degrees, double speed) {
 		degrees = Math.toRadians(degrees);
-		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)),
-				degrees * TURN_MULT / speed));
+		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)), degrees * TURN_MULT / speed));
 		waitForDone();
 	}
 	
@@ -161,9 +169,9 @@ public class DriveHandler {
 		setPower(ZERO);
 	}
 	
-	public void waitForDone(){
-		while(hasTasks()){
-			if(!isRunning()){
+	public void waitForDone() {
+		while (hasTasks()) {
+			if (!isRunning()) {
 				cancelTasks();
 				return;
 			}
@@ -172,6 +180,7 @@ public class DriveHandler {
 	
 	public void addLinearOpMode(LinearOpMode mode) {
 		this.mode = mode;
+		this.telemetry = mode.telemetry;
 	}
 	
 	/**
@@ -222,17 +231,17 @@ public class DriveHandler {
 			double avgProgress = 0, totalOff = 0;
 			for (int i = 0; i < 4; i++) {
 				progress[i] = (double) motors[i].getCurrentPosition() / motors[i].getTargetPosition();
-				totalOff = Math.abs(motors[i].getCurrentPosition() - motors[i].getTargetPosition());
+				totalOff += Math.abs(motors[i].getCurrentPosition() - motors[i].getTargetPosition());
 				if (Double.isNaN(progress[i])) progress[i] = 1;
 				avgProgress += progress[i];
 			}
 			avgProgress /= 4;
 			//adjust power as necessary..
 			for (int i = 0; i < 4; i++) {
-				actualPower.power[i] = Math.abs(targetPower.power[i] * (1 - 3 * (progress[i] - avgProgress)));
+				actualPower.power[i] = targetPower.power[i] * (1 - 2 * (progress[i] - avgProgress));
 			}
 			setPower(actualPower);
-			return totalOff < 100;
+			return totalOff < 120;
 		}
 		
 	}
@@ -242,7 +251,6 @@ public class DriveHandler {
 		
 		MoveThread() {
 			this.setName("MoveThread");
-			this.setPriority(Thread.currentThread().getPriority() - 1);
 		}
 		
 		//continually run moveTasks;
@@ -262,12 +270,11 @@ public class DriveHandler {
 							curTask.start();
 						}
 						if (curTask.process()) {
-							stopRobot();
 							moveTasks.remove();
+							stopRobot();
 							isFirstTime = true;
 						}
 					}
-					Thread.sleep(1);
 				} catch (NullPointerException | InterruptedException ignored) {}
 			}
 			stopRobot();

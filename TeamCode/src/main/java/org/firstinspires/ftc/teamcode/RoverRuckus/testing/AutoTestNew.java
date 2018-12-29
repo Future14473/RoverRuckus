@@ -13,9 +13,7 @@ public class AutoTestNew extends LinearOpMode {
 	
 	@Override
 	public void runOpMode() throws InterruptedException {
-		robot.init(hardwareMap);
-		robot.drive.addLinearOpMode(this);
-		goldLooker.init(hardwareMap);
+		initialize();
 		waitForStart();
 		/*
 		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -25,17 +23,12 @@ public class AutoTestNew extends LinearOpMode {
 		
 		goldLooker.start();
 		robot.drive.move(270, 0.5, 0.07);
-		robot.drive.move(0, 0.5, 0.05);
-		robot.drive.move(55, 1f, .57f);
 		robot.drive.waitForDone();
 		
 		knockOffGold();
 	}
+	
 	public boolean runTo(int encoder, DcMotor motor) {
-		int dir;
-		
-		if (motor.getCurrentPosition() >= encoder) dir = 1;
-		if (motor.getCurrentPosition() < encoder) dir = -1;
 		motor.setPower(1);
 		//decreasing
 		while (Math.abs(encoder - motor.getCurrentPosition()) > 100) {
@@ -46,6 +39,9 @@ public class AutoTestNew extends LinearOpMode {
 	}
 	
 	private void knockOffGold() {
+		robot.drive.move(55, 1f, .57f);
+		//robot.drive.turn(5,1);
+		robot.drive.waitForDone();
 		boolean found = false;
 		int i;
 		int look = -1; // -1 means nothing, 0 means white, 1 means gold
@@ -57,14 +53,14 @@ public class AutoTestNew extends LinearOpMode {
 				}
 			}
 			if (look == 1) { //found gold
-				robot.drive.move(0, .5f, .3f); // move forwards to hit gold
-				robot.drive.move(180, .5f, .3f); // move back
+				robot.drive.move(0, 1f, .35f); // move forwards to hit gold
+				robot.drive.move(180, 1f, .2f); // move back
 				found = true;
 				break;
 			}
 			
 			if (i != -1) {// has not traverse the 3 positions yet
-				robot.drive.move(270, 1f, 17f / 36);
+				robot.drive.move(280, 1f, 17f / 36);
 				look = -1;
 			}
 		}
@@ -84,23 +80,39 @@ public class AutoTestNew extends LinearOpMode {
 	}
 	
 	private int closerLook() {
-		int look;
-		robot.drive.move(0, 0.3f, 2f / 36);
-		look = goldLooker.look();
-		if (look != -1) {
-			return look;
+		int look = -1;
+		while (look == -1) {
+			look = goldLooker.look();
 		}
-		robot.drive.move(180, 0.3f, 2f / 36);
-		robot.drive.move(270, 0.3f, 2f / 36);
-		robot.drive.move(0, 0.3f, 2f / 36);
-		look = goldLooker.look();
-		if (look != -1) {
-			return look;
-		}
-		robot.drive.move(180, 0.3f, 2f / 36);
-		robot.drive.move(90, 0.3f, 4f / 36);
-		robot.drive.move(0, 0.3f, 2f / 36);
-		look = goldLooker.look();
 		return look;
+		/*
+		robot.drive.move(0, 0.8, 2f / 36);
+		robot.drive.move(180, 0.8, 2f / 36);
+		robot.drive.move(270, 0.8, 2f / 36);
+		robot.drive.move(0, 0.8, 2f / 36);
+		robot.drive.waitForDone();
+		look = goldLooker.look();
+		if (look != -1) {
+			return look;
+		}
+		robot.drive.move(180, 0.8, 2f / 36);
+		robot.drive.move(90, 0.8, 4f / 36);
+		robot.drive.move(0, 0.8, 2f / 36);
+		robot.drive.waitForDone();
+		look = goldLooker.look();
+		return look;*/
+	}
+	
+	private void initialize() {
+		telemetry.addLine("Init started...");
+		telemetry.addLine("Pls wait thx");
+		telemetry.update();
+		
+		robot.init(hardwareMap);
+		robot.drive.addLinearOpMode(this);
+		goldLooker.init(hardwareMap);
+		
+		telemetry.addLine("Init done");
+		telemetry.update();
 	}
 }
