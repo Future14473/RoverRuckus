@@ -31,8 +31,6 @@ public class GoldKnockOffDouble extends LinearOpMode {
 			case 2:
 				robot.drive.move(45, 1, .6);
 				break;
-			default:
-				throw new RuntimeException("This shouldn't happen");
 		}
 		robot.drive.move(0, 1, 0.3);
 		robot.drive.move(0, 1, -0.3);
