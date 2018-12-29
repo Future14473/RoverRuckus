@@ -73,7 +73,10 @@ public class MecanumWheelsTest extends OpMode {
 		} else {
 			robot.Rotation.setPower(0);
 		}
-		
-		
+	}
+	
+	@Override
+	public void stop() {
+		robot.drive.stop();
 	}
 }

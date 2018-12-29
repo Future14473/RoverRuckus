@@ -10,6 +10,7 @@ public class RunToPos extends LinearOpMode {
 	@Override
 	public void runOpMode() throws InterruptedException {
 		robot.init(hardwareMap);
+		robot.drive.addLinearOpMode(this);
 		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.Hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 		waitForStart();

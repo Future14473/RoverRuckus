@@ -14,10 +14,8 @@ public class CheeseCode extends LinearOpMode {
 	@Override
 	public void runOpMode() {
 		robot.init(hardwareMap);
+		robot.drive.addLinearOpMode(this);
 		waitForStart();
-            /*
-            move seems to have issues because the setPower method works find but move method doesn't work
-             */
 		robot.drive.move(0, 0.5f, 0.5f);
 		//robot.drive.waitForDone();
 		//sleep(1000);
@@ -30,6 +28,6 @@ public class CheeseCode extends LinearOpMode {
 		robot.drive.move(270, 0.5f, 0.5f);
 		//robot.drive.waitForDone();
 		//sleep(1000);
-		robot.drive.waitForDone();
+		while(opModeIsActive());
 	}
 }

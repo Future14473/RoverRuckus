@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.RoverRuckus.testing.AutoTestNew;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -21,6 +23,8 @@ public class DriveHandler {
 	//the motors
 	//[ FL, FR, BL, BR ]
 	private DcMotor[] motors;
+	private LinearOpMode mode;
+	private boolean running = true;
 	
 	/**
 	 * construct by motors
@@ -74,7 +78,11 @@ public class DriveHandler {
 			motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		}
 	}
-	
+	public void stop(){
+		running = false;
+		cancelTasks();
+		moveThread = null;
+	}
 	/**
 	 * starts the MoveTasks handling thread. A new thread might be created.
 	 */
@@ -84,7 +92,9 @@ public class DriveHandler {
 			moveThread.start();
 		}
 	}
-	
+	private boolean isRunning(){
+		return mode != null ? (!mode.isStarted() || mode.opModeIsActive()) : running;
+	}
 	/**
 	 * returns if there are any move tasks currently
 	 */
@@ -151,9 +161,17 @@ public class DriveHandler {
 		setPower(ZERO);
 	}
 	
-	@SuppressWarnings("StatementWithEmptyBody")
-	public void waitForDone() {
-		while (hasTasks()) ;
+	public void waitForDone(){
+		while(hasTasks()){
+			if(!isRunning()){
+				cancelTasks();
+				return;
+			}
+		}
+	}
+	
+	public void addLinearOpMode(LinearOpMode mode) {
+		this.mode = mode;
 	}
 	
 	/**
@@ -221,10 +239,8 @@ public class DriveHandler {
 	
 	private class MoveThread extends Thread {
 		private boolean isFirstTime;
-		private boolean exitFlag;
 		
 		MoveThread() {
-			exitFlag = false;
 			this.setName("MoveThread");
 			this.setPriority(Thread.currentThread().getPriority() - 1);
 		}
@@ -233,8 +249,7 @@ public class DriveHandler {
 		@Override
 		public void run() {
 			isFirstTime = true;
-			while (true) {
-				if (exitFlag) return;
+			while (isRunning()) {
 				try {
 					synchronized (lock) {
 						while (moveTasks.isEmpty()) {
@@ -242,12 +257,10 @@ public class DriveHandler {
 							lock.wait();
 						}
 						MoveTask curTask = moveTasks.element();
-						if (exitFlag) return;
 						if (isFirstTime) {
 							isFirstTime = false;
 							curTask.start();
 						}
-						if (exitFlag) return;
 						if (curTask.process()) {
 							stopRobot();
 							moveTasks.remove();
@@ -257,6 +270,7 @@ public class DriveHandler {
 					Thread.sleep(1);
 				} catch (NullPointerException | InterruptedException ignored) {}
 			}
+			stopRobot();
 		}
 	}
 }

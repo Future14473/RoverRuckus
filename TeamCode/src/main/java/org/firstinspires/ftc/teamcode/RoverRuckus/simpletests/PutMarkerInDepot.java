@@ -10,6 +10,7 @@ public class PutMarkerInDepot extends LinearOpMode {
 	
 	@Override
 	public void runOpMode() throws InterruptedException {
+		robot.drive.addLinearOpMode(this);
 		waitForStart();
 		while (opModeIsActive()) {
 			robot.init(hardwareMap);
