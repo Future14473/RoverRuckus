@@ -12,7 +12,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class DriveHandler {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
-	private static final Object lock = new Object();
+	private static final Object moveLock = new Object();
+	private static final Object doneLock = new Object();
 	public static double MOVE_MULT = 4450; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
 	public static double TURN_MULT = 1205; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
 	//we have a separate thread handling moveTasks. This is so the robot can still do other stuff
@@ -84,17 +85,20 @@ public class DriveHandler {
 		}
 	}
 	
+	/**
+	 * Stops the MoveThread. For use in non-linear OpMode.
+	 * If LinearOpMode is attached, the thread will stop when opModeIsActive() returns false.
+	 */
 	public void stop() {
-		running = false;
-		cancelTasks();
-		moveThread = null;
+		running = false; //exit loop in thread if running
+		moveThread.interrupt(); //interrupt to exit if waiting
 	}
 	
 	/**
 	 * starts the MoveTasks handling thread. A new thread might be created.
 	 */
 	private void startMoveThread() {
-		if (moveThread == null) {
+		if (!threadRunning()) {
 			moveThread = new MoveThread();
 			moveThread.start();
 		}
@@ -125,22 +129,34 @@ public class DriveHandler {
 	public void turn(double degrees, double speed) {
 		degrees = Math.toRadians(degrees);
 		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)), Math.abs(degrees) * TURN_MULT / speed));
-		waitForDone();
+	}
+	
+	private boolean threadRunning() {
+		return moveThread != null && moveThread.isAlive();
 	}
 	
 	private void addTask(MoveTask task) {
+		if (!isRunning()) {
+			return;
+			//throw new RuntimeException("Thread ain't running");
+		}
 		moveTasks.add(task);
-		synchronized (lock) {
-			lock.notifyAll();
+		synchronized (moveLock) {
+			moveLock.notifyAll(); //notify thread to start running again.
 		}
 	}
 	
 	/**
-	 * cancels all tasks and stops robot.
+	 * Cancels all tasks, notifies waiting threads, and stops robot.
 	 */
 	public void cancelTasks() {
-		synchronized (lock) {
+		synchronized (moveLock) {
 			moveTasks.clear();
+		}
+		synchronized (doneLock) {
+			//no tasks left, continue.
+			//OR no longer running, notify waiting.
+			doneLock.notifyAll();
 		}
 		stopRobot();
 	}
@@ -168,11 +184,15 @@ public class DriveHandler {
 		setPower(ZERO);
 	}
 	
+	/**
+	 * Waits until either there are no tasks left or not running.
+	 */
 	public void waitForDone() {
-		while (hasTasks()) {
-			if (!isRunning()) {
-				cancelTasks();
-				return;
+		while (isRunning() && hasTasks()) {
+			synchronized (doneLock) {
+				try {
+					doneLock.wait();
+				} catch (InterruptedException ignored) {}
 			}
 		}
 	}
@@ -183,7 +203,7 @@ public class DriveHandler {
 	}
 	
 	/**
-	 * a set of power levels for algit rm --cached -r .ideal 4 motors;
+	 * a set of power levels for all 4 motors;
 	 * just a container around double[][]
 	 */
 	public static class MotorPowerSet {
@@ -250,34 +270,40 @@ public class DriveHandler {
 		
 		MoveThread() {
 			this.setName("MoveThread");
-			this.setPriority(Math.min(Thread.currentThread().getPriority() + 1, Thread.MAX_PRIORITY));
+			this.setPriority(Math.min(Thread.currentThread().getPriority() + 2, Thread.MAX_PRIORITY));
 		}
 		
-		//continually run moveTasks;
 		@Override
 		public void run() {
 			isFirstTime = true;
-			while (isRunning()) {
-				try {
-					synchronized (lock) {
-						while (moveTasks.isEmpty()) {
-							stopRobot();
-							lock.wait();
+			//if interrupted, skips to here.
+			//next loop cycle will exit if not running.
+			while (isRunning()) try {
+				synchronized (moveLock) {
+					while (!hasTasks()) {
+						synchronized (doneLock) {
+							//no tasks left, can continue.
+							doneLock.notifyAll();
 						}
-						MoveTask curTask = moveTasks.element();
-						if (isFirstTime) {
-							isFirstTime = false;
-							curTask.start();
-						}
-						if (curTask.process()) {
-							moveTasks.remove();
-							stopRobot();
-							isFirstTime = true;
-						}
+						stopRobot();
+						moveLock.wait(1000);
+						if (!isRunning()) break;
 					}
-				} catch (NullPointerException | InterruptedException ignored) {}
-			}
-			stopRobot();
+					MoveTask curTask = moveTasks.element();
+					if (isFirstTime) {
+						isFirstTime = false;
+						curTask.start();
+					}
+					if (curTask.process()) {
+						moveTasks.remove();
+						//stopRobot();
+						isFirstTime = true;
+					}
+				}
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			} catch (InterruptedException ignored) {}
+			cancelTasks();
 		}
 	}
 }
