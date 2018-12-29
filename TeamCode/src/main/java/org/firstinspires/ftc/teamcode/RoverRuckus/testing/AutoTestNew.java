@@ -47,15 +47,12 @@ public class AutoTestNew extends LinearOpMode {
 		boolean found = false;
 		
 		int i;
-		int look = -1; // -1 means nothing, 0 means white, 1 means gold
+		int look; // -1 means nothing, 0 means white, 1 means gold
 		for (i = 1; i >= -1; i--) {// -1 is left, 0 is center, 1 is right position
-			
-			while (look == -1) {
-				look = goldLooker.look();
-				while (look == -1) {
-					look = closerLook();
-				}
-			}
+			do {
+				look = closerLook();
+				
+			} while (look == -1);
 			if (look == 1) { //found gold
 				robot.drive.move(0, 1f, .35f); // move forwards to hit gold
 				robot.drive.move(180, 1f, .2f); // move back
@@ -129,6 +126,7 @@ public class AutoTestNew extends LinearOpMode {
 		telemetry.addLine("Init done");
 		telemetry.update();
 	}
+	
 	private void PutMarkerInDepot() {
 		robot.drive.move(260, 0.8, 1.1);
 		robot.drive.turn(40, 0.5);

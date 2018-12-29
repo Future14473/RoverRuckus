@@ -46,6 +46,7 @@ public class Robot {
 		
 		drive.setModeEncoder();
 		Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 	}
 }
