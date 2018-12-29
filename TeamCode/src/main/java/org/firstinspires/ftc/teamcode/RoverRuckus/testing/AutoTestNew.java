@@ -17,11 +17,12 @@ public class AutoTestNew extends LinearOpMode {
 		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		
-		runTo(robot.Hooke.getCurrentPosition() - 31000, robot.Hooke);
+		runTo(robot.Hooke.getCurrentPosition() - 32000, robot.Hooke);
 		
 		robot.drive.move(270, 0.5, 0.07);
 		robot.drive.move(0, 0.5, 0.05);
-		robot.drive.move(90, 0.5, 0.1);
+		robot.drive.move(90, 0.5, 0.07);
+		robot.drive.waitForDone();
 	}
 	
 	public boolean runTo(int encoder, DcMotor motor) {
