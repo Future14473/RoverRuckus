@@ -7,7 +7,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Came
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -53,12 +52,14 @@ public class GoldLooker {
 		List<Recognition> recognitions = tfod.getUpdatedRecognitions();
 		if (recognitions == null) return -1;
 		//Collections.sort(recognitions,byConfidence);
+		boolean white = false, found = false;
 		for (Recognition recognition : recognitions) {
 			if (recognition.getConfidence() < 0.65) continue;
-			if (recognition.getLabel().equals(LABEL_SILVER_MINERAL)) return 0;
-			else return 1;
+			found = true;
+			if (recognition.getLabel().equals(LABEL_SILVER_MINERAL)) white = true;
 		}
-		return -1;
+		if (!found) return -1;
+		return white ? 0 : 1;
 	}
 	
 	/**

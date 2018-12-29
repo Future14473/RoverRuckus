@@ -7,7 +7,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Came
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -43,21 +42,27 @@ public class GoldDoubleLooker {
 		tfod.shutdown();
 	}
 	
-	private static final Comparator<Recognition> byConfidence =
-			(a, b) -> (int) (b.getConfidence()) - (int) a.getConfidence();
-	
 	/**
 	 * returns 1 if current screen is gold, 0 if is white, -1 if none detected.
 	 */
 	public int look() {
 		List<Recognition> recognitions = tfod.getUpdatedRecognitions();
 		if (recognitions == null || recognitions.size() < 2) return -1;
+		int ax = -1, bx = -1;
+		boolean ag = false, bg = false;
 		for (Recognition recognition : recognitions) {
 			if (recognition.getConfidence() < 0.65) continue;
-			if (recognition.getLabel().equals(LABEL_SILVER_MINERAL)) return 0;
-			else return 1;
+			if (ax == -1) {
+				ag = recognition.getLabel().equals(LABEL_GOLD_MINERAL);
+				ax = (int) recognition.getTop();
+			} else if (bx == -1) {
+				bg = recognition.getLabel().equals(LABEL_GOLD_MINERAL);
+				bx = (int) recognition.getTop();
+			} else return -1;
 		}
-		return -1;
+		if (bx == -1 || ag && bg) return -1;
+		if (!(ag || bg)) return 0;
+		return ax < bx ? 1 : 2;
 	}
 	
 	/**
