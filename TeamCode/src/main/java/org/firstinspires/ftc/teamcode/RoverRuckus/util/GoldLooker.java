@@ -42,9 +42,6 @@ public class GoldLooker {
 		tfod.shutdown();
 	}
 	
-	private static final Comparator<Recognition> byConfidence =
-			(a, b) -> (int) (b.getConfidence()) - (int) a.getConfidence();
-	
 	/**
 	 * returns 1 if current screen is gold, 0 if is white, -1 if none detected.
 	 */
@@ -68,7 +65,7 @@ public class GoldLooker {
 	private void initVuforia() {
 		VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 		parameters.vuforiaLicenseKey = VUFORIA_KEY;
-		parameters.cameraDirection = CameraDirection.BACK;
+		parameters.cameraDirection = CameraDirection.FRONT;
 		//  Instantiate the Vuforia engine
 		vuforia = ClassFactory.getInstance().createVuforia(parameters);
 		// Loading trackables is not necessary for the Tensor Flow Object Detection engine.
