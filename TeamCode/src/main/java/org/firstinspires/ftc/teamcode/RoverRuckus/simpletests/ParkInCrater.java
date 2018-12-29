@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.simpletests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "ParkInCrater", group = "Test")
+@Disabled
 public class ParkInCrater extends LinearOpMode {
 	private Robot robot = new Robot();
 	

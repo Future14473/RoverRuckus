@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.simpletests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "PutMarkerInDepot", group = "Test")
+@Disabled
 public class PutMarkerInDepot extends LinearOpMode {
 	private Robot robot = new Robot();
 	

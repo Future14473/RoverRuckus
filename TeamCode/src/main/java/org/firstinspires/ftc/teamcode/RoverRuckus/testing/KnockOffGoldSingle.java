@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLooker;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldSingleLook;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "Gold Knocking Tester", group = "Test")
-public class GoldKnockingTester extends LinearOpMode {
+public class KnockOffGoldSingle extends LinearOpMode {
 	
-	private GoldLooker goldLooker = new GoldLooker();
+	private GoldSingleLook goldSingleLook = new GoldSingleLook();
 	private Robot robot = new Robot();
 	private boolean found = false;
 	//private int pos = -1;
@@ -20,14 +20,14 @@ public class GoldKnockingTester extends LinearOpMode {
 		telemetry.addLine("Pls wait thx");
 		telemetry.update();
 		robot.init(hardwareMap);
-		goldLooker.init(hardwareMap);
+		goldSingleLook.init(hardwareMap);
 		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		telemetry.addLine("Init done");
 		telemetry.update();
 		waitForStart();
 		//runto(-32000);
-		goldLooker.start();
+		goldSingleLook.start();
 		
 		robot.drive.move(290, 1, .1);
 		robot.drive.move(55, 1, .57);
@@ -79,7 +79,7 @@ public class GoldKnockingTester extends LinearOpMode {
 //				robot.drive.move(90, 0.5f, 4.0 / 36);
 				//robot.drive.move(0, 0.3f, 2.0 / 36);
 			}
-			look = goldLooker.look();
+			look = goldSingleLook.look();
 		}
 		robot.drive.cancelTasks();
 		return look;
