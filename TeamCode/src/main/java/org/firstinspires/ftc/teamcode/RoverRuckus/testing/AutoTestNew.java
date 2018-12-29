@@ -41,11 +41,10 @@ public class AutoTestNew extends LinearOpMode {
 	}
 	
 	private void knockOffGold() {
-		robot.drive.move(55, 1f, .57f);
+		robot.drive.move(55, 1, .57);
 		//robot.drive.turn(5,1);
 		robot.drive.waitForDone();
 		boolean found = false;
-		robot.drive.move(55, 1, .75); //move forwards
 		
 		int i;
 		int look = -1; // -1 means nothing, 0 means white, 1 means gold
