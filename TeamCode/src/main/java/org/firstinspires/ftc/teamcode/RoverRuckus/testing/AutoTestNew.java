@@ -38,7 +38,7 @@ public class AutoTestNew extends LinearOpMode {
 		motor.setPower(0);
 	}
 	
-	private void knockOffGold() {
+	private void knockOffGold() throws InterruptedException {
 		goldLooker.start();
 		robot.drive.turn(20, 1);
 		int look;
@@ -60,7 +60,6 @@ public class AutoTestNew extends LinearOpMode {
 		robot.drive.move(0, 1, -0.3);
 		robot.drive.move(-90, 1, 17.0 / 36 * look);
 		robot.drive.waitForDone();
-		
 	}
 	
 	private void initialize() {
@@ -76,7 +75,7 @@ public class AutoTestNew extends LinearOpMode {
 		telemetry.update();
 	}
 	
-	private void PutMarkerInDepot() {
+	private void PutMarkerInDepot() throws InterruptedException {
 		robot.drive.move(260, 1, 1.05);
 		robot.drive.turn(40, 1);
 		robot.drive.move(-90, 0.3, 0.4);

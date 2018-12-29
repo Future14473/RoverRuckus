@@ -15,7 +15,7 @@ public class GoldKnockOffSingle extends LinearOpMode {
 	//private int pos = -1;
 	
 	@Override
-	public void runOpMode() {
+	public void runOpMode() throws InterruptedException {
 		telemetry.addLine("Init started...");
 		telemetry.addLine("Pls wait thx");
 		telemetry.update();

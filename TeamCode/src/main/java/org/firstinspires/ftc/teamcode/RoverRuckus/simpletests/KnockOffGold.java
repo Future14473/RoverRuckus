@@ -69,7 +69,7 @@ public class KnockOffGold extends LinearOpMode {
 		//}
 	}
 	
-	public static int closerLook(Robot robot, GoldLookSingle goldLookSingle) {
+	public static int closerLook(Robot robot, GoldLookSingle goldLookSingle) throws InterruptedException {
 		int look;
 		robot.drive.move(0, 0.3f, 2f / 36);
 		look = goldLookSingle.look();
