@@ -78,6 +78,7 @@ public class KnockOffGold extends LinearOpMode {
 		robot.drive.move(180, 0.3f, 2f / 36);
 		robot.drive.move(270, 0.3f, 2f / 36);
 		robot.drive.move(0, 0.3f, 2f / 36);
+		robot.drive.waitForDone();
 		look = goldLooker.look();
 		if (look != -1) {
 			return look;
@@ -85,6 +86,7 @@ public class KnockOffGold extends LinearOpMode {
 		robot.drive.move(180, 0.3f, 2f / 36);
 		robot.drive.move(90, 0.3f, 4f / 36);
 		robot.drive.move(0, 0.3f, 2f / 36);
+		robot.drive.waitForDone();
 		look = goldLooker.look();
 		return look;
 	}
