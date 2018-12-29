@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLooker;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldDoubleLooker;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "AutoTestNew", group = "test")
 public class AutoTestNew extends LinearOpMode {
 	private Robot robot = new Robot();
-	private GoldLooker goldLooker = new GoldLooker();
+	private GoldDoubleLooker goldLooker = new GoldDoubleLooker();
 	
 	@Override
 	public void runOpMode() throws InterruptedException {
@@ -20,9 +20,8 @@ public class AutoTestNew extends LinearOpMode {
 		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		runTo(-33000, robot.Hooke);
 		
-		
-		goldLooker.start();
-		robot.drive.move(270, 0.5, 0.14);
+		robot.drive.move(270, 1, 0.15);
+		robot.drive.move(0, 1, 0.1);
 		robot.drive.waitForDone();
 		
 		knockOffGold();
@@ -30,71 +29,51 @@ public class AutoTestNew extends LinearOpMode {
 		ParkInCrater();
 	}
 	
-	public boolean runTo(int encoder, DcMotor motor) {
+	private void runTo(int encoder, DcMotor motor) {
 		motor.setPower(1);
 		//decreasing
 		while (Math.abs(encoder - motor.getCurrentPosition()) > 100) {
 			//wait
 		}
 		motor.setPower(0);
-		return true;
 	}
 	
 	private void knockOffGold() {
-		robot.drive.move(55, 1, .57);
-		//robot.drive.turn(5,1);
-		robot.drive.waitForDone();
-		boolean found = false;
-		
-		int i;
-		int look; // -1 means nothing, 0 means white, 1 means gold
-		for (i = 1; i >= -1; i--) {// -1 is left, 0 is center, 1 is right position
-			do {
-				look = closerLook();
-			} while (look == -1);
-			if (look == 1) { //found gold
-				robot.drive.move(0, 1f, .35f); // move forwards to hit gold
-				robot.drive.move(180, 1f, .2f); // move back
-				found = true;
+		goldLooker.start();
+		robot.drive.turn(20, 1);
+		int look;
+		do look = goldLooker.look(); while (look == -1);
+		goldLooker.stop();
+		robot.drive.turn(-20, 1);
+		switch (look) {
+			case 0:
+				robot.drive.move(-45, 1, .6);
 				break;
-			}
-			
-			if (i != -1) {// has not traverse the 3 positions yet
-				robot.drive.move(280, 1f, 17f / 36);
-			}
+			case 1:
+				robot.drive.move(0, 1, .3);
+				break;
+			case 2:
+				robot.drive.move(45, 1, .6);
+				break;
+			default:
+				throw new RuntimeException("This shouldn't happen");
 		}
-		if (!found) {
-			telemetry.addData("NOT FOUND", "NOT FOUND");
-			telemetry.update();
-		}
-		
-		//robot.drive.move(90, 1f, (1 - i) * 17f / 36);
-		
-		if (i == 1) {
-			robot.drive.move(280, 1f, 34f / 36);
-		} else if (i == 0) {
-			robot.drive.move(280, 1f, 17f / 36);
-		}
-		
-		//robot.drive.move(180, 1f, 0.4f);
-		//robot.drive.stopRobot();
-
-            /*
-            if (found) {
-                break;
-            }
-            */
-		//}
+		robot.drive.move(0, 1, 0.3);
+		robot.drive.move(0, 1, -0.3);
+		robot.drive.move(-90, 1, 17.0 / 36 * look);
+		robot.drive.waitForDone();
 		
 	}
 	
+/*
 	private int closerLook() {
 		int look = -1;
 		while (look == -1) {
 			look = goldLooker.look();
 		}
 		return look;
-		/*
+		*/
+/*
 		robot.drive.move(0, 0.8, 2f / 36);
 		robot.drive.move(180, 0.8, 2f / 36);
 		robot.drive.move(270, 0.8, 2f / 36);
@@ -109,8 +88,10 @@ public class AutoTestNew extends LinearOpMode {
 		robot.drive.move(0, 0.8, 2f / 36);
 		robot.drive.waitForDone();
 		look = goldLooker.look();
-		return look;*/
+		return look;*//*
+
 	}
+*/
 	
 	private void initialize() {
 		telemetry.addLine("Init started...");
