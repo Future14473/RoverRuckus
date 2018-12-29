@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
-@Autonomous(name = "AutoTestNew", group = "test")
+@Autonomous(name = "New Autonomous Test", group = "autonomous")
 public class AutoTestNew extends LinearOpMode {
 	private Robot robot = new Robot();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
@@ -16,9 +16,9 @@ public class AutoTestNew extends LinearOpMode {
 		initialize();
 		waitForStart();
 		
-		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		runTo(-33000, robot.Hooke);
+		robot.hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		runTo(-33000, robot.hooke);
 		
 		robot.drive.move(270, 1, 0.15);
 		robot.drive.move(0, 1, 0.1);
@@ -82,19 +82,19 @@ public class AutoTestNew extends LinearOpMode {
 		robot.drive.move(-90, 0.3, 0.4);
 		robot.drive.move(180, 1, 1);
 		robot.drive.waitForDone();
-		robot.Marker.setPosition(0.9);
+		robot.marker.setPosition(0.9);
 		sleep(500);
-		robot.Flicker.setPosition(0.65);
+		robot.flicker.setPosition(0.65);
 		sleep(500);
 	}
 	
 	private void ParkInCrater() {
 		robot.drive.move(0, 1, 2.5);
-		robot.Arm.setPower(-1);
+		robot.rotation.setPower(-1);
 		sleep(3000);
-		robot.Arm.setPower(0);
-		robot.Rotation.setPower(1);
+		robot.rotation.setPower(0);
+		robot.arm.setPower(1);
 		sleep(1000);
-		robot.Rotation.setPower(0);
+		robot.arm.setPower(0);
 	}
 }

@@ -21,8 +21,8 @@ public class GoldKnockOffSingle extends LinearOpMode {
 		telemetry.update();
 		robot.init(hardwareMap);
 		goldLookSingle.init(hardwareMap);
-		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		telemetry.addLine("Init done");
 		telemetry.update();
 		waitForStart();

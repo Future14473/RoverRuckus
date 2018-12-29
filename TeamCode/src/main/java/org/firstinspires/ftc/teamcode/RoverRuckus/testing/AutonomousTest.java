@@ -34,12 +34,12 @@ public class AutonomousTest extends LinearOpMode {
 		sleep(5000);
 		
 		robot.drive.move(0, 1, 2f);
-		robot.Arm.setPower(-1);
+		robot.rotation.setPower(-1);
 		sleep(1000);
-		robot.Arm.setPower(0);
-		robot.Rotation.setPower(1);
+		robot.rotation.setPower(0);
+		robot.arm.setPower(1);
 		sleep(1000);
-		robot.Rotation.setPower(0);
+		robot.arm.setPower(0);
 		*/
 	}
 	
@@ -94,19 +94,19 @@ public class AutonomousTest extends LinearOpMode {
 		robot.init(hardwareMap);
 		robot.drive.addLinearOpMode(this);
 		goldLookSingle.init(hardwareMap);
-		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		telemetry.addLine("Init done");
 		telemetry.update();
 	}
 	
 	private void dropFromLander() {
-		robot.Hooke.setPower(1);
+		robot.hooke.setPower(1);
 		//decreasing
-		while (Math.abs(robot.Hooke.getCurrentPosition() - -32000) > 100) {
+		while (Math.abs(robot.hooke.getCurrentPosition() - -32000) > 100) {
 			//wait
 		}
-		robot.Hooke.setPower(0);
+		robot.hooke.setPower(0);
 	}
 	
 	private int closerLook() {

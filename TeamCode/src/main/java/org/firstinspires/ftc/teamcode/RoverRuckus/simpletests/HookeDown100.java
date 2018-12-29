@@ -16,10 +16,10 @@ public class HookeDown100 extends LinearOpMode {
 		robot.drive.addLinearOpMode(this);
 		waitForStart();
 		robot.init(hardwareMap);
-		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		
-		runto(robot.Hooke.getCurrentPosition() + 1000, robot.Hooke);
+		runto(robot.hooke.getCurrentPosition() + 1000, robot.hooke);
 	}
 	
 	public boolean runto(int encoder, DcMotor motor) {

@@ -45,7 +45,7 @@ public class DriveHandler {
 		for (int i = 0; i < 4; i++) {
 			motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		}
-		startMoveThread();
+		//startMoveThread();
 	}
 	
 	/**
@@ -129,6 +129,7 @@ public class DriveHandler {
 	}
 	
 	private void addTask(MoveTask task) {
+		startMoveThread(); //FIXME: TEMPORARY
 		moveTasks.add(task);
 		synchronized (lock) {
 			lock.notifyAll();
@@ -169,6 +170,7 @@ public class DriveHandler {
 	}
 	
 	public void waitForDone() {
+		if (mode != null) mode.idle();
 		while (hasTasks()) {
 			if (!isRunning()) {
 				cancelTasks();
@@ -250,7 +252,7 @@ public class DriveHandler {
 		
 		MoveThread() {
 			this.setName("MoveThread");
-			this.setPriority(Math.min(Thread.currentThread().getPriority() + 1, Thread.MAX_PRIORITY));
+			this.setPriority(Thread.currentThread().getPriority());
 		}
 		
 		//continually run moveTasks;
