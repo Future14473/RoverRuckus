@@ -17,7 +17,7 @@ public class AutoTestNew extends LinearOpMode {
 		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		
-		runTo(robot.Hooke.getCurrentPosition() - 31000, robot.Hooke);
+		runTo(- 31000, robot.Hooke);
 		
 		robot.drive.move(270, 0.5, 0.07);
 		robot.drive.move(0, 0.5, 0.05);
@@ -25,24 +25,18 @@ public class AutoTestNew extends LinearOpMode {
 	}
 	
 	public boolean runTo(int encoder, DcMotor motor) {
-		int dir = 0;
+		int dir;
 		
-		if (motor.getCurrentPosition() > encoder) dir = 1;
+		if (motor.getCurrentPosition() >= encoder) dir = 1;
 		if (motor.getCurrentPosition() < encoder) dir = -1;
-		//dir=1;
-		motor.setPower(dir);
+		motor.setPower(1);
 		//decreasing
-		while (!((-1 * dir * (motor.getCurrentPosition() - encoder)) > 100)) {
+		while (Math.abs(encoder - motor.getCurrentPosition()) > 100){
 			//wait
-			
 		}
-		waitForDone(robot.Hooke);
 		motor.setPower(0);
 		
 		return true;
 	}
 	
-	public void waitForDone(DcMotor motor) {
-		while (motor.isBusy()) ;
-	}
 }
