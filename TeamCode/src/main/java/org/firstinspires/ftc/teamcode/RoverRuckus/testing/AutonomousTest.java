@@ -15,22 +15,33 @@ public class AutonomousTest extends LinearOpMode {
 	
 	@Override
 	public void runOpMode() {
-		telemetry.addLine("Init started...");
-		telemetry.addLine("Pls wait thx");
-		telemetry.update();
-		robot.init(hardwareMap);
-		goldLooker = new GoldLooker(hardwareMap);
-		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		telemetry.addLine("Init done");
-		telemetry.update();
+		initialize();
 		waitForStart();
-		//runto(-32000);
-		goldLooker.start();
 		
-		robot.drive.move(290, 1, .1);
-		robot.drive.move(55, 1, .57);
+		dropFromLander();
+		moveOut();
+		knockGold();
+		/*
+		robot.drive.move(260f, 1, 2f);
+		robot.drive.turn(80, 0.5f);
 		robot.drive.waitForDone();
+		
+		robot.Marker.setPosition(0.84);
+		sleep(2000);
+		robot.Flicker.setPosition(0.65);
+		sleep(5000);
+		
+		robot.drive.move(0, 1, 2f);
+		robot.Arm.setPower(-1);
+		sleep(1000);
+		robot.Arm.setPower(0);
+		robot.Rotation.setPower(1);
+		sleep(1000);
+		robot.Rotation.setPower(0);
+		*/
+	}
+	
+	private void knockGold() {
 		int i, look; // -1 means nothing, 0 means white, 1 means gold
 		for (i = 1; i >= -1; i--) {// -1 is left, 0 is center, 1 is right position
 			telemetry.addData("i is:", i);
@@ -62,28 +73,34 @@ public class AutonomousTest extends LinearOpMode {
 		} else if (i == 0) {
 			robot.drive.move(270, 1, 17.0 / 36);
 		}
-		robot.drive.move(260f, 1, 2f);
-		robot.drive.turn(80, 0.5f);
 		robot.drive.waitForDone();
-		
-		robot.Marker.setPosition(0.84);
-		sleep(2000);
-		robot.Flicker.setPosition(0.65);
-		sleep(5000);
-		
-		robot.drive.move(0, 1, 2f);
-		robot.Arm.setPower(-1);
-		sleep(1000);
-		robot.Arm.setPower(0);
-		robot.Rotation.setPower(1);
-		sleep(1000);
-		robot.Rotation.setPower(0);
 	}
 	
-	private void runto(int encoder) {
+	private void moveOut() {
+		goldLooker.start();
+		
+		robot.drive.move(290, 1, .1);
+		robot.drive.move(55, 1, .6);
+		//POSSIBLY: MOVE
+		robot.drive.waitForDone();
+	}
+	
+	private void initialize() {
+		telemetry.addLine("Init started...");
+		telemetry.addLine("Pls wait thx");
+		telemetry.update();
+		robot.init(hardwareMap);
+		goldLooker = new GoldLooker(hardwareMap);
+		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		telemetry.addLine("Init done");
+		telemetry.update();
+	}
+	
+	private void dropFromLander() {
 		robot.Hooke.setPower(1);
 		//decreasing
-		while (Math.abs(robot.Hooke.getCurrentPosition() - encoder) > 100) {
+		while (Math.abs(robot.Hooke.getCurrentPosition() - -32000) > 100) {
 			//wait
 		}
 		robot.Hooke.setPower(0);
