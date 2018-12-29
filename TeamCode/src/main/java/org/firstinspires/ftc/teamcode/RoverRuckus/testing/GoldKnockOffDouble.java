@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldDoubleLook;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
-@Autonomous(name = "Knock Off gold, double look", group = "Test")
-public class KnockOffGoldDouble extends LinearOpMode {
-	private GoldDoubleLook goldLooker = new GoldDoubleLook();
+@Autonomous(name = "Gold locking off, double look", group = "Test")
+public class GoldKnockOffDouble extends LinearOpMode {
+	private GoldLookDouble goldLooker = new GoldLookDouble();
 	private Robot robot = new Robot();
 	
 	@Override

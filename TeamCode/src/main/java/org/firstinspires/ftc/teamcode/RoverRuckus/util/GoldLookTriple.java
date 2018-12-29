@@ -41,7 +41,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class GoldTripleLook {
+public class GoldLookTriple {
 	private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
@@ -59,7 +59,7 @@ public class GoldTripleLook {
 	private boolean detected = true;
 	private int goldPos = -1;
 	
-	public GoldTripleLook(HardwareMap hardwareMap) {
+	public GoldLookTriple(HardwareMap hardwareMap) {
 		initVuforia();
 		if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
 			initTfod(hardwareMap);

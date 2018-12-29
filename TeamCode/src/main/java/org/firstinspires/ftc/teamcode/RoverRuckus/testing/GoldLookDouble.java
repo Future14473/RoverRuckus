@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "Gold Double Look tester", group = "Test")
-public class GoldDoubleLook extends LinearOpMode {
-	private org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldDoubleLook goldLooker = new org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldDoubleLook();
+public class GoldLookDouble extends LinearOpMode {
+	private org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble goldLooker = new org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble();
 	
 	
 	@Override

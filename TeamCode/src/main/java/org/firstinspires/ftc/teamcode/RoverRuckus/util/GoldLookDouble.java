@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 
 
-public class GoldDoubleLook {
+public class GoldLookDouble {
 	private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";

@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.simpletests;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldSingleLook;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookSingle;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "KnockOffGoldDiagonal", group = "Test")
 @Disabled
 public class KnockOffGold extends LinearOpMode {
-	private GoldSingleLook goldSingleLook = new GoldSingleLook();
+	private GoldLookSingle goldLookSingle = new GoldLookSingle();
 	private Robot robot = new Robot();
 	private boolean stop = false;
 	private boolean found = false;
@@ -17,10 +17,10 @@ public class KnockOffGold extends LinearOpMode {
 	@Override
 	public void runOpMode() throws InterruptedException {
 		robot.init(hardwareMap);
-		goldSingleLook.init(hardwareMap);
+		goldLookSingle.init(hardwareMap);
 		robot.drive.addLinearOpMode(this);
 		waitForStart();
-		goldSingleLook.start();
+		goldLookSingle.start();
 		robot.drive.move(55, 1f, .75f); //move forwards
 		
 		int i;
@@ -28,9 +28,9 @@ public class KnockOffGold extends LinearOpMode {
 		for (i = 1; i >= -1; i--) {// -1 is left, 0 is center, 1 is right position
 			
 			while (look == -1) {
-				look = goldSingleLook.look();
+				look = goldLookSingle.look();
 				while (look == -1) {
-					look = closerLook(robot, goldSingleLook);
+					look = closerLook(robot, goldLookSingle);
 				}
 			}
 			if (look == 1) { //found gold
@@ -69,10 +69,10 @@ public class KnockOffGold extends LinearOpMode {
 		//}
 	}
 	
-	public static int closerLook(Robot robot, GoldSingleLook goldSingleLook) {
+	public static int closerLook(Robot robot, GoldLookSingle goldLookSingle) {
 		int look;
 		robot.drive.move(0, 0.3f, 2f / 36);
-		look = goldSingleLook.look();
+		look = goldLookSingle.look();
 		if (look != -1) {
 			return look;
 		}
@@ -80,7 +80,7 @@ public class KnockOffGold extends LinearOpMode {
 		robot.drive.move(270, 0.3f, 2f / 36);
 		robot.drive.move(0, 0.3f, 2f / 36);
 		robot.drive.waitForDone();
-		look = goldSingleLook.look();
+		look = goldLookSingle.look();
 		if (look != -1) {
 			return look;
 		}
@@ -88,7 +88,7 @@ public class KnockOffGold extends LinearOpMode {
 		robot.drive.move(90, 0.3f, 4f / 36);
 		robot.drive.move(0, 0.3f, 2f / 36);
 		robot.drive.waitForDone();
-		look = goldSingleLook.look();
+		look = goldLookSingle.look();
 		return look;
 	}
 }
