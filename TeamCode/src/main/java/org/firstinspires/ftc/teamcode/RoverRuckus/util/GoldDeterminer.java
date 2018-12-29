@@ -184,8 +184,9 @@ public class GoldDeterminer {
 				//if it overlaps closely with other recognitions and is silver, override it with silver.
 				for (int j = i + 1; j < Math.min(recognitions.length, 6); j++) {
 					if (recognitions[j] == null) continue;
-					if (Math.hypot(recognitions[j].getTop() - recognitions[i].getTop(),
-							recognitions[j].getBottom() - recognitions[i].getBottom()) < Math.max(recognitions[i].getHeight(), recognitions[j].getHeight())) {
+					if (Math.hypot(recognitions[j].getTop() - recognitions[i].getTop(), recognitions[j].getBottom() -
+							recognitions[i].getBottom()) < Math.max(recognitions[i].getHeight(), recognitions[j]
+							.getHeight())) {
 						boolean jGold = recognitions[j].getLabel().equals(LABEL_GOLD_MINERAL);
 						if (jGold) recognitions[j] = null;
 						else recognitions[i] = null;
