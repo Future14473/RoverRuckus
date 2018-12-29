@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldDoubleLook;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "AutoTestNew", group = "test")
 public class AutoTestNew extends LinearOpMode {
 	private Robot robot = new Robot();
-	private GoldDoubleLook goldLooker = new GoldDoubleLook();
+	private GoldLookDouble goldLooker = new GoldLookDouble();
 	
 	@Override
 	public void runOpMode() throws InterruptedException {

@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldSingleLook;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookSingle;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @TeleOp(name = "AutonomousTest", group = "Test")
@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 public class AutonomousTest extends LinearOpMode {
 	
 	private Robot robot = new Robot();
-	private GoldSingleLook goldSingleLook = new GoldSingleLook();
+	private GoldLookSingle goldLookSingle = new GoldLookSingle();
 	private boolean found = false;
 	
 	@Override
@@ -79,7 +79,7 @@ public class AutonomousTest extends LinearOpMode {
 	}
 	
 	private void moveOut() {
-		goldSingleLook.start();
+		goldLookSingle.start();
 		
 		robot.drive.move(290, 1, .1);
 		robot.drive.move(55, 1, .6);
@@ -93,7 +93,7 @@ public class AutonomousTest extends LinearOpMode {
 		telemetry.update();
 		robot.init(hardwareMap);
 		robot.drive.addLinearOpMode(this);
-		goldSingleLook.init(hardwareMap);
+		goldLookSingle.init(hardwareMap);
 		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		telemetry.addLine("Init done");
@@ -121,7 +121,7 @@ public class AutonomousTest extends LinearOpMode {
 				robot.drive.move(90, 0.3f, 4.0 / 36);
 				robot.drive.move(0, 0.3f, 2.0 / 36);
 			}
-			look = goldSingleLook.look();
+			look = goldLookSingle.look();
 		}
 		robot.drive.cancelTasks();
 		return look;
