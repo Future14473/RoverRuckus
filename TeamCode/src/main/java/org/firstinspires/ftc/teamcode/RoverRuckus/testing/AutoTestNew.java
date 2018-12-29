@@ -41,11 +41,10 @@ public class AutoTestNew extends LinearOpMode {
 	}
 	
 	private void knockOffGold() {
-		robot.drive.move(55, 1f, .57f);
+		robot.drive.move(55, 1, .57);
 		//robot.drive.turn(5,1);
 		robot.drive.waitForDone();
 		boolean found = false;
-		robot.drive.move(55, 1, .75); //move forwards
 		
 		int i;
 		int look; // -1 means nothing, 0 means white, 1 means gold
@@ -129,10 +128,10 @@ public class AutoTestNew extends LinearOpMode {
 	}
 	
 	private void PutMarkerInDepot() {
-		robot.drive.move(260, 0.5, 1);
-		robot.drive.turn(90, 0.5);
+		robot.drive.move(260, 0.5, 1.2);
+		robot.drive.turn(60, 0.5);
 		robot.drive.move(180, 0.5, 1);
-		robot.Marker.setPosition(0.84);
+		robot.Marker.setPosition(0.9);
 		sleep(2000);
 		robot.Flicker.setPosition(0.65);
 		sleep(5000);
@@ -141,7 +140,7 @@ public class AutoTestNew extends LinearOpMode {
 	private void ParkInCrater() {
 		robot.drive.move(0, 0.5, 2.5);
 		robot.Arm.setPower(-1);
-		sleep(1000);
+		sleep(2000);
 		robot.Arm.setPower(0);
 		robot.Rotation.setPower(1);
 		sleep(1000);
