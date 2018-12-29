@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -42,11 +41,6 @@ public class GoldDoubleLooker {
 		tfod.shutdown();
 	}
 	
-	private Telemetry telemetry;
-	
-	public void setTelemetry(Telemetry telemetry) {
-		this.telemetry = telemetry;
-	}
 	
 	/**
 	 * returns 1 if current screen is gold, 0 if is white, -1 if none detected.
@@ -75,7 +69,6 @@ public class GoldDoubleLooker {
 		int i = 1;
 		for (Recognition recognition : recognitions) {
 			if (recognition == null || recognition.getConfidence() < 0.65) continue;
-			telemetry.addData(recognition.getLabel(), recognition.getTop());
 			if (ax == -1) {
 				ag = recognition.getLabel().equals(LABEL_GOLD_MINERAL);
 				ax = (int) recognition.getTop();

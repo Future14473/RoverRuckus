@@ -13,7 +13,6 @@ public class GoldDoubleLookerTester extends LinearOpMode {
 	public void runOpMode() {
 		goldLooker.init(hardwareMap);
 		waitForStart();
-		goldLooker.setTelemetry(telemetry);
 		goldLooker.start();
 		int look;
 		while (opModeIsActive()) {

@@ -125,7 +125,7 @@ public class DriveHandler {
 	 */
 	public void turn(double degrees, double speed) {
 		degrees = Math.toRadians(degrees);
-		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)), degrees * TURN_MULT / speed));
+		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)), Math.abs(degrees) * TURN_MULT / speed));
 		waitForDone();
 	}
 	
