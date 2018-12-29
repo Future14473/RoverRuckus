@@ -11,7 +11,7 @@ public class GoldKnockOffDouble extends LinearOpMode {
 	private Robot robot = new Robot();
 	
 	@Override
-	public void runOpMode() {
+	public void runOpMode() throws InterruptedException {
 		goldLooker.init(hardwareMap);
 		robot.init(hardwareMap);
 		robot.drive.addLinearOpMode(this);

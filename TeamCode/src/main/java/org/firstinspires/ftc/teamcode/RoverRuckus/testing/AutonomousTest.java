@@ -16,7 +16,7 @@ public class AutonomousTest extends LinearOpMode {
 	private boolean found = false;
 	
 	@Override
-	public void runOpMode() {
+	public void runOpMode() throws InterruptedException {
 		initialize();
 		waitForStart();
 		
@@ -43,7 +43,7 @@ public class AutonomousTest extends LinearOpMode {
 		*/
 	}
 	
-	private void knockGold() {
+	private void knockGold() throws InterruptedException {
 		int i, look; // -1 means nothing, 0 means white, 1 means gold
 		for (i = 1; i >= -1; i--) {// -1 is left, 0 is center, 1 is right position
 			telemetry.addData("i is:", i);
@@ -78,7 +78,7 @@ public class AutonomousTest extends LinearOpMode {
 		robot.drive.waitForDone();
 	}
 	
-	private void moveOut() {
+	private void moveOut() throws InterruptedException {
 		goldLookSingle.start();
 		
 		robot.drive.move(290, 1, .1);
