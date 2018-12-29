@@ -18,7 +18,6 @@ public class KnockOffGold extends LinearOpMode {
 		goldLooker.init(hardwareMap);
 		robot.drive.addLinearOpMode(this);
 		waitForStart();
-		//while (opModeIsActive()) {//why while loop?
 		goldLooker.start();
 		robot.drive.move(55, 1f, .75f); //move forwards
 		

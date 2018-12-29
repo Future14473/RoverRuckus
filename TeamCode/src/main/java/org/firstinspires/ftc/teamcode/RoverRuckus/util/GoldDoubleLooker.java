@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class GoldLooker {
+public class GoldDoubleLooker {
 	private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
@@ -51,8 +51,7 @@ public class GoldLooker {
 	 */
 	public int look() {
 		List<Recognition> recognitions = tfod.getUpdatedRecognitions();
-		if (recognitions == null) return -1;
-		//Collections.sort(recognitions,byConfidence);
+		if (recognitions == null || recognitions.size() < 2) return -1;
 		for (Recognition recognition : recognitions) {
 			if (recognition.getConfidence() < 0.65) continue;
 			if (recognition.getLabel().equals(LABEL_SILVER_MINERAL)) return 0;
