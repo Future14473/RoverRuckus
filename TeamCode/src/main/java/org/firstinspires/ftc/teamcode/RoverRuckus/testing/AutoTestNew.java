@@ -51,7 +51,6 @@ public class AutoTestNew extends LinearOpMode {
 		for (i = 1; i >= -1; i--) {// -1 is left, 0 is center, 1 is right position
 			do {
 				look = closerLook();
-				
 			} while (look == -1);
 			if (look == 1) { //found gold
 				robot.drive.move(0, 1f, .35f); // move forwards to hit gold
@@ -62,7 +61,6 @@ public class AutoTestNew extends LinearOpMode {
 			
 			if (i != -1) {// has not traverse the 3 positions yet
 				robot.drive.move(280, 1f, 17f / 36);
-				look = -1;
 			}
 		}
 		if (!found) {
@@ -73,9 +71,9 @@ public class AutoTestNew extends LinearOpMode {
 		//robot.drive.move(90, 1f, (1 - i) * 17f / 36);
 		
 		if (i == 1) {
-			robot.drive.move(278, 1f, 38f / 36);
+			robot.drive.move(280, 1f, 34f / 36);
 		} else if (i == 0) {
-			robot.drive.move(278, 1f, 19f / 36);
+			robot.drive.move(280, 1f, 17f / 36);
 		}
 		
 		//robot.drive.move(180, 1f, 0.4f);

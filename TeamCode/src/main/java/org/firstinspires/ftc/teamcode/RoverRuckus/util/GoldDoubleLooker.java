@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -42,16 +42,40 @@ public class GoldDoubleLooker {
 		tfod.shutdown();
 	}
 	
+	private Telemetry telemetry;
+	
+	public void setTelemetry(Telemetry telemetry) {
+		this.telemetry = telemetry;
+	}
+	
 	/**
 	 * returns 1 if current screen is gold, 0 if is white, -1 if none detected.
 	 */
 	public int look() {
-		List<Recognition> recognitions = tfod.getUpdatedRecognitions();
-		if (recognitions == null || recognitions.size() < 2) return -1;
+		List<Recognition> listRecognitions = tfod.getUpdatedRecognitions();
+		if (listRecognitions == null || listRecognitions.size() < 2) return -1;
 		int ax = -1, bx = -1;
 		boolean ag = false, bg = false;
+		
+		Recognition[] recognitions = new Recognition[listRecognitions.size()];
+		listRecognitions.toArray(recognitions);
+		for (int i = 0; i < Math.min(recognitions.length, 6); i++) {
+			if (recognitions[i] == null) continue;
+			//if it overlaps closely with other recognitions and is silver, override it with silver.
+			for (int j = i + 1; j < Math.min(recognitions.length, 6); j++) {
+				if (recognitions[j] == null) continue;
+				if (Math.hypot(recognitions[j].getTop() - recognitions[i].getTop(),
+						recognitions[j].getBottom() - recognitions[i].getBottom()) < Math.max(recognitions[i].getHeight(), recognitions[j].getHeight())) {
+					if (recognitions[j].getLabel().equals(LABEL_GOLD_MINERAL)) recognitions[j] = null;
+					else recognitions[i] = null;
+					break;
+				}
+			}
+		}
+		int i = 1;
 		for (Recognition recognition : recognitions) {
-			if (recognition.getConfidence() < 0.65) continue;
+			if (recognition == null || recognition.getConfidence() < 0.65) continue;
+			telemetry.addData(recognition.getLabel(), recognition.getTop());
 			if (ax == -1) {
 				ag = recognition.getLabel().equals(LABEL_GOLD_MINERAL);
 				ax = (int) recognition.getTop();
@@ -62,7 +86,7 @@ public class GoldDoubleLooker {
 		}
 		if (bx == -1 || ag && bg) return -1;
 		if (!(ag || bg)) return 0;
-		return ax < bx ? 1 : 2;
+		return (ag == ax < bx) ? 1 : 2;
 	}
 	
 	/**

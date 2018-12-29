@@ -241,7 +241,7 @@ public class DriveHandler {
 				actualPower.power[i] = targetPower.power[i] * (1 - 2 * (progress[i] - avgProgress));
 			}
 			setPower(actualPower);
-			return totalOff < 120;
+			return totalOff < 150;
 		}
 		
 	}
@@ -251,6 +251,7 @@ public class DriveHandler {
 		
 		MoveThread() {
 			this.setName("MoveThread");
+			this.setPriority(Math.min(Thread.currentThread().getPriority() + 1, Thread.MAX_PRIORITY));
 		}
 		
 		//continually run moveTasks;
