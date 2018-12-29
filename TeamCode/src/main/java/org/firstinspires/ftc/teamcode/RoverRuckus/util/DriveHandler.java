@@ -98,6 +98,7 @@ public class DriveHandler {
 	public void move(double direction, double speed, double distance) { // maybe has some problems here
 		direction = Math.toRadians(direction);
 		addTask(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT / speed));
+		waitForDone();
 	}
 	
 	/**
@@ -105,7 +106,9 @@ public class DriveHandler {
 	 */
 	public void turn(double degrees, double speed) {
 		degrees = Math.toRadians(degrees);
-		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)), degrees * TURN_MULT / speed));
+		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)),
+				degrees * TURN_MULT / speed));
+		waitForDone();
 	}
 	
 	private void addTask(MoveTask task) {

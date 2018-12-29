@@ -20,7 +20,7 @@ public class KnockOffGold extends LinearOpMode {
 		waitForStart();
 		//while (opModeIsActive()) {//why while loop?
 		goldLooker.start();
-		robot.drive.move(55, 1f, .57f); //move forwards
+		robot.drive.move(55, 1f, .75f); //move forwards
 		
 		int i;
 		int look = -1; // -1 means nothing, 0 means white, 1 means gold
@@ -40,7 +40,7 @@ public class KnockOffGold extends LinearOpMode {
 			}
 			
 			if (i != -1) {// has not traverse the 3 positions yet
-				robot.drive.move(270, 1f, 17f / 36);
+				robot.drive.move(278, 1f, 19f / 36);
 				look = -1;
 			}
 		}
@@ -52,9 +52,9 @@ public class KnockOffGold extends LinearOpMode {
 		//robot.drive.move(90, 1f, (1 - i) * 17f / 36);
 		
 		if (i == 1) {
-			robot.drive.move(270, 1f, 34f / 36);
+			robot.drive.move(278, 1f, 38f / 36);
 		} else if (i == 0) {
-			robot.drive.move(270, 1f, 17f / 36);
+			robot.drive.move(278, 1f, 19f / 36);
 		}
 		
 		//robot.drive.move(180, 1f, 0.4f);
