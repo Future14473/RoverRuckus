@@ -92,12 +92,13 @@ public class AutoNextToCrater extends LinearOpMode {
 	private void parkInCrater() throws InterruptedException {
 		robot.drive.moveXY(0, 2, 10);
 		//*
-		robot.rotation.setPower(-1);
-		sleep(3000);
-		robot.rotation.setPower(0);
 		robot.arm.setPower(1);
+		robot.rotation.setPower(-1);
 		sleep(1000);
 		robot.arm.setPower(0);
+		sleep(2000);
+		robot.rotation.setPower(0);
 		//*/
+		robot.drive.waitForDone();
 	}
 }
