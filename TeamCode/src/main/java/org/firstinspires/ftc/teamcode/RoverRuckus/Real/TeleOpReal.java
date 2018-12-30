@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.Practice;
+package org.firstinspires.ftc.teamcode.RoverRuckus.Real;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
-@TeleOp(name = "MecanumWheelsTest", group = "Test")
-public class MecanumWheelsTest extends OpMode {
+@TeleOp(name = "TeleOp Real", group = "Real")
+public class TeleOpReal extends OpMode {
 	private Robot robot = new Robot();
 	//boolean a = false;
 	
