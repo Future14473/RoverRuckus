@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 
-@TeleOp(name = "Gold Double Look tester", group = "Test")
-public class GoldLookDouble extends LinearOpMode {
-	private org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble goldLooker = new org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble();
+@TeleOp(name = "Gold Look Double test", group = "Test")
+public class GoldLookDoubleTest extends LinearOpMode {
+	private GoldLookDouble goldLooker = new GoldLookDouble();
 	
 	
 	@Override
