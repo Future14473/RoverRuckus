@@ -18,8 +18,10 @@ public class AutoNextToCrater extends LinearOpMode {
 		
 		unHook();
 		knockOffGold();
+		robot.hooke.setPower(-1);
 		putMarkerInDepot();
 		parkInCrater();
+		robot.hooke.setPower(0);
 	}
 	
 	private void unHook() {

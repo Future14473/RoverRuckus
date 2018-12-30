@@ -7,6 +7,7 @@ public class Robot {
 	//Expansion Hub 2
 	public DcMotor hooke, rotation, arm, collection;
 	public Servo marker, flicker;
+	public CRServo tape;
 	public DistanceSensor SensorRange;
 	public ElapsedTime period = new ElapsedTime();
 	public DriveHandler drive;
@@ -29,7 +30,6 @@ public class Robot {
 		drive = new DriveHandler(this);
 		drive.setModeEncoder();
 		
-		
 		hooke = hwMap.get(DcMotor.class, "Hooke");
 		hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		hooke.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -46,12 +46,11 @@ public class Robot {
 		
 		marker = hwMap.get(Servo.class, "Marker");
 		flicker = hwMap.get(Servo.class, "Flicker");
-		
-		//SensorRange = hwMap.get(DistanceSensor.class, "SensorRange");
+		tape = hwMap.get(CRServo.class, "Tape");
+		tape.setPower(0.5);
 		
 		leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-		//Hooke.setDirection(DcMotorSimple.Direction.REVERSE);
 		
 		drive = new DriveHandler(this);
 		

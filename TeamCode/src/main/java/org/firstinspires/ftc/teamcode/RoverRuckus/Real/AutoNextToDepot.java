@@ -18,8 +18,10 @@ public class AutoNextToDepot extends LinearOpMode {
 		
 		unHook();
 		knockOffGold();
+		robot.hooke.setPower(-1);
 		putMarkerInDepot();
 		parkInCrater();
+		robot.hooke.setPower(0);
 	}
 	
 	private void unHook() {
@@ -75,9 +77,9 @@ public class AutoNextToDepot extends LinearOpMode {
 	
 	private void putMarkerInDepot() throws InterruptedException {
 		robot.drive.turn(-135, 10); //turn
-		robot.drive.moveXY(0.4,0,10);
+		robot.drive.moveXY(0.4, 0, 10);
 		robot.drive.moveXY(0.1, 0, 0.6); //wall hug
-		robot.drive.moveXY(-0.05,0,10);
+		robot.drive.moveXY(-0.05, 0, 10);
 		robot.drive.moveXY(0, -1.2, 10); //go to crater
 		robot.drive.waitForDone();
 		//deposit
