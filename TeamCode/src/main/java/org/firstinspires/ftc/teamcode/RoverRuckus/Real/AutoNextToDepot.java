@@ -78,8 +78,8 @@ public class AutoNextToDepot extends LinearOpMode {
 	
 	private void putMarkerInDepot() throws InterruptedException {
 		robot.drive.turn(-135, 10); //turn
-		robot.drive.moveXY(0.45, 0, 10);
-		robot.drive.moveXY(0, -1.2, 10); //go to crater
+		robot.drive.moveXY(0.4, 0, 10);
+		robot.drive.moveXY(0, -1.1, 10); //go to depot
 		robot.drive.waitForDone();
 		//deposit
 		robot.marker.setPosition(0.9);
