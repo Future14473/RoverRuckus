@@ -34,8 +34,8 @@ public class Robot {
 		hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		hooke.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		arm = hwMap.get(DcMotor.class, "Arm");
-		arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		rotation = hwMap.get(DcMotor.class, "Rotation");
 		rotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

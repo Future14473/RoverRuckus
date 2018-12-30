@@ -87,9 +87,4 @@ public class TeleOpReal extends OpMode {
 		}
 		
 	}
-	
-	@Override
-	public void stop() {
-		robot.drive.stop();
-	}
 }

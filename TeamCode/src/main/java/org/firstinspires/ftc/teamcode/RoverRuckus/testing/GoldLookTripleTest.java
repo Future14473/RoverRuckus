@@ -2,14 +2,15 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookTriple;
 
-@TeleOp(name = "Gold Finder Tester", group = "Test")
-public class GoldLookTriple extends OpMode {
-	private org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookTriple goldLookTriple;
+@TeleOp(name = "Gold Look Triple Test", group = "Test")
+public class GoldLookTripleTest extends OpMode {
+	private GoldLookTriple goldLookTriple;
 	
 	@Override
 	public void init() {
-		goldLookTriple = new org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookTriple(hardwareMap);
+		goldLookTriple = new GoldLookTriple(hardwareMap);
 	}
 	
 	@Override
