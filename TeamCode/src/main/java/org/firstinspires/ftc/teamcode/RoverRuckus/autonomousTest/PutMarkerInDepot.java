@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.simpletests;
+package org.firstinspires.ftc.teamcode.RoverRuckus.autonomousTest;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
