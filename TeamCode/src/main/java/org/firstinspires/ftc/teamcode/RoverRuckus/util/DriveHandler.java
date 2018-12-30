@@ -148,7 +148,7 @@ public class DriveHandler {
 		if (!isRunning()) {
 			throw new InterruptedException("OpMode stopped running");
 		}
-		startMoveThread(); //FIXME: TEMPORARY
+		startMoveThread();
 		moveTasks.add(task);
 		synchronized (moveLock) {
 			moveLock.notifyAll(); //notify thread to start running again.
