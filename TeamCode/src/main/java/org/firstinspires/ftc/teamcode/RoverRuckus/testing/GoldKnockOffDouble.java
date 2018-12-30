@@ -12,16 +12,19 @@ public class GoldKnockOffDouble extends LinearOpMode {
 	
 	@Override
 	public void runOpMode() throws InterruptedException {
+		telemetry.addLine("init started... pls wait");
+		telemetry.update();
 		goldLooker.init(hardwareMap);
 		robot.init(hardwareMap);
 		robot.drive.addLinearOpMode(this);
+		telemetry.addLine("Init done");
+		telemetry.update();
 		waitForStart();
 		
 		
 		goldLooker.start();
-		robot.drive.move(270, 1, 0.15);
-		robot.drive.move(0, 1, 0.1);
-		robot.drive.move(90,1,0.15);
+		robot.drive.moveXY(-0.15, 0, 1);
+		robot.drive.moveXY(0.15, 0.1, 1);
 		robot.drive.turn(20, 1);
 		robot.drive.waitForDone();
 		int look;
@@ -33,20 +36,20 @@ public class GoldKnockOffDouble extends LinearOpMode {
 		switch (look) {
 			case 0:
 				//robot.drive.move(-30, 1, .7);
-				robot.drive.moveXY(-.3, .4, 1);
+				robot.drive.moveXY(-.5, .4, 1);
 				break;
 			case 1:
 				//robot.drive.move(10, 1, .4);
-				robot.drive.moveXY(.2, .4, 1);
+				robot.drive.moveXY(.1, .4, 1);
 				break;
 			case 2:
 				//robot.drive.move(60, 1, .7);
-				robot.drive.moveXY(.8, .4, 1);
+				robot.drive.moveXY(.7, .4, 1);
 				break;
 		}
-		robot.drive.move(0, 1, 0.2);
-		robot.drive.move(0, 1, -0.2);
-		robot.drive.move(-90, 1, 0.5 * look);
+		robot.drive.moveXY(0, 0.2, 1);
+		robot.drive.moveXY(0, -0.2, 1);
+		robot.drive.moveXY(-0.6 * look, 0, 1);
 		robot.drive.waitForDone();
 	}
 }
