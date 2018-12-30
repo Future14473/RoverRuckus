@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookSingle;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "Gold Knocking Tester", group = "Test")
+@Disabled
 public class GoldKnockOffSingle extends LinearOpMode {
 	
 	private GoldLookSingle goldLookSingle = new GoldLookSingle();

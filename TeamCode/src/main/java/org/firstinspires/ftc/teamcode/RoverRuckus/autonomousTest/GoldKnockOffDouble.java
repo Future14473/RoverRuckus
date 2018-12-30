@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
+package org.firstinspires.ftc.teamcode.RoverRuckus.autonomousTest;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -23,33 +23,28 @@ public class GoldKnockOffDouble extends LinearOpMode {
 		
 		
 		goldLooker.start();
-		robot.drive.moveXY(-0.15, 0, 1);
-		robot.drive.moveXY(0.15, 0.1, 1);
-		robot.drive.turn(20, 1);
-		robot.drive.waitForDone();
+		robot.drive.moveXY(-0.15, 0, 10);
+		robot.drive.moveXY(0, 0.1, 10);
 		int look;
 		do look = goldLooker.look(); while (look == -1 && opModeIsActive());
+		look = (look + 2) % 3;
 		goldLooker.stop();
 		telemetry.addData("Gold is at:", look);
 		telemetry.update();
-		robot.drive.turn(-20, 1);
 		switch (look) {
 			case 0:
-				//robot.drive.move(-30, 1, .7);
-				robot.drive.moveXY(-.5, .4, 1);
+				robot.drive.moveXY(-.25, .4, 10);
 				break;
 			case 1:
-				//robot.drive.move(10, 1, .4);
-				robot.drive.moveXY(.1, .4, 1);
+				robot.drive.moveXY(.25, .4, 10);
 				break;
 			case 2:
-				//robot.drive.move(60, 1, .7);
-				robot.drive.moveXY(.7, .4, 1);
+				robot.drive.moveXY(.75, .4, 10);
 				break;
 		}
-		robot.drive.moveXY(0, 0.2, 1);
-		robot.drive.moveXY(0, -0.2, 1);
-		robot.drive.moveXY(-0.6 * look, 0, 1);
+		robot.drive.moveXY(0, 0.2, 10);
+		robot.drive.moveXY(0, -0.2, 10);
+		robot.drive.moveXY(-0.5 * look, 0, 10); //CHANGE THIS TO INCLUDE MORE DISTANCE
 		robot.drive.waitForDone();
 	}
 }
