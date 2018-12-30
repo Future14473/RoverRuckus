@@ -20,10 +20,6 @@ public class AutoTestNew extends LinearOpMode {
 		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		runTo(-33000, robot.Hooke);
 		
-		robot.drive.move(270, 1, 0.15);
-		robot.drive.move(0, 1, 0.1);
-		robot.drive.waitForDone();
-		
 		knockOffGold();
 		PutMarkerInDepot();
 		ParkInCrater();
@@ -40,7 +36,10 @@ public class AutoTestNew extends LinearOpMode {
 	
 	private void knockOffGold() throws InterruptedException {
 		goldLooker.start();
+		robot.drive.move(270, 1, 0.15);
+		robot.drive.move(0, 1, 0.1);
 		robot.drive.turn(20, 1);
+		robot.drive.waitForDone();
 		int look;
 		do look = goldLooker.look(); while (look == -1);
 		goldLooker.stop();

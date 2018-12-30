@@ -19,7 +19,11 @@ public class GoldKnockOffDouble extends LinearOpMode {
 		
 		
 		goldLooker.start();
+		robot.drive.move(270, 1, 0.15);
+		robot.drive.move(0, 1, 0.1);
+		robot.drive.move(90,1,0.15);
 		robot.drive.turn(20, 1);
+		robot.drive.waitForDone();
 		int look;
 		do look = goldLooker.look(); while (look == -1 && opModeIsActive());
 		goldLooker.stop();
