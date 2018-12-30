@@ -19,7 +19,7 @@ public class AutoNextToDepot extends LinearOpMode {
 		unHook();
 		knockOffGold();
 		putMarkerInDepot();
-		//parkInCrater();
+		parkInCrater();
 	}
 	
 	private void unHook() {
@@ -35,30 +35,28 @@ public class AutoNextToDepot extends LinearOpMode {
 	
 	private void knockOffGold() throws InterruptedException {
 		goldLooker.start();
-		robot.drive.moveXY(-0.15, 0, 1);
-		robot.drive.moveXY(0.15, 0.1, 1);
-		robot.drive.turn(20, 1);
-		robot.drive.waitForDone();
+		robot.drive.moveXY(-0.15, 0, 10);
+		robot.drive.moveXY(0, 0.1, 10);
 		int look;
 		do look = goldLooker.look(); while (look == -1 && opModeIsActive());
+		look = (look + 2) % 3;
 		goldLooker.stop();
 		telemetry.addData("Gold is at:", look);
 		telemetry.update();
-		robot.drive.turn(-20, 1);
 		switch (look) {
 			case 0:
-				robot.drive.moveXY(-.5, .4, 1);
+				robot.drive.moveXY(-.25, .4, 10);
 				break;
 			case 1:
-				robot.drive.moveXY(.1, .4, 1);
+				robot.drive.moveXY(.25, .4, 10);
 				break;
 			case 2:
-				robot.drive.moveXY(.7, .4, 1);
+				robot.drive.moveXY(.75, .4, 10);
 				break;
 		}
-		robot.drive.moveXY(0, 0.2, 1);
-		robot.drive.moveXY(0, -0.2, 1);
-		robot.drive.moveXY(-0.6 * look - 0.6, 0, 1);
+		robot.drive.moveXY(0, 0.2, 10);
+		robot.drive.moveXY(0, -0.2, 10);
+		robot.drive.moveXY(-0.5 * look - 0.6, 0, 10);
 		robot.drive.waitForDone();
 	}
 	
@@ -76,9 +74,11 @@ public class AutoNextToDepot extends LinearOpMode {
 	}
 	
 	private void putMarkerInDepot() throws InterruptedException {
-		robot.drive.turn(-135, 1); //turn
-		robot.drive.moveXY(0.5, 0, 0.5); //wall hug
-		robot.drive.moveXY(0, -1, 1); //go to crater
+		robot.drive.turn(-135, 10); //turn
+		robot.drive.moveXY(0.4,0,10);
+		robot.drive.moveXY(0.1, 0, 0.6); //wall hug
+		robot.drive.moveXY(-0.05,0,10);
+		robot.drive.moveXY(0, -1.2, 10); //go to crater
 		robot.drive.waitForDone();
 		//deposit
 		robot.marker.setPosition(0.9);
@@ -88,12 +88,14 @@ public class AutoNextToDepot extends LinearOpMode {
 	}
 	
 	private void parkInCrater() throws InterruptedException {
-		robot.drive.moveXY(0, 2, 1);
+		robot.drive.moveXY(0, 2, 10);
+		//*
 		robot.rotation.setPower(-1);
 		sleep(3000);
 		robot.rotation.setPower(0);
 		robot.arm.setPower(1);
 		sleep(1000);
 		robot.arm.setPower(0);
+		//*/
 	}
 }
