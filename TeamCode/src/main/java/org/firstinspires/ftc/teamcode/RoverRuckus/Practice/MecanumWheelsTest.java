@@ -62,12 +62,12 @@ public class MecanumWheelsTest extends OpMode {
 			robot.hooke.setPower(0);
 		}
 		
-		if (gamepad2.a) {
-			robot.collection.setPower(1);
-		} else if (gamepad2.b) {
-			robot.collection.setPower(-1);
+		if (gamepad2.dpad_up) {
+			robot.arm.setPower(1);
+		} else if (gamepad2.dpad_down) {
+			robot.arm.setPower(-1);
 		} else {
-			robot.collection.setPower(0);
+			robot.arm.setPower(0);
 		}
 		
 		if (gamepad2.left_bumper) {
@@ -77,6 +77,15 @@ public class MecanumWheelsTest extends OpMode {
 		} else {
 			robot.rotation.setPower(0);
 		}
+		
+		if (gamepad2.a) {
+			robot.collection.setPower(1);
+		} else if (gamepad2.b) {
+			robot.collection.setPower(-1);
+		} else {
+			robot.collection.setPower(0);
+		}
+		
 	}
 	
 	@Override
