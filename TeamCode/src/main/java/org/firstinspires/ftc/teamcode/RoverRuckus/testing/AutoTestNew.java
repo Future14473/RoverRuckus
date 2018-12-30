@@ -90,7 +90,7 @@ public class AutoTestNew extends LinearOpMode {
 		sleep(500);
 	}
 	
-	private void ParkInCrater() {
+	private void ParkInCrater() throws InterruptedException {
 		robot.drive.move(0, 1, 2.5);
 		robot.Arm.setPower(-1);
 		sleep(3000);

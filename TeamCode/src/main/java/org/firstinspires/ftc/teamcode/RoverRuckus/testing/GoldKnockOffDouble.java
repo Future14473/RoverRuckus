@@ -21,7 +21,7 @@ public class GoldKnockOffDouble extends LinearOpMode {
 		goldLooker.start();
 		robot.drive.turn(20, 1);
 		int look;
-		do look = goldLooker.look(); while (look == -1);
+		do look = goldLooker.look(); while (look == -1 && opModeIsActive());
 		goldLooker.stop();
 		telemetry.addData("Gold is at:", look);
 		telemetry.update();

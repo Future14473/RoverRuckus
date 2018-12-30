@@ -88,13 +88,15 @@ public class DriveHandlerTweak extends OpMode {
 				telemetry.update();
 			}
 			//*
-			if (gamepad1.a) {
-				robot.drive.move(angle, speed, distance);
-				wait = true;
-			} else if (gamepad1.b) {
-				robot.drive.turn((float) Math.toDegrees(angle), speed);
-				wait = true;
-			}
+			try {
+				if (gamepad1.a) {
+					robot.drive.move(angle, speed, distance);
+					wait = true;
+				} else if (gamepad1.b) {
+					robot.drive.turn((float) Math.toDegrees(angle), speed);
+					wait = true;
+				}
+			} catch (InterruptedException ignored) {}
 			//*/
 		}
 	}
