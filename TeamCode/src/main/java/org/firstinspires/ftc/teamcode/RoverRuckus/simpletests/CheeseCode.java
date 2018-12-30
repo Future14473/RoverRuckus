@@ -12,7 +12,7 @@ public class CheeseCode extends LinearOpMode {
 	
 	
 	@Override
-	public void runOpMode() {
+	public void runOpMode() throws InterruptedException {
 		robot.init(hardwareMap);
 		robot.drive.addLinearOpMode(this);
 		waitForStart();
