@@ -12,7 +12,7 @@ public class MecanumWheelsTest extends OpMode {
 	@Override
 	public void init() {
 		robot.init(hardwareMap);
-		robot.drive.setModeEncoder();
+		//robot.drive.setModeEncoder();
 	}
 	
 	@Override
@@ -46,7 +46,11 @@ public class MecanumWheelsTest extends OpMode {
 			telemetry.update();
 		}
 */
-		if (gamepad2.dpad_up) {robot.Arm.setPower(1);} else if (gamepad2.dpad_down) {robot.Arm.setPower(-1);} else {
+		if (gamepad2.dpad_up) {
+			robot.Arm.setPower(1);
+		} else if (gamepad2.dpad_down) {
+			robot.Arm.setPower(-1);
+		} else {
 			robot.Arm.setPower(0);
 		}
 		
