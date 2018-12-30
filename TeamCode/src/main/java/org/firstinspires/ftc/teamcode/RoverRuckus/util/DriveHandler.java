@@ -118,15 +118,24 @@ public class DriveHandler {
 	/**
 	 * adds a MoveTask to move in a straight line a specified direction and distance.
 	 */
-	public void move(double direction, double speed, double distance) { // maybe has some problems here
+	public void move(double direction, double speed, double distance) throws InterruptedException { // maybe has some problems here
 		direction = Math.toRadians(direction);
 		addTask(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT / speed));
 	}
 	
 	/**
+	 * adds a MoveTasks that moves the robot in a straight line to a displacement specified by x and y.
+	 */
+	public void moveXY(double x, double y, double speed) throws InterruptedException {
+		double direction = Math.toDegrees(Math.atan2(x, y));
+		double distance = Math.hypot(x, y);
+		move(direction, speed, distance);
+	}
+	
+	/**
 	 * ads a move task to rotate in place a specified number of degrees, positive or negative.
 	 */
-	public void turn(double degrees, double speed) {
+	public void turn(double degrees, double speed) throws InterruptedException {
 		degrees = Math.toRadians(degrees);
 		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)), Math.abs(degrees) * TURN_MULT / speed));
 	}
@@ -135,10 +144,9 @@ public class DriveHandler {
 		return moveThread != null && moveThread.isAlive();
 	}
 	
-	private void addTask(MoveTask task) {
+	private void addTask(MoveTask task) throws InterruptedException {
 		if (!isRunning()) {
-			return;
-			//throw new RuntimeException("Thread ain't running");
+			throw new InterruptedException("OpMode stopped running");
 		}
 		startMoveThread(); //FIXME: TEMPORARY
 		moveTasks.add(task);
@@ -251,10 +259,11 @@ public class DriveHandler {
 			if (actualPower == null) {
 				start();
 			}
-			double avgProgress = 0, maxOff = 0;
+			double avgProgress = 0;
+			int maxOff = 0;
 			for (int i = 0; i < 4; i++) {
 				progress[i] = (double) motors[i].getCurrentPosition() / motors[i].getTargetPosition();
-				maxOff = Math.max(maxOff,Math.abs(motors[i].getCurrentPosition() - motors[i].getTargetPosition()));
+				maxOff = Math.max(maxOff, Math.abs(motors[i].getCurrentPosition() - motors[i].getTargetPosition()));
 				if (Double.isNaN(progress[i])) progress[i] = 1;
 				avgProgress += progress[i];
 			}

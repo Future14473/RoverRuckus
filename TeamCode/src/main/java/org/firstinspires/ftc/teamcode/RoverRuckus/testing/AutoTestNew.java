@@ -20,10 +20,6 @@ public class AutoTestNew extends LinearOpMode {
 		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		runTo(-33000, robot.hooke);
 		
-		robot.drive.move(270, 1, 0.15);
-		robot.drive.move(0, 1, 0.1);
-		robot.drive.waitForDone();
-		
 		knockOffGold();
 		PutMarkerInDepot();
 		ParkInCrater();
@@ -40,25 +36,31 @@ public class AutoTestNew extends LinearOpMode {
 	
 	private void knockOffGold() throws InterruptedException {
 		goldLooker.start();
+		robot.drive.move(270, 1, 0.15);
+		robot.drive.move(0, 1, 0.1);
 		robot.drive.turn(20, 1);
+		robot.drive.waitForDone();
 		int look;
 		do look = goldLooker.look(); while (look == -1);
 		goldLooker.stop();
 		robot.drive.turn(-20, 1);
 		switch (look) {
 			case 0:
-				robot.drive.move(-30, 1, .7);
+				//robot.drive.move(-30, 1, .7);
+				robot.drive.moveXY(-.4, .5, 1);
 				break;
 			case 1:
-				robot.drive.move(10, 1, .4);
+				//robot.drive.move(10, 1, .4);
+				robot.drive.moveXY(.1, .5, 1);
 				break;
 			case 2:
-				robot.drive.move(60, 1, .7);
+				//robot.drive.move(60, 1, .7);
+				robot.drive.moveXY(.6, .5, 1);
 				break;
 		}
-		robot.drive.move(0, 1, 0.3);
-		robot.drive.move(0, 1, -0.3);
-		robot.drive.move(-90, 1, 17.0 / 36 * look);
+		robot.drive.move(0, 1, 0.2);
+		robot.drive.move(0, 1, -0.2);
+		robot.drive.move(-90, 1, 0.5 * look);
 		robot.drive.waitForDone();
 	}
 	
@@ -87,7 +89,7 @@ public class AutoTestNew extends LinearOpMode {
 		sleep(500);
 	}
 	
-	private void ParkInCrater() {
+	private void ParkInCrater() throws InterruptedException {
 		robot.drive.move(0, 1, 2.5);
 		robot.rotation.setPower(-1);
 		sleep(3000);

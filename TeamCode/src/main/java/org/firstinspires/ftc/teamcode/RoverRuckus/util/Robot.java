@@ -26,12 +26,23 @@ public class Robot {
 		rightFront = hwMap.get(DcMotor.class, "FrontRight");
 		leftBack = hwMap.get(DcMotor.class, "BackLeft");
 		rightBack = hwMap.get(DcMotor.class, "BackRight");
+		drive = new DriveHandler(this);
+		drive.setModeEncoder();
+		
 		
 		hooke = hwMap.get(DcMotor.class, "Hooke");
-		rotation = hwMap.get(DcMotor.class, "Rotation");
+		hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		hooke.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		arm = hwMap.get(DcMotor.class, "Arm");
-		
+		arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		rotation = hwMap.get(DcMotor.class, "Rotation");
+		rotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		collection = hwMap.get(DcMotor.class, "Collection");
+		collection.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		collection.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		
 		
 		marker = hwMap.get(Servo.class, "Marker");
 		flicker = hwMap.get(Servo.class, "Flicker");

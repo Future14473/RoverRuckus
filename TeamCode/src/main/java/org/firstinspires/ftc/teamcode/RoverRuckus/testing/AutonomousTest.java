@@ -109,7 +109,7 @@ public class AutonomousTest extends LinearOpMode {
 		robot.hooke.setPower(0);
 	}
 	
-	private int closerLook() {
+	private int closerLook() throws InterruptedException {
 		int look = -1;
 		while (look == -1) {
 			if (!robot.drive.hasTasks()) {
