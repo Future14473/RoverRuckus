@@ -21,6 +21,7 @@ public class AutoNextToDepot extends LinearOpMode {
 		robot.hooke.setPower(-1);
 		putMarkerInDepot();
 		parkInCrater();
+		sleep(2000);
 		robot.hooke.setPower(0);
 	}
 	
@@ -56,8 +57,8 @@ public class AutoNextToDepot extends LinearOpMode {
 				robot.drive.moveXY(.75, .4, 10);
 				break;
 		}
-		robot.drive.moveXY(0, 0.2, 10);
-		robot.drive.moveXY(0, -0.2, 10);
+		robot.drive.moveXY(0, 0.25, 10);
+		robot.drive.moveXY(0, -0.25, 10);
 		robot.drive.moveXY(-0.5 * look - 0.6, 0, 10);
 		robot.drive.waitForDone();
 	}
@@ -77,9 +78,7 @@ public class AutoNextToDepot extends LinearOpMode {
 	
 	private void putMarkerInDepot() throws InterruptedException {
 		robot.drive.turn(-135, 10); //turn
-		robot.drive.moveXY(0.4, 0, 10);
-		robot.drive.moveXY(0.1, 0, 0.6); //wall hug
-		robot.drive.moveXY(-0.05, 0, 10);
+		robot.drive.moveXY(0.45, 0, 10);
 		robot.drive.moveXY(0, -1.2, 10); //go to crater
 		robot.drive.waitForDone();
 		//deposit
@@ -90,13 +89,13 @@ public class AutoNextToDepot extends LinearOpMode {
 	}
 	
 	private void parkInCrater() throws InterruptedException {
-		robot.drive.moveXY(0, 2, 10);
+		robot.drive.moveXY(0, 1.7, 10);
 		//*
 		robot.arm.setPower(1);
-		robot.rotation.setPower(-1);
 		sleep(1000);
 		robot.arm.setPower(0);
-		sleep(2000);
+		robot.rotation.setPower(1);
+		sleep(2500);
 		robot.rotation.setPower(0);
 		//*/
 		robot.drive.waitForDone();

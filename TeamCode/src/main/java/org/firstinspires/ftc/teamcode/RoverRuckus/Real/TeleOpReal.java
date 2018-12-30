@@ -21,17 +21,17 @@ public class TeleOpReal extends OpMode {
 		//telemetry.addData("Stick angle:",angle);
 		robot.drive.moveAt(angle, speed, turnRate);
 		
-		if(gamepad1.left_bumper){
+		if (gamepad1.left_bumper) {
 			robot.tape.setPower(0);
-		} else if (gamepad1.right_bumper){
+		} else if (gamepad1.right_bumper) {
 			robot.tape.setPower(1);
 		} else {
 			robot.tape.setPower(0.5);
 		}
 		
-		if (gamepad2.x) {
+		if (gamepad1.x) {
 			robot.hooke.setPower(1); //hook up, robot down
-		} else if (gamepad2.y) {
+		} else if (gamepad1.y) {
 			robot.hooke.setPower(-1); //hook down, robot up
 		} else {
 			robot.hooke.setPower(0);
