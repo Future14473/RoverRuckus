@@ -60,26 +60,15 @@ public class DriveHandler {
 	 * Generates a MotorPowerSet that corresponds to turning the robot in the specified direction
 	 */
 	private static MotorPowerSet calcPowerSet(double direction, double speed, double turnRate) {
-		//DO THE MATH
-       /* assert (speed >= 0 && speed <= 1);
-        speed = Math.abs(speed);
-        if(speed > 1f) {
-            speed = 1f;
-        }
-        */
 		double robotAngle = direction + Math.PI / 4;
 		double v1 = speed * Math.sin(robotAngle) + turnRate;
 		double v2 = speed * Math.cos(robotAngle) - turnRate;
 		double v3 = speed * Math.cos(robotAngle) + turnRate;
 		double v4 = speed * Math.sin(robotAngle) - turnRate;
-		//if any level is greater than 1, scale down to prevent robot going off course
-		//if turnRate is 0 and speed <1, this wont be a problem.
-		double max = Math.max(Math.max(Math.abs(v1), Math.abs(v2)), Math.max(Math.abs(v3), Math.abs(v4)));
-		if (max < 1) max = 1;
-		return new MotorPowerSet(v1 / max, v2 / max, v3 / max, v4 / max);
+		return new MotorPowerSet(v1, v2, v3, v4);
 	}
 	
-	public void setModeEncoder() {
+	void setModeEncoder() {
 		for (int i = 0; i < 4; i++) {
 			motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		}
@@ -118,7 +107,8 @@ public class DriveHandler {
 	/**
 	 * adds a MoveTask to move in a straight line a specified direction and distance.
 	 */
-	public void move(double direction, double speed, double distance) throws InterruptedException { // maybe has some problems here
+	public void move(double direction, double speed, double distance) throws InterruptedException { // maybe has some
+		// problems here
 		direction = Math.toRadians(direction);
 		addTask(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT / speed));
 	}
@@ -148,7 +138,7 @@ public class DriveHandler {
 		if (!isRunning()) {
 			throw new InterruptedException("OpMode stopped running");
 		}
-		startMoveThread(); //FIXME: TEMPORARY
+		startMoveThread();
 		moveTasks.add(task);
 		synchronized (moveLock) {
 			moveLock.notifyAll(); //notify thread to start running again.
@@ -174,11 +164,12 @@ public class DriveHandler {
 	 * set motors to given powerSet.
 	 */
 	private void setPower(MotorPowerSet p) {
-		for (int i = 0; i < 4; i++) { motors[i].setPower(p.power[i]); }
+		MotorPowerSet s = p.scaled();
+		for (int i = 0; i < 4; i++) { motors[i].setPower(s.power[i]); }
 	}
 	
 	/**
-	 * Tells the robot to move in a specied direction and turnRate.
+	 * Tells the robot to move in a specified direction and turnRate.
 	 * Can handle motor power levels greater than 1 -- it will scale them down.
 	 * If you're not turning and moving at the same time, and speed <=1, that wont be a problem
 	 */
@@ -219,21 +210,27 @@ public class DriveHandler {
 		double[] power;
 		
 		MotorPowerSet(double leftFront, double rightFront, double backLeft, double backRight) {
-			double[] power = new double[4];
-			power[0] = leftFront;
-			power[1] = rightFront;
-			power[2] = backLeft;
-			power[3] = backRight;
-			this.power = power;
+			this.power = new double[]{leftFront, rightFront, backLeft, backRight};
 		}
 		
 		MotorPowerSet() {
 			this.power = new double[4];
 		}
+		
+		MotorPowerSet scaled() {
+			MotorPowerSet set = new MotorPowerSet();
+			double max = 1;
+			for (int i = 0; i < 4; i++) {
+				max = Math.max(max, Math.abs(power[i]));
+			}
+			for (int i = 0; i < 4; i++) {
+				set.power[i] = power[i]/max;
+			}
+			return set;
+		}
 	}
 	
 	private class MoveTask { //NOT STATIC, to access DC motors
-		//don't want to spam new, so I have fields instead of vars.
 		private MotorPowerSet targetPower, actualPower;
 		private double multiplier;
 		private double[] progress = new double[4];
