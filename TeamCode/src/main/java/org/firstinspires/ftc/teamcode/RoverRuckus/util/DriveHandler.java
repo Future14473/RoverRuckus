@@ -124,6 +124,15 @@ public class DriveHandler {
 	}
 	
 	/**
+	 * adds a MoveTasks that moves the robot in a straight line to a displacement specified by x and y.
+	 */
+	public void moveXY(double x, double y, double speed) {
+		double direction = Math.toDegrees(Math.atan2(x, y));
+		double distance = Math.hypot(x, y);
+		move(direction, speed, distance);
+	}
+	
+	/**
 	 * ads a move task to rotate in place a specified number of degrees, positive or negative.
 	 */
 	public void turn(double degrees, double speed) {
@@ -249,10 +258,11 @@ public class DriveHandler {
 			if (actualPower == null) {
 				start();
 			}
-			double avgProgress = 0, maxOff = 0;
+			double avgProgress = 0;
+			int maxOff = 0;
 			for (int i = 0; i < 4; i++) {
 				progress[i] = (double) motors[i].getCurrentPosition() / motors[i].getTargetPosition();
-				maxOff = Math.max(maxOff,Math.abs(motors[i].getCurrentPosition() - motors[i].getTargetPosition()));
+				maxOff = Math.max(maxOff, Math.abs(motors[i].getCurrentPosition() - motors[i].getTargetPosition()));
 				if (Double.isNaN(progress[i])) progress[i] = 1;
 				avgProgress += progress[i];
 			}
