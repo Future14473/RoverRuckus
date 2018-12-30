@@ -1,23 +1,24 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.simpletests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "DropFromLander", group = "Test")
+@Disabled
 public class DropFromLander extends LinearOpMode {
-	private Robot robot = new Robot();
-	
+	private Robot robot = new Robot();	
 	@Override
 	public void runOpMode() throws InterruptedException {
 		robot.init(hardwareMap);
 		robot.drive.addLinearOpMode(this);
-		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		waitForStart();
 		
-		runTo(robot.Hooke.getCurrentPosition() - 31000, robot.Hooke);
+		runTo(robot.hooke.getCurrentPosition() - 31000, robot.hooke);
 		
 		robot.drive.move(270, 0.5, 0.1);
 		robot.drive.move(0, 0.5, 0.1);
@@ -37,7 +38,7 @@ public class DropFromLander extends LinearOpMode {
 			//wait
 			
 		}
-		waitForDone(robot.Hooke);
+		waitForDone(robot.hooke);
 		motor.setPower(0);
 		
 		return true;

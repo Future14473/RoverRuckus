@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.simpletests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "Up100", group = "Test")
+@Disabled
 public class HookeUp100 extends LinearOpMode {
 	Robot robot = new Robot();
 	
@@ -15,10 +17,10 @@ public class HookeUp100 extends LinearOpMode {
 		waitForStart();
 		robot.init(hardwareMap);
 		
-		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		
-		runto(robot.Hooke.getCurrentPosition() - 1000, robot.Hooke);
+		runto(robot.hooke.getCurrentPosition() - 1000, robot.hooke);
 	}
 	
 	public boolean runto(int encoder, DcMotor motor) {

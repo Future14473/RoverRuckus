@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class GoldDoubleLooker {
+public class GoldLookSingle {
 	private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
@@ -47,22 +47,16 @@ public class GoldDoubleLooker {
 	 */
 	public int look() {
 		List<Recognition> recognitions = tfod.getUpdatedRecognitions();
-		if (recognitions == null || recognitions.size() < 2) return -1;
-		int ax = -1, bx = -1;
-		boolean ag = false, bg = false;
+		if (recognitions == null) return -1;
+		//Collections.sort(recognitions,byConfidence);
+		boolean white = false, found = false;
 		for (Recognition recognition : recognitions) {
 			if (recognition.getConfidence() < 0.65) continue;
-			if (ax == -1) {
-				ag = recognition.getLabel().equals(LABEL_GOLD_MINERAL);
-				ax = (int) recognition.getTop();
-			} else if (bx == -1) {
-				bg = recognition.getLabel().equals(LABEL_GOLD_MINERAL);
-				bx = (int) recognition.getTop();
-			} else return -1;
+			found = true;
+			if (recognition.getLabel().equals(LABEL_SILVER_MINERAL)) white = true;
 		}
-		if (bx == -1 || ag && bg) return -1;
-		if (!(ag || bg)) return 0;
-		return ax < bx ? 1 : 2;
+		if (!found) return -1;
+		return white ? 0 : 1;
 	}
 	
 	/**
@@ -71,7 +65,7 @@ public class GoldDoubleLooker {
 	private void initVuforia() {
 		VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 		parameters.vuforiaLicenseKey = VUFORIA_KEY;
-		parameters.cameraDirection = CameraDirection.BACK;
+		parameters.cameraDirection = CameraDirection.FRONT;
 		//  Instantiate the Vuforia engine
 		vuforia = ClassFactory.getInstance().createVuforia(parameters);
 		// Loading trackables is not necessary for the Tensor Flow Object Detection engine.

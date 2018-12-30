@@ -3,31 +3,31 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLooker;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookSingle;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @Autonomous(name = "Gold Knocking Tester", group = "Test")
-public class GoldKnockingTester extends LinearOpMode {
+public class GoldKnockOffSingle extends LinearOpMode {
 	
-	private GoldLooker goldLooker = new GoldLooker();
+	private GoldLookSingle goldLookSingle = new GoldLookSingle();
 	private Robot robot = new Robot();
 	private boolean found = false;
 	//private int pos = -1;
 	
 	@Override
-	public void runOpMode() {
+	public void runOpMode() throws InterruptedException {
 		telemetry.addLine("Init started...");
 		telemetry.addLine("Pls wait thx");
 		telemetry.update();
 		robot.init(hardwareMap);
-		goldLooker.init(hardwareMap);
-		robot.Hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		robot.Hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		goldLookSingle.init(hardwareMap);
+		robot.hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		telemetry.addLine("Init done");
 		telemetry.update();
 		waitForStart();
 		//runto(-32000);
-		goldLooker.start();
+		goldLookSingle.start();
 		
 		robot.drive.move(290, 1, .1);
 		robot.drive.move(55, 1, .57);
@@ -79,7 +79,7 @@ public class GoldKnockingTester extends LinearOpMode {
 //				robot.drive.move(90, 0.5f, 4.0 / 36);
 				//robot.drive.move(0, 0.3f, 2.0 / 36);
 			}
-			look = goldLooker.look();
+			look = goldLookSingle.look();
 		}
 		robot.drive.cancelTasks();
 		return look;
