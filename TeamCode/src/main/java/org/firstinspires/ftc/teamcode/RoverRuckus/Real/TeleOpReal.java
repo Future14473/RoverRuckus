@@ -22,11 +22,11 @@ public class TeleOpReal extends OpMode {
 		robot.drive.moveAt(angle, speed, turnRate);
 		
 		if (gamepad1.left_bumper) {
-			robot.tape.setPower(0);
+			robot.tape.setPower(-1);
 		} else if (gamepad1.right_bumper) {
 			robot.tape.setPower(1);
 		} else {
-			robot.tape.setPower(0.5);
+			robot.tape.setPower(0);
 		}
 		
 		if (gamepad1.x) {

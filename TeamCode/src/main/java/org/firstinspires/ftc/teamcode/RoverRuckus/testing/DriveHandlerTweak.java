@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.DriveHandler;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
-@TeleOp(name = "DriveTweak", group = "Test")
+@TeleOp(name = "DriveTweak", group = "measure")
 public class DriveHandlerTweak extends OpMode {
 	private Robot robot = new Robot();
 	private boolean wait = false;
