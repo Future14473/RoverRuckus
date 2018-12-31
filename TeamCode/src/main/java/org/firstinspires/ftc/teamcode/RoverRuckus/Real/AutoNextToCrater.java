@@ -19,7 +19,7 @@ public class AutoNextToCrater extends LinearOpMode {
 		unHook();
 		knockOffGold();
 		robot.hooke.setPower(-1);
-		//markerAndPark();
+		markerAndPark();
 		while (Math.abs(robot.hooke.getCurrentPosition()) > 50) idle();
 		robot.hooke.setPower(0);
 	}
@@ -48,7 +48,7 @@ public class AutoNextToCrater extends LinearOpMode {
 		robot.drive.moveXY(-.35 + .5 * look, .4, 10);
 		robot.drive.moveXY(0, 0.25, 10);
 		robot.drive.moveXY(0, -0.25, 10);
-		robot.drive.moveXY(-0.5 * look - 0.5, 0, 10);
+		robot.drive.moveXY(-0.5 * look - 1.2, 0, 10);
 		robot.drive.waitForDone();
 	}
 	
@@ -67,7 +67,7 @@ public class AutoNextToCrater extends LinearOpMode {
 	
 	private void markerAndPark() throws InterruptedException {
 		robot.drive.turn(45, 10); //turn
-		robot.drive.moveXY(-0.4, 0, 10);
+		robot.drive.moveXY(-0.2, 0, 10);
 		robot.drive.moveXY(0, -1.1, 10); //go to depot
 		robot.drive.waitForDone();
 		robot.drive.moveXY(0, 1.7, 10);

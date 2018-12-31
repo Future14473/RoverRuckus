@@ -6,9 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
-@TeleOp(name = "Hook Measurement", group = "measure")
-@Disabled
-public class HookMeasure extends OpMode {
+@TeleOp(name = "Measurement", group = "measure")
+public class Measure extends OpMode {
 	private Robot robot = new Robot();
 	
 	@Override
@@ -23,16 +22,11 @@ public class HookMeasure extends OpMode {
 			robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		}
 		if (gamepad1.x) {
-			robot.hooke.setPower(1);
+			robot.rotation.setPower(0.3);
 		} else if (gamepad1.y) {
-			robot.hooke.setPower(-1);
-		} else robot.hooke.setPower(0);
-		/*if(gamepad1.b){
-			robot.hooke.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			robot.hooke.setTargetPosition(-26000);
-			robot.hooke.setPower(1);
-			while(robot.hooke.isBusy());
-		}*/
-		telemetry.addData("Hook pos:", robot.hooke.getCurrentPosition());
+			robot.rotation.setPower(-0.3);
+		} else robot.rotation.setPower(0);
+		telemetry.addData("Rot pos:", robot.rotation.getCurrentPosition());
+		telemetry.update();
 	}
 }

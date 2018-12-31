@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.Real;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @TeleOp(name = "THE ACTUAL TELEOP", group = "teleop")
@@ -38,8 +39,16 @@ public class TeleOpReal extends OpMode {
 		}
 		
 		robot.arm.setPower(gamepad2.left_stick_y);
-		
-		robot.rotation.setPower(gamepad2.right_stick_y);
+		if(gamepad2.dpad_up){
+			robot.rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+			robot.rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		}
+		if (gamepad2.x || !(gamepad2.right_stick_y > 0 && robot.rotation.getCurrentPosition() < -6680) //
+				&& !(gamepad2.right_stick_y < 0 && robot.rotation.getCurrentPosition() > 20)) {
+			robot.rotation.setPower(gamepad2.right_stick_y / 2);
+		} else {
+			robot.rotation.setPower(0);
+		}
 		
 		if (gamepad2.left_bumper) {
 			robot.collection.setPower(1); //in
