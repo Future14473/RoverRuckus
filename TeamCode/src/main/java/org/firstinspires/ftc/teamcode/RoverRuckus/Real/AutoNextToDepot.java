@@ -19,7 +19,8 @@ public class AutoNextToDepot extends LinearOpMode {
 		unHook();
 		knockOffGold();
 		robot.hooke.setPower(-1);
-		markerAndPark();
+		putMarkerInDepot();
+		parkInCrater();
 		while (Math.abs(robot.hooke.getCurrentPosition()) > 50) idle();
 		robot.hooke.setPower(0);
 	}
@@ -65,17 +66,19 @@ public class AutoNextToDepot extends LinearOpMode {
 		telemetry.update();
 	}
 	
-	private void markerAndPark() throws InterruptedException {
+	private void putMarkerInDepot() throws InterruptedException {
 		robot.drive.turn(-135, 10); //turn
 		robot.drive.moveXY(0.2, 0, 10);
 		robot.drive.moveXY(0, -1.1, 10); //go to depot
 		robot.drive.waitForDone();
-		robot.drive.moveXY(0, 1.7, 10);
 		//deposit
 		robot.marker.setPosition(0.9);
-		robot.arm.setPower(1);
 		sleep(500);
 		robot.flicker.setPosition(0.65);
+	}
+	private void parkInCrater() throws InterruptedException {
+		robot.drive.moveXY(0, 1.7, 10);
+		robot.arm.setPower(1);
 		sleep(500);
 		robot.arm.setPower(0);
 		robot.rotation.setPower(1);
