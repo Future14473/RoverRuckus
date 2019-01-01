@@ -1,18 +1,17 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.Real;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
-@Autonomous(name = "Auto Next to Crater", group = "autonomous")
-public class AutoNextToCrater extends LinearOpMode {
-	private Robot robot = new Robot();
+public abstract class AbstractAuto extends LinearOpMode {
+	private static final int HOOK_TURN = -26000;
+	protected Robot robot = new Robot();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	
 	@Override
-	public void runOpMode() throws InterruptedException {
+	public final void runOpMode() throws InterruptedException {
 		initialize();
 		waitForStart();
 		
@@ -25,12 +24,25 @@ public class AutoNextToCrater extends LinearOpMode {
 		robot.hooke.setPower(0);
 	}
 	
+	private void initialize() {
+		telemetry.addLine("Init started...");
+		telemetry.addLine("Pls wait thx");
+		telemetry.update();
+		
+		robot.init(hardwareMap);
+		robot.drive.addLinearOpMode(this);
+		goldLooker.init(hardwareMap);
+		
+		telemetry.addLine("Init done");
+		telemetry.update();
+	}
+	
 	private void unHook() {
 		robot.hooke.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		robot.hooke.setPower(1);
 		//decreasing
-		while (Math.abs(-26000 - robot.hooke.getCurrentPosition()) > 100 && opModeIsActive()) {
+		while (Math.abs(HOOK_TURN - robot.hooke.getCurrentPosition()) > 100 && opModeIsActive()) {
 			idle();
 		}
 		robot.hooke.setPower(0);
@@ -53,29 +65,18 @@ public class AutoNextToCrater extends LinearOpMode {
 		robot.drive.waitForDone();
 	}
 	
-	private void initialize() {
-		telemetry.addLine("Init started...");
-		telemetry.addLine("Pls wait thx");
-		telemetry.update();
-		
-		robot.init(hardwareMap);
-		robot.drive.addLinearOpMode(this);
-		goldLooker.init(hardwareMap);
-		
-		telemetry.addLine("Init done");
-		telemetry.update();
-	}
+	protected abstract void position() throws InterruptedException; //THE ONLY ABSTRACT METHOD
 	
 	private void putMarkerInDepot() throws InterruptedException {
-		robot.drive.turn(45, 10); //turn
-		robot.drive.moveXY(-0.2, 0, 10);
-		robot.drive.moveXY(0, -1.1, 10); //go to depot
+		position();
+		robot.drive.moveXY(0, -1.1, 10);
 		robot.drive.waitForDone();
 		//deposit
 		robot.marker.setPosition(0.9);
 		sleep(500);
 		robot.flicker.setPosition(0.65);
 	}
+	
 	private void parkInCrater() throws InterruptedException {
 		robot.drive.moveXY(0, 1.7, 10);
 		robot.arm.setPower(1);

@@ -67,7 +67,7 @@ public class AutoNextToDepot extends LinearOpMode {
 	}
 	
 	private void putMarkerInDepot() throws InterruptedException {
-		robot.drive.turn(-135, 10); //turn
+		robot.drive.turn(-135, 10);
 		robot.drive.moveXY(0.2, 0, 10);
 		robot.drive.moveXY(0, -1.1, 10); //go to depot
 		robot.drive.waitForDone();
@@ -79,10 +79,10 @@ public class AutoNextToDepot extends LinearOpMode {
 	private void parkInCrater() throws InterruptedException {
 		robot.drive.moveXY(0, 1.7, 10);
 		robot.arm.setPower(1);
+		robot.rotation.setPower(1);
 		sleep(500);
 		robot.arm.setPower(0);
-		robot.rotation.setPower(1);
-		sleep(1500);
+		sleep(1000);
 		robot.rotation.setPower(0);
 		robot.drive.waitForDone();
 	}
