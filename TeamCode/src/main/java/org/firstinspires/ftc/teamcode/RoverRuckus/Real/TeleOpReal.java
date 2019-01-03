@@ -6,11 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
+@SuppressWarnings("SpellCheckingInspection")
 @TeleOp(name = "THE ACTUAL TELEOP", group = "teleop")
 public class TeleOpReal extends OpMode {
 	private Robot robot = new Robot();
 	private int yay = 0;
 	private boolean pastGamepad2a;
+	private boolean pastGamepad1x;
 	
 	@Override
 	public void init() {
@@ -19,9 +21,9 @@ public class TeleOpReal extends OpMode {
 		yay = hardwareMap.appContext.getResources().getIdentifier("yay", "raw",
 				hardwareMap.appContext.getPackageName());
 		if (yay != 0) SoundPlayer.getInstance().preload(hardwareMap.appContext, yay);
+		SoundPlayer.getInstance().setMasterVolume(1);
 	}
 	
-	private boolean pastGamepad1x = false;
 	
 	@Override
 	public void loop() {
@@ -41,10 +43,10 @@ public class TeleOpReal extends OpMode {
 			robot.tape.setPower(0);
 		}
 		//HOOK
-		if (gamepad1.x) {
-			robot.hooke.setPower(1); //hook up, robot down
-		} else if (gamepad1.y) {
-			robot.hooke.setPower(-1); //hook down, robot up
+		if (gamepad2.dpad_down) {
+			robot.hooke.setPower(-1); //hook up, robot down
+		} else if (gamepad2.dpad_up) {
+			robot.hooke.setPower(1); //hook down, robot up
 		} else {
 			robot.hooke.setPower(0);
 		}
@@ -61,11 +63,16 @@ public class TeleOpReal extends OpMode {
 		} else {
 			robot.rotation.setPower(0);
 		}
+		telemetry.addData("Gamepad1x:",gamepad1.x);
+		telemetry.addData("past Gamepad1x:", pastGamepad1x);
 		//resetting limits.
-		if (pastGamepad1x && !gamepad1.x) {
+		if (!gamepad1.x && pastGamepad1x) {
+			telemetry.addLine("WOOOOOOOT");
+			telemetry.update();
 			robot.rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 			robot.rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		}
+		telemetry.update();
 		pastGamepad1x = gamepad1.x;
 		
 		//COLLECTION
@@ -76,8 +83,11 @@ public class TeleOpReal extends OpMode {
 		} else {
 			robot.collection.setPower(0);
 		}
+		//FUN HOUSE
 		if (gamepad2.a && !pastGamepad2a) {
+			SoundPlayer.getInstance().stopPlayingAll();
 			SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, yay);
 		}
+		pastGamepad2a = gamepad2.a;
 	}
 }

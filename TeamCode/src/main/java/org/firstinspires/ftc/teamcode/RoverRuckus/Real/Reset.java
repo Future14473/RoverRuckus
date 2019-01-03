@@ -30,7 +30,7 @@ public class Reset extends LinearOpMode {
 			pastPos = robot.arm.getCurrentPosition();
 			idle();
 			sleep(100);
-		} while (robot.rotation.getCurrentPosition() > pastPos && opModeIsActive());
+		} while (robot.rotation.getCurrentPosition() > pastPos + 20 && opModeIsActive());
 		robot.arm.setPower(0);
 		telemetry.addLine("Done");
 		telemetry.update();

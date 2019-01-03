@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 public abstract class AbstractAuto extends LinearOpMode {
-	private static final int HOOK_TURN = -26000;
+	private static final int HOOK_TURN = -25800;
 	protected Robot robot = new Robot();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	
@@ -17,10 +17,9 @@ public abstract class AbstractAuto extends LinearOpMode {
 		
 		unHook();
 		knockOffGold();
-		robot.hooke.setPower(-1);
 		putMarkerInDepot();
 		parkInCrater();
-		while (Math.abs(robot.hooke.getCurrentPosition()) > 50) idle();
+		while (Math.abs(robot.hooke.getCurrentPosition()) > 20 & opModeIsActive()) idle();
 		robot.hooke.setPower(0);
 	}
 	
@@ -42,7 +41,7 @@ public abstract class AbstractAuto extends LinearOpMode {
 		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		robot.hooke.setPower(1);
 		//decreasing
-		while (Math.abs(HOOK_TURN - robot.hooke.getCurrentPosition()) > 100 && opModeIsActive()) {
+		while (Math.abs(HOOK_TURN - robot.hooke.getCurrentPosition()) > 80 && opModeIsActive()) {
 			idle();
 		}
 		robot.hooke.setPower(0);
@@ -58,10 +57,12 @@ public abstract class AbstractAuto extends LinearOpMode {
 		goldLooker.stop();
 		telemetry.addData("Gold is at:", look);
 		telemetry.update();
+		robot.drive.waitForDone();
+		robot.hooke.setPower(-1);
 		robot.drive.moveXY(-.35 + .5 * look, .4, 10);
 		robot.drive.moveXY(0, 0.25, 10);
 		robot.drive.moveXY(0, -0.25, 10);
-		robot.drive.moveXY(-0.5 * look - 1.2, 0, 10);
+		robot.drive.moveXY(-0.5 * look - 0.6, 0, 10);
 		robot.drive.waitForDone();
 	}
 	
@@ -69,7 +70,6 @@ public abstract class AbstractAuto extends LinearOpMode {
 	
 	private void putMarkerInDepot() throws InterruptedException {
 		position();
-		robot.drive.moveXY(0, -1.1, 10);
 		robot.drive.waitForDone();
 		//deposit
 		robot.marker.setPosition(0.9);
@@ -78,7 +78,8 @@ public abstract class AbstractAuto extends LinearOpMode {
 	}
 	
 	private void parkInCrater() throws InterruptedException {
-		robot.drive.moveXY(0, 1.7, 10);
+		robot.drive.moveXY(0, 1.6, 10);
+		/*
 		robot.arm.setPower(1);
 		robot.rotation.setPower(1);
 		sleep(500);
@@ -86,5 +87,6 @@ public abstract class AbstractAuto extends LinearOpMode {
 		sleep(1000);
 		robot.rotation.setPower(0);
 		robot.drive.waitForDone();
+		//*/
 	}
 }
