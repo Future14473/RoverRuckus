@@ -7,7 +7,7 @@ public class AutoImplCrater extends AbstractAuto {
 	@Override
 	protected void position() throws InterruptedException {
 		robot.drive.turn(45, 10);
-		robot.drive.moveXY(-0.3, 0, 10);
-		robot.drive.moveXY(0, -1.4, 10);
+		robot.drive.moveXY(-0.4, 0, 10);
+		robot.drive.moveXY(0, -1.2, 10);
 	}
 }

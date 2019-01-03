@@ -59,10 +59,10 @@ public abstract class AbstractAuto extends LinearOpMode {
 		telemetry.update();
 		robot.drive.waitForDone();
 		robot.hooke.setPower(-1);
-		robot.drive.moveXY(-.35 + .5 * look, .4, 10);
+		robot.drive.moveXY(-0.35 + 0.5 * look, 0.4, 10);
 		robot.drive.moveXY(0, 0.25, 10);
 		robot.drive.moveXY(0, -0.25, 10);
-		robot.drive.moveXY(-0.5 * look - 0.6, 0, 10);
+		robot.drive.moveXY(-0.5 * look - 0.5, 0, 10);
 		robot.drive.waitForDone();
 	}
 	
@@ -73,18 +73,15 @@ public abstract class AbstractAuto extends LinearOpMode {
 		robot.drive.waitForDone();
 		//deposit
 		robot.marker.setPosition(0.9);
-		sleep(500);
+		sleep(300);
 		robot.flicker.setPosition(0.65);
 	}
 	
 	private void parkInCrater() throws InterruptedException {
-		robot.drive.moveXY(0, 1.6, 10);
-		/*
-		robot.arm.setPower(1);
+		robot.drive.moveXY(0, 1.7, 10);
+		//*
 		robot.rotation.setPower(1);
-		sleep(500);
-		robot.arm.setPower(0);
-		sleep(1000);
+		sleep(2000);
 		robot.rotation.setPower(0);
 		robot.drive.waitForDone();
 		//*/

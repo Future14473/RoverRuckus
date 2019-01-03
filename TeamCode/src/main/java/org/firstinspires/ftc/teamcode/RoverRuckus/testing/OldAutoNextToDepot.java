@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
-@Autonomous(name = "Old Auto Next to Crater", group = "autonomous")
+@Autonomous(name = "Old Auto Next to Depot", group = "autonomous")
 @Disabled
-public class AutoNextToCrater extends LinearOpMode {
+public class OldAutoNextToDepot extends LinearOpMode {
 	private Robot robot = new Robot();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	
@@ -69,8 +69,8 @@ public class AutoNextToCrater extends LinearOpMode {
 	}
 	
 	private void putMarkerInDepot() throws InterruptedException {
-		robot.drive.turn(45, 10); //turn
-		robot.drive.moveXY(-0.2, 0, 10);
+		robot.drive.turn(-135, 10);
+		robot.drive.moveXY(0.2, 0, 10);
 		robot.drive.moveXY(0, -1.1, 10); //go to depot
 		robot.drive.waitForDone();
 		//deposit
