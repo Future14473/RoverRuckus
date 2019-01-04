@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.DriveHandler;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
-@TeleOp(name = "DriveTweak", group = "Test")
+@TeleOp(name = "DriveTweak", group = "measure")
+@Disabled
 public class DriveHandlerTweak extends OpMode {
 	private Robot robot = new Robot();
 	private boolean wait = false;

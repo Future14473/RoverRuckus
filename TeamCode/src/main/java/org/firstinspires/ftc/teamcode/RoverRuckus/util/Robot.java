@@ -38,6 +38,7 @@ public class Robot {
 		arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		rotation = hwMap.get(DcMotor.class, "Rotation");
 		rotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		collection = hwMap.get(DcMotor.class, "Collection");
 		collection.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

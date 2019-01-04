@@ -9,7 +9,8 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 @Autonomous(name = "DropFromLander", group = "Test")
 @Disabled
 public class DropFromLander extends LinearOpMode {
-	private Robot robot = new Robot();	
+	private Robot robot = new Robot();
+	
 	@Override
 	public void runOpMode() throws InterruptedException {
 		robot.init(hardwareMap);

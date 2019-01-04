@@ -1,7 +1,11 @@
 <component name="ProjectDictionaryState">
   <dictionary name="anema">
     <words>
+      <w>gamepad</w>
       <w>mecanum</w>
+      <w>mult</w>
+      <w>tele</w>
+      <w>teleop</w>
       <w>tfod</w>
       <w>vuforia</w>
     </words>

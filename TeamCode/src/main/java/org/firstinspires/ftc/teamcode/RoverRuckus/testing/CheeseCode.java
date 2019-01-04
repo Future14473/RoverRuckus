@@ -30,6 +30,6 @@ public class CheeseCode extends LinearOpMode {
 		robot.drive.move(270, 1, 0.5f);
 		//robot.drive.waitForDone();
 		//sleep(1000);
-		while(opModeIsActive());
+		while (opModeIsActive()) ;
 	}
 }

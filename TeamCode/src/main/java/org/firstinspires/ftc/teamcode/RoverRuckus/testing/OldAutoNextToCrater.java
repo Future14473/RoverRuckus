@@ -1,13 +1,15 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.Real;
+package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
-@Autonomous(name = "Auto Next to Crater", group = "autonomous")
-public class AutoNextToCrater extends LinearOpMode {
+@Autonomous(name = "Old Auto Next to Crater", group = "autonomous")
+@Disabled
+public class OldAutoNextToCrater extends LinearOpMode {
 	private Robot robot = new Robot();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	
@@ -21,6 +23,7 @@ public class AutoNextToCrater extends LinearOpMode {
 		robot.hooke.setPower(-1);
 		putMarkerInDepot();
 		parkInCrater();
+		while (Math.abs(robot.hooke.getCurrentPosition()) > 50) idle();
 		robot.hooke.setPower(0);
 	}
 	
@@ -29,7 +32,7 @@ public class AutoNextToCrater extends LinearOpMode {
 		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		robot.hooke.setPower(1);
 		//decreasing
-		while (Math.abs(-32000 - robot.hooke.getCurrentPosition()) > 100 && opModeIsActive()) {
+		while (Math.abs(-26000 - robot.hooke.getCurrentPosition()) > 100 && opModeIsActive()) {
 			idle();
 		}
 		robot.hooke.setPower(0);
@@ -45,20 +48,10 @@ public class AutoNextToCrater extends LinearOpMode {
 		goldLooker.stop();
 		telemetry.addData("Gold is at:", look);
 		telemetry.update();
-		switch (look) {
-			case 0:
-				robot.drive.moveXY(-.25, .4, 10);
-				break;
-			case 1:
-				robot.drive.moveXY(.25, .4, 10);
-				break;
-			case 2:
-				robot.drive.moveXY(.75, .4, 10);
-				break;
-		}
-		robot.drive.moveXY(0, 0.2, 10);
-		robot.drive.moveXY(0, -0.2, 10);
-		robot.drive.moveXY(-0.5 * look - 0.8, 0, 10);
+		robot.drive.moveXY(-.35 + .5 * look, .4, 10);
+		robot.drive.moveXY(0, 0.25, 10);
+		robot.drive.moveXY(0, -0.25, 10);
+		robot.drive.moveXY(-0.5 * look - 1.2, 0, 10);
 		robot.drive.waitForDone();
 	}
 	
@@ -77,28 +70,22 @@ public class AutoNextToCrater extends LinearOpMode {
 	
 	private void putMarkerInDepot() throws InterruptedException {
 		robot.drive.turn(45, 10); //turn
-		robot.drive.moveXY(-0.30, 0, 10);
-		robot.drive.moveXY(-0.10, 0, 0.6); //wall hug
-		robot.drive.moveXY(+0.05, 0, 10);
-		robot.drive.moveXY(0, -1.1, 10); //go to crater
+		robot.drive.moveXY(-0.2, 0, 10);
+		robot.drive.moveXY(0, -1.1, 10); //go to depot
 		robot.drive.waitForDone();
 		//deposit
 		robot.marker.setPosition(0.9);
 		sleep(500);
 		robot.flicker.setPosition(0.65);
-		sleep(500);
 	}
-	
 	private void parkInCrater() throws InterruptedException {
-		robot.drive.moveXY(0, 2, 10);
-		//*
+		robot.drive.moveXY(0, 1.7, 10);
 		robot.arm.setPower(1);
-		robot.rotation.setPower(-1);
-		sleep(1000);
+		robot.rotation.setPower(1);
+		sleep(500);
 		robot.arm.setPower(0);
-		sleep(2000);
+		sleep(1000);
 		robot.rotation.setPower(0);
-		//*/
 		robot.drive.waitForDone();
 	}
 }

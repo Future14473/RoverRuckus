@@ -224,7 +224,7 @@ public class DriveHandler {
 				max = Math.max(max, Math.abs(power[i]));
 			}
 			for (int i = 0; i < 4; i++) {
-				set.power[i] = power[i]/max;
+				set.power[i] = power[i] / max;
 			}
 			return set;
 		}
