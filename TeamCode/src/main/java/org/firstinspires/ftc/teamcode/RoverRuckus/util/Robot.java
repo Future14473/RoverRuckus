@@ -49,8 +49,8 @@ public class Robot {
 		tape = hwMap.get(CRServo.class, "Tape");
 		tape.setPower(0.5);
 		
-		leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+		leftBack.setDirection(DcMotorSimple.Direction.REVERSE); // sets the power of left back wheel to reverse
+		leftFront.setDirection(DcMotorSimple.Direction.REVERSE); // same for this one
 		
 		drive = new DriveHandler(this);
 		
