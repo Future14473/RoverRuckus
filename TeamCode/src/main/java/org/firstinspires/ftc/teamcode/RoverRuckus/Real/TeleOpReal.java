@@ -17,11 +17,6 @@ public class TeleOpReal extends OpMode {
 	@Override
 	public void init() {
 		robot.init(hardwareMap);
-		//FOR FUN, sounds
-		yay = hardwareMap.appContext.getResources().getIdentifier("yay", "raw",
-				hardwareMap.appContext.getPackageName());
-		if (yay != 0) SoundPlayer.getInstance().preload(hardwareMap.appContext, yay);
-		SoundPlayer.getInstance().setMasterVolume(1);
 	}
 	
 	
@@ -86,11 +81,5 @@ public class TeleOpReal extends OpMode {
 		} else {
 			robot.collection.setPower(0);
 		}
-		//FUN HOUSE
-		if (gamepad2.a && !pastGamepad2a) {
-			SoundPlayer.getInstance().stopPlayingAll();
-			SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, yay);
-		}
-		pastGamepad2a = gamepad2.a;
 	}
 }
