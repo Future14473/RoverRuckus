@@ -37,6 +37,9 @@ public class GoldLookDouble {
 		tfod.activate();
 	}
 	
+	public void pause() {
+		tfod.deactivate();
+	}
 	public void stop() {
 		tfod.shutdown();
 	}
