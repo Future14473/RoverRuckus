@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 public class Reset extends LinearOpMode {
 	private Robot robot = new Robot();
 	
+	@SuppressWarnings("RedundantThrows")
 	@Override
 	public void runOpMode() throws InterruptedException {
 		robot.init(hardwareMap);

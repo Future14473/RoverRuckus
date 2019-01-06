@@ -13,9 +13,9 @@ public class AutoImpCraterHelper extends AbstractAuto {
 	
 	@Override
 	public void extra() throws InterruptedException {
-		robot.drive.turn(47, 10);
+		robot.drive.turn(40, 10);
 		robot.drive.moveXY(0, -0.1, 10);
 		knockOffGold();
-		robot.drive.turn(-45, 10);
+		robot.drive.turn(-40, 10);
 	}
 }

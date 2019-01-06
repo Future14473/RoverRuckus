@@ -44,7 +44,7 @@ public class DriveHandler {
 		moveThread = null;
 		moveTasks = new ConcurrentLinkedQueue<>();
 		for (int i = 0; i < 4; i++) {
-			motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+			motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		}
 		//startMoveThread();
 	}
@@ -270,7 +270,7 @@ public class DriveHandler {
 				actualPower.power[i] = targetPower.power[i] * (1 - 2 * (progress[i] - avgProgress));
 			}
 			setPower(actualPower);
-			return maxOff < 50;
+			return maxOff < 100;
 		}
 		
 	}
