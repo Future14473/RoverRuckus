@@ -54,6 +54,15 @@ public class TeleOpReal extends OpMode {
 			robot.hooke.setPower(0);
 		}
 		
+		//OPEN
+		if(gamepad1.x) {
+			robot.opener.setPosition(0.5);
+		} else if (gamepad1.y) {
+			robot.opener.setPosition(-0.5);
+		} else {
+			robot.opener.setPosition(0);
+		}
+		
 		//GAMEPAD 2
 		//ARM
 		robot.arm.setPower(gamepad2.left_stick_y);
