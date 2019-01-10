@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.Real;
 
-import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,9 +8,8 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 @TeleOp(name = "THE ACTUAL TELEOP", group = "teleop")
 public class TeleOpReal extends OpMode {
 	private Robot robot = new Robot();
-	private int yay = 0;
 	private boolean pastGamepad1y;
-	private boolean pastGamepad2a, pastGamepad2x;
+	private boolean pastGamepad2x;
 	private boolean reverseDrive = false;
 	
 	@Override

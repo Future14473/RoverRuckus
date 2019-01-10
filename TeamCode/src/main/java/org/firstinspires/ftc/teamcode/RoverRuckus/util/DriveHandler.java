@@ -26,11 +26,6 @@ public class DriveHandler {
 	private DcMotor[] motors;
 	private LinearOpMode mode;
 	private boolean running = true;
-	private Telemetry telemetry;
-	
-	public void setTelemetry(Telemetry telemetry) {
-		this.telemetry = telemetry;
-	}
 	
 	/**
 	 * construct by motors
@@ -180,7 +175,7 @@ public class DriveHandler {
 	/**
 	 * Stops robot, i.e., set motor power levels to zero.
 	 */
-	public void stopRobot() {
+	private void stopRobot() {
 		setPower(ZERO);
 	}
 	
@@ -199,7 +194,6 @@ public class DriveHandler {
 	
 	public void addLinearOpMode(LinearOpMode mode) {
 		this.mode = mode;
-		this.telemetry = mode.telemetry;
 	}
 	
 	/**
