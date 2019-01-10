@@ -7,7 +7,8 @@ public class AutoImplDepot extends AbstractAuto {
 	@Override
 	protected void positionForDepot() throws InterruptedException {
 		robot.drive.turn(-135, 10);
-		robot.drive.moveXY(0.35, 0, 10);
-		robot.drive.moveXY(0, -1.4, 10);
+		robot.drive.moveXY(0.5, 0, 10);
+		robot.drive.moveXY(-0.05, 0, 10);
+		robot.drive.moveXY(0, -1.3, 10);
 	}
 }

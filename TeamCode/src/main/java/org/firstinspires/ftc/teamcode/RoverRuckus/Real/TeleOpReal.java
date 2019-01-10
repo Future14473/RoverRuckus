@@ -2,14 +2,12 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.Real;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @TeleOp(name = "THE ACTUAL TELEOP", group = "teleop")
 public class TeleOpReal extends OpMode {
 	private Robot robot = new Robot();
 	private boolean pastGamepad1y;
-	private boolean pastGamepad2x;
 	private boolean reverseDrive = false;
 	
 	@Override
@@ -53,7 +51,7 @@ public class TeleOpReal extends OpMode {
 		}
 		
 		//OPEN
-		if(gamepad1.x) {
+		if (gamepad1.x) {
 			robot.opener.setPosition(0.5);
 		} else if (gamepad1.y) {
 			robot.opener.setPosition(-0.5);
@@ -64,21 +62,8 @@ public class TeleOpReal extends OpMode {
 		//GAMEPAD 2
 		//ARM
 		robot.arm.setPower(gamepad2.left_stick_y);
-		//ROTATION, WITH LIMITS.
-		if (gamepad2.x || !(gamepad2.right_stick_y > 0 && robot.rotation.getCurrentPosition() < 0) //
-				&& !(gamepad2.right_stick_y < 0 && robot.rotation.getCurrentPosition() > 5480)) {
-			robot.rotation.setPower(gamepad2.right_stick_y / 1.5);
-			//negative = knob up, arm up
-			//positive = knob down, arm down
-		} else {
-			robot.rotation.setPower(0);
-		}
-		//resetting limits.
-		if (!gamepad2.x && pastGamepad2x) {
-			robot.rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-			robot.rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		}
-		pastGamepad2x = gamepad2.x;
+		//ROTATION
+		robot.rotation.setPower(gamepad2.right_stick_y / 1.5);
 		
 		//COLLECTION
 		if (gamepad2.left_bumper) {

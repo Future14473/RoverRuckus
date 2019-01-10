@@ -6,8 +6,9 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 public abstract class AbstractAuto extends LinearOpMode {
-	private static final int HOOK_TURN = -25800;
-	private static final int ROTATION_TURN = -6680;
+	private static final int HOOK_TURN = -25700;
+	private static final int ROTATION_TURN = -6770;
+	private static final int ARM_TURN = -2000;
 	protected Robot robot = new Robot();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	private int look = -1;
@@ -85,14 +86,14 @@ public abstract class AbstractAuto extends LinearOpMode {
 	public void extra() throws InterruptedException {}
 	
 	private void parkInCrater() throws InterruptedException {
-		robot.drive.moveXY(0, 1.4, 10);
+		robot.drive.moveXY(0, 1.6, 10);
 		robot.rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		robot.rotation.setPower(0.7);
-		while (Math.abs(ROTATION_TURN - robot.rotation.getCurrentPosition()) > 50 && opModeIsActive()) {
-			idle();
-		}
+		while (Math.abs(ROTATION_TURN - robot.rotation.getCurrentPosition()) > 50 && opModeIsActive()) idle();
 		robot.rotation.setPower(0);
+		robot.arm.setPower(-1);
+		while (Math.abs(ARM_TURN - robot.arm.getCurrentPosition()) > 50 && opModeIsActive()) idle();
 		robot.drive.waitForDone();
 	}
 	
