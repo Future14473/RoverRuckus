@@ -10,6 +10,7 @@ public abstract class AbstractAuto extends LinearOpMode {
 	private static final int ROTATION_TURN = -6680;
 	protected Robot robot = new Robot();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
+	private int look = -1;
 	
 	@Override
 	public final void runOpMode() throws InterruptedException {
@@ -57,8 +58,7 @@ public abstract class AbstractAuto extends LinearOpMode {
 	
 	protected void knockOffGold() throws InterruptedException {
 		goldLooker.start();
-		int look;
-		do look = goldLooker.look(); while (look == -1 && opModeIsActive());
+		while (look == -1 && opModeIsActive()) look = goldLooker.look();
 		look = (look + 2) % 3;
 		goldLooker.pause();
 		telemetry.addData("Gold is at:", look);
@@ -97,8 +97,8 @@ public abstract class AbstractAuto extends LinearOpMode {
 	}
 	
 	private void finish() {
+		goldLooker.stop();
 		while (Math.abs(robot.hooke.getCurrentPosition()/* - 0 */) > 20 & opModeIsActive()) idle();
 		robot.hooke.setPower(0);
-		goldLooker.stop();
 	}
 }

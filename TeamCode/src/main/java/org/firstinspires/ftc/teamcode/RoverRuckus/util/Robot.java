@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Robot {
 	//Expansion Hub 2
 	public DcMotor hooke, rotation, arm, collection;
-	public Servo marker, flicker;
+	public Servo marker, flicker, opener;
 	public CRServo tape;
 	public DistanceSensor SensorRange;
 	public ElapsedTime period = new ElapsedTime();
@@ -47,6 +47,7 @@ public class Robot {
 		
 		marker = hwMap.get(Servo.class, "Marker");
 		flicker = hwMap.get(Servo.class, "Flicker");
+		opener = hwMap.get(Servo.class, "Opener");
 		tape = hwMap.get(CRServo.class, "Tape");
 		tape.setPower(0.5);
 		
