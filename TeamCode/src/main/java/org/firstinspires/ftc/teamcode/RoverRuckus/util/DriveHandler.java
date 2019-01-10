@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -89,7 +88,7 @@ public class DriveHandler {
 	}
 	
 	private boolean isRunning() {
-		return mode != null ? (!mode.isStarted() || mode.opModeIsActive()) : running;
+		return mode != null ? !mode.isStarted() || !mode.isStopRequested() : running;
 	}
 	
 	/**
@@ -183,8 +182,7 @@ public class DriveHandler {
 	 * Waits until either there are no tasks left or not running.
 	 */
 	public void waitForDone() throws InterruptedException {
-		if (mode != null) mode.idle();
-		while (isRunning() && hasTasks()) {
+		while (hasTasks() && isRunning()) {
 			if (mode != null) mode.idle();
 			synchronized (doneLock) {
 				doneLock.wait();
@@ -192,13 +190,16 @@ public class DriveHandler {
 		}
 	}
 	
+	/**
+	 * Tracks if OpMode is running.
+	 */
 	public void addLinearOpMode(LinearOpMode mode) {
 		this.mode = mode;
 	}
 	
 	/**
 	 * a set of power levels for all 4 motors;
-	 * just a container around double[][]
+	 * just a container around double[]
 	 */
 	public static class MotorPowerSet {
 		double[] power;
@@ -261,7 +262,7 @@ public class DriveHandler {
 			avgProgress /= 4;
 			//adjust power as necessary..
 			for (int i = 0; i < 4; i++) {
-				actualPower.power[i] = targetPower.power[i] * (1 - 2 * (progress[i] - avgProgress));
+				actualPower.power[i] = targetPower.power[i] * (1 - 3 * (progress[i] - avgProgress));
 			}
 			setPower(actualPower);
 			return maxOff < 100;
