@@ -11,7 +11,7 @@ public class TeleOpReal extends OpMode {
 	private Robot robot = new Robot();
 	private boolean pastGamepad1y, pastGamepad2x, pastGamepad2leftStick0;
 	private boolean reverseDrive = false;
-	
+	private static final int ARM_MIN = -5000, ARM_MAX = -10;
 	@Override
 	public void init() {
 		robot.init(hardwareMap);
@@ -75,11 +75,11 @@ public class TeleOpReal extends OpMode {
 		boolean gamepad2leftStick0 = Math.abs(gamepad2.left_stick_y) < 1e-5;
 		if (gamepad2leftStick0) {
 			if (!pastGamepad2leftStick0) {
-				robot.arm.setTargetPosition(Range.clip(robot.arm.getCurrentPosition(), -5000, -10)); //current
-				// position.
+				//current position.
+				robot.arm.setTargetPosition(Range.clip(robot.arm.getCurrentPosition(), ARM_MIN, ARM_MAX));
 			}
 		} else {
-			robot.arm.setTargetPosition(gamepad2.left_stick_y > 0 ? -10 : -5000); //so limits.
+			robot.arm.setTargetPosition(gamepad2.left_stick_y < 0 ? ARM_MIN : ARM_MAX); //go to place with limits.
 		}
 		robot.arm.setPower(gamepad2.left_stick_y);
 		pastGamepad2leftStick0 = gamepad2leftStick0;
