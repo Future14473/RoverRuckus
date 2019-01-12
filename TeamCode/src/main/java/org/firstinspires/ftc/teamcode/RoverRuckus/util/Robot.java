@@ -7,8 +7,7 @@ public class Robot {
 	//Expansion Hub 2
 	public DcMotor hooke, rotation, arm, collection;
 	public Servo marker, flicker, opener;
-	public CRServo tape;
-	public DistanceSensor SensorRange;
+	//public CRServo tape;
 	public ElapsedTime period = new ElapsedTime();
 	public DriveHandler drive;
 	//Expansion Hub 1
@@ -37,7 +36,7 @@ public class Robot {
 		arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		rotation = hwMap.get(DcMotor.class, "Rotation");
-		rotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		rotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		collection = hwMap.get(DcMotor.class, "Collection");
@@ -48,8 +47,8 @@ public class Robot {
 		marker = hwMap.get(Servo.class, "Marker");
 		flicker = hwMap.get(Servo.class, "Flicker");
 		opener = hwMap.get(Servo.class, "Opener");
-		tape = hwMap.get(CRServo.class, "Tape");
-		tape.setPower(0.5);
+		/*tape = hwMap.get(CRServo.class, "Tape");
+		tape.setPower(0.5);*/
 		
 		leftBack.setDirection(DcMotorSimple.Direction.REVERSE); // sets the power of left back wheel to reverse
 		leftFront.setDirection(DcMotorSimple.Direction.REVERSE); // same for this one

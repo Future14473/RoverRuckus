@@ -26,7 +26,7 @@ public class Measure extends OpMode {
 			motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		}
 		if(gamepad1.x){
-			servo.setPosition(100);
+			servo.setPosition(0.5);
 		} else {
 			servo.setPosition(0);
 		}

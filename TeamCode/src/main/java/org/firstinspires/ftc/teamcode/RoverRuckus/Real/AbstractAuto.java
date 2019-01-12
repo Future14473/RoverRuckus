@@ -2,14 +2,15 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.Real;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 public abstract class AbstractAuto extends LinearOpMode {
 	private static final int HOOK_TURN = -25700;
-	private static final int ROTATION_TURN = -6770;
-	private static final int ARM_TURN = -2000;
+	private static final int ARM_TURN = -1000;
 	protected Robot robot = new Robot();
+	ElapsedTime timer = new ElapsedTime();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	private int look = -1;
 	
@@ -59,10 +60,14 @@ public abstract class AbstractAuto extends LinearOpMode {
 	
 	protected void knockOffGold() throws InterruptedException {
 		goldLooker.start();
-		while (look == -1 && opModeIsActive()) look = goldLooker.look();
-		look = (look + 2) % 3;
+		timer.reset();
+		while (look == -1 && timer.milliseconds() < 5000 && opModeIsActive()) look = goldLooker.look();
+		if (look == -1) {
+			look = 2;
+			telemetry.addLine("FAIL-SAFE HAPPENED");
+		} else look = (look + 2) % 3;
 		goldLooker.pause();
-		telemetry.addData("Gold is at:", look);
+		telemetry.addData("Gold is at:", (look == 0) ? "left" : ((look == 1) ? "middle" : "right"));
 		telemetry.update();
 		robot.drive.waitForDone();
 		robot.hooke.setPower(-1); //INTERLUDE
@@ -81,6 +86,7 @@ public abstract class AbstractAuto extends LinearOpMode {
 		robot.marker.setPosition(0.9);
 		sleep(300);
 		robot.flicker.setPosition(0.65);
+		sleep(400);
 	}
 	
 	public void extra() throws InterruptedException {}
@@ -89,8 +95,8 @@ public abstract class AbstractAuto extends LinearOpMode {
 		robot.drive.moveXY(0, 1.6, 10);
 		robot.rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		robot.rotation.setPower(0.7);
-		while (Math.abs(ROTATION_TURN - robot.rotation.getCurrentPosition()) > 50 && opModeIsActive()) idle();
+		robot.rotation.setPower(0.6);
+		sleep(1500);
 		robot.rotation.setPower(0);
 		robot.arm.setPower(-1);
 		while (Math.abs(ARM_TURN - robot.arm.getCurrentPosition()) > 50 && opModeIsActive()) idle();

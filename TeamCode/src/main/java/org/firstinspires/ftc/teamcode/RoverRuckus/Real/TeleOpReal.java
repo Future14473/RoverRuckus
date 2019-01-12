@@ -3,21 +3,20 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.Real;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @TeleOp(name = "THE ACTUAL TELEOP", group = "teleop")
 public class TeleOpReal extends OpMode {
+	private static final int ARM_MIN = 10;
 	private Robot robot = new Robot();
-	private boolean pastGamepad1y, pastGamepad2x, pastGamepad2leftStick0;
+	private boolean pastGamepad1y;
 	private boolean reverseDrive = false;
-	private static final int ARM_MIN = -5000, ARM_MAX = -10;
+	private boolean pastGamepad2x;
+	
 	@Override
 	public void init() {
 		robot.init(hardwareMap);
-		robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 	}
-	
 	
 	@Override
 	public void loop() {
@@ -35,15 +34,16 @@ public class TeleOpReal extends OpMode {
 		double turnRate = gamepad1.right_stick_x * speedMult * 2; //prioritize turning over moving.
 		robot.drive.moveAt(angle, speed, turnRate);
 		telemetry.addData("DIRECTION", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
-		telemetry.update();
 		//TAPE
-		if (gamepad1.a) {
+		/*if (gamepad1.a) {
 			robot.tape.setPower(-1); //out
 		} else if (gamepad1.b) {
 			robot.tape.setPower(1); //in
 		} else {
 			robot.tape.setPower(0);
-		}
+		}*/
+		
+		//GAMEPAD 2
 		//HOOK
 		if (gamepad2.dpad_down) {
 			robot.hooke.setPower(-1); //hook up, robot down
@@ -53,39 +53,17 @@ public class TeleOpReal extends OpMode {
 			robot.hooke.setPower(0);
 		}
 		
-		//OPEN
-		if (gamepad1.x) {
-			robot.opener.setPosition(0.5);
-		} else if (gamepad1.y) {
-			robot.opener.setPosition(-0.5);
-		} else {
-			robot.opener.setPosition(0);
-		}
-		
-		//GAMEPAD 2
-		//ARM: with limits, and smartness
-		if (gamepad2.x && !pastGamepad2x) { //just pressed
+		if (!gamepad2.x && pastGamepad2x) {
+			robot.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 			robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		}
-		if (!gamepad2.x && pastGamepad2x) { //released
-			robot.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-			robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		}
-		
-		boolean gamepad2leftStick0 = Math.abs(gamepad2.left_stick_y) < 1e-5;
-		if (gamepad2leftStick0) {
-			if (!pastGamepad2leftStick0) {
-				//current position.
-				robot.arm.setTargetPosition(Range.clip(robot.arm.getCurrentPosition(), ARM_MIN, ARM_MAX));
-			}
-		} else {
-			robot.arm.setTargetPosition(gamepad2.left_stick_y < 0 ? ARM_MIN : ARM_MAX); //go to place with limits.
-		}
-		robot.arm.setPower(gamepad2.left_stick_y);
-		pastGamepad2leftStick0 = gamepad2leftStick0;
 		pastGamepad2x = gamepad2.x;
+		//ARM: with limits, and smartness
+		if (!gamepad2.x && robot.arm.getCurrentPosition() < ARM_MIN && gamepad2.left_stick_y > 0) robot.arm.setPower(0);
+		else robot.arm.setPower(gamepad2.left_stick_y);
+		
 		//ROTATION
-		robot.rotation.setPower(gamepad2.right_stick_y / 1.5);
+		robot.rotation.setPower(gamepad2.right_stick_y / 2);
 		
 		//COLLECTION
 		if (gamepad2.left_bumper) {
@@ -95,5 +73,7 @@ public class TeleOpReal extends OpMode {
 		} else {
 			robot.collection.setPower(0);
 		}
+		
+		telemetry.update();
 	}
 }
