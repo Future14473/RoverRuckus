@@ -60,7 +60,7 @@ public class TeleOpReal extends OpMode {
 		pastGamepad2x = gamepad2.x;
 		//ARM: with limits, and smartness
 		if (!gamepad2.x && robot.arm.getCurrentPosition() < ARM_MIN && gamepad2.left_stick_y > 0) robot.arm.setPower(0);
-		else robot.arm.setPower(gamepad2.left_stick_y);
+		else robot.arm.setPower(gamepad2.left_stick_y / 2);
 		
 		//ROTATION
 		robot.rotation.setPower(gamepad2.right_stick_y / 2);

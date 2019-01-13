@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 public abstract class AbstractAuto extends LinearOpMode {
 	private static final int HOOK_TURN = -25700;
-	private static final int ARM_TURN = -1000;
+	private static final int ARM_TURN = -1500;
 	protected Robot robot = new Robot();
-	ElapsedTime timer = new ElapsedTime();
+	private ElapsedTime timer = new ElapsedTime();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	private int look = -1;
 	
@@ -54,8 +54,9 @@ public abstract class AbstractAuto extends LinearOpMode {
 			idle();
 		}
 		robot.hooke.setPower(0);
-		robot.drive.moveXY(-0.15, 0, 10);
+		robot.drive.moveXY(-0.15,  0.1, 10);
 		robot.drive.moveXY(0, 0.1, 10);
+		robot.drive.turn(-10, 10);
 	}
 	
 	protected void knockOffGold() throws InterruptedException {
@@ -84,22 +85,23 @@ public abstract class AbstractAuto extends LinearOpMode {
 		robot.drive.waitForDone();
 		//deposit
 		robot.marker.setPosition(0.9);
-		sleep(300);
+		sleep(1000);
 		robot.flicker.setPosition(0.65);
-		sleep(400);
+		sleep(1000);
 	}
 	
 	public void extra() throws InterruptedException {}
 	
 	private void parkInCrater() throws InterruptedException {
-		robot.drive.moveXY(0, 1.6, 10);
+		robot.drive.moveXY(0, 1.7, 10);
 		robot.rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		robot.rotation.setPower(0.6);
-		sleep(1500);
+		sleep(1000);
 		robot.rotation.setPower(0);
 		robot.arm.setPower(-1);
-		while (Math.abs(ARM_TURN - robot.arm.getCurrentPosition()) > 50 && opModeIsActive()) idle();
+		sleep(1000);
+		robot.arm.setPower(0);
 		robot.drive.waitForDone();
 	}
 	
