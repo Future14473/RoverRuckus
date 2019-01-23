@@ -15,7 +15,7 @@ public class GoldLookDouble {
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 	
-	@SuppressWarnings({"SpellCheckingInspection", "LongLine"})
+	@SuppressWarnings({"SpellCheckingInspection"})
 	private static final String VUFORIA_KEY = "Aavay7//////AAABmS26wV70nE/XoqC91tMM/rlwbqInv/YUads4QRll085q/yT" +
 			"+qW0qdyrUwXPXbvwDkGhnffFMGIizzvfrXviNCbfAAgJzSwDJuL0MJl3LRE2FU4JMKKU2v7V" +
 			"+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz/LaIEh4phJs35awBUu+g" +
@@ -69,7 +69,6 @@ public class GoldLookDouble {
 				}
 			}
 		}
-		int i = 1;
 		for (Recognition recognition : recognitions) {
 			if (recognition == null || recognition.getConfidence() < 0.65) continue;
 			if (ax == -1) {

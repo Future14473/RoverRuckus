@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookSingle;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
+@SuppressWarnings("ALL")
 @Autonomous(name = "Gold Knocking Tester", group = "Test")
 @Disabled
 public class GoldKnockOffSingle extends LinearOpMode {
@@ -70,7 +71,7 @@ public class GoldKnockOffSingle extends LinearOpMode {
 	private int closerLook() {
 		int look = -1;
 		while (look == -1) {
-			if (!robot.drive.hasTasks()) {
+			if (!robot.drive.isDone()) {
 				//robot.drive.move(0, 0.3f, 2.0 / 36);
 				//robot.drive.move(180, 0.3f, 2.0 / 36);
 //				robot.drive.move(270, 0.5f, 2.0 / 36);

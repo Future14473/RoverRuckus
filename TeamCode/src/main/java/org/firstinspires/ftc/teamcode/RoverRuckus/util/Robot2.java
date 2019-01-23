@@ -3,13 +3,10 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 import com.qualcomm.robotcore.hardware.*;
 
 public class Robot2 {
-	//Expansion Hub 2
 	public final DcMotor hook, rotater, extender, scorer;
 	public final Servo marker, flicker, door;
 	public final CRServo collector;
-	public final OldDriveHandlerImpl drive;
-	//public CRServo tape;
-	//Expansion Hub 1
+	public final NewDriveHandlerImpl drive;
 	public DcMotor rightFront, rightBack, leftFront, leftBack;
 	
 	
@@ -23,7 +20,7 @@ public class Robot2 {
 		leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 		
-		drive = new OldDriveHandlerImpl(leftFront, rightFront, leftBack, rightBack);
+		drive = new NewDriveHandlerImpl(leftFront, rightFront, leftBack, rightBack);
 		drive.setModeEncoder();
 		
 		

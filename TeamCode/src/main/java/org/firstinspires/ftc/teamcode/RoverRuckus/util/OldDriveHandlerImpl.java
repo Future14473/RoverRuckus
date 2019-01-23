@@ -9,15 +9,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Separate utility class to handle omnidirectional motion on mecanum wheels.
  */
+@Deprecated
 public class OldDriveHandlerImpl implements DriveHandlerIntf {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
-	private static final Object moveLock = new Object();
-	private static final Object doneLock = new Object();
-	public static double MOVE_MULT = 4450; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
-	public static double TURN_MULT = 1205; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
+	private final Object moveLock = new Object();
+	private final Object doneLock = new Object();
 	//we have a separate thread handling moveTasks. This is so the robot can still do other stuff
 	//while this is happening at the same time.
-	private static MoveThread moveThread;
+	private MoveThread moveThread;
 	private Queue<MoveTask> moveTasks; //the currentPos moveTasks to do;
 	//NOW THE FUN STUFF, FOR AUTONOMOUS MOTION.
 	//the motors
@@ -29,12 +28,8 @@ public class OldDriveHandlerImpl implements DriveHandlerIntf {
 	/**
 	 * construct by motors
 	 */
-	private OldDriveHandlerImpl(DcMotor leftFront, DcMotor rightFront, DcMotor backLeft, DcMotor backRight) {
-		motors = new DcMotor[4];
-		motors[0] = leftFront;
-		motors[1] = rightFront;
-		motors[2] = backLeft;
-		motors[3] = backRight;
+	OldDriveHandlerImpl(DcMotor leftFront, DcMotor rightFront, DcMotor backLeft, DcMotor backRight) {
+		motors = new DcMotor[]{leftFront, rightFront, backLeft, backRight};
 		moveThread = null;
 		moveTasks = new ConcurrentLinkedQueue<>();
 		for (int i = 0; i < 4; i++) {
@@ -94,7 +89,7 @@ public class OldDriveHandlerImpl implements DriveHandlerIntf {
 	/**
 	 * returns if there are any move tasks currently
 	 */
-	public boolean hasTasks() {
+	public boolean isDone() {
 		return !moveTasks.isEmpty();
 	}
 	
@@ -182,7 +177,7 @@ public class OldDriveHandlerImpl implements DriveHandlerIntf {
 	 * Waits until either there are no tasks left or not running.
 	 */
 	public void waitForDone() throws InterruptedException {
-		while (hasTasks() && isRunning()) {
+		while (isDone() && isRunning()) {
 			if (mode != null) mode.idle();
 			synchronized (doneLock) {
 				doneLock.wait();

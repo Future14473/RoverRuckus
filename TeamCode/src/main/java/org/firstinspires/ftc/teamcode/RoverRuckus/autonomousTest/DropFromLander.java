@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
+@SuppressWarnings("ALL")
 @Autonomous(name = "DropFromLander", group = "Test")
 @Disabled
 public class DropFromLander extends LinearOpMode {
@@ -27,7 +28,7 @@ public class DropFromLander extends LinearOpMode {
 		
 	}
 	
-	public boolean runTo(int encoder, DcMotor motor) {
+	public void runTo(int encoder, DcMotor motor) {
 		int dir = 0;
 		
 		if (motor.getCurrentPosition() > encoder) dir = 1;
@@ -42,7 +43,6 @@ public class DropFromLander extends LinearOpMode {
 		waitForDone(robot.hooke);
 		motor.setPower(0);
 		
-		return true;
 	}
 	
 	public void waitForDone(DcMotor motor) {

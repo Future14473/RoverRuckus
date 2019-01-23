@@ -7,23 +7,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Robot {
-	//Expansion Hub 2
 	public DcMotor hooke, rotation, arm, collection;
 	public Servo marker, flicker, opener;
-	//public CRServo tape;
-	public ElapsedTime period = new ElapsedTime();
-	public OldDriveHandlerImpl drive;
-	//Expansion Hub 1
+	public DriveHandlerIntf drive;
 	public DcMotor rightFront, rightBack, leftFront, leftBack;
-	private HardwareMap hwMap;
 	
 	
 	public Robot() {
 	}
 	
-	public void init(HardwareMap ahwMap) {
-		
-		hwMap = ahwMap;
+	public void init(HardwareMap hwMap) {
 		
 		leftFront = hwMap.get(DcMotor.class, "FrontLeft");
 		rightFront = hwMap.get(DcMotor.class, "FrontRight");
@@ -34,7 +27,6 @@ public class Robot {
 		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 		
 		drive = new OldDriveHandlerImpl(this);
-		drive.setModeEncoder();
 		
 		hooke = hwMap.get(DcMotor.class, "Hooke");
 		hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
+@SuppressWarnings("ALL")
 @Autonomous(name = "PutMarkerInDepot", group = "Test")
 @Disabled
 public class PutMarkerInDepot extends LinearOpMode {

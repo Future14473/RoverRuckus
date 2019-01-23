@@ -2,6 +2,7 @@
   <dictionary name="anema">
     <words>
       <w>gamepad</w>
+      <w>interactable</w>
       <w>mecanum</w>
       <w>mult</w>
       <w>rotater</w>

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 public abstract class AbstractAuto extends LinearOpMode {
 	private static final int HOOK_TURN = -25700;
-	private static final int ARM_TURN = -1500;
+	// --Commented out by Inspection (1/22/2019 6:58 PM):private static final int ARM_TURN = -1500;
 	protected Robot robot = new Robot();
 	private ElapsedTime timer = new ElapsedTime();
 	private GoldLookDouble goldLooker = new GoldLookDouble();

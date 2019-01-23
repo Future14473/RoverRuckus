@@ -48,7 +48,7 @@ public class DriveHandlerTweak extends OpMode {
 			if (gamepad1.x) {
 				robot.drive.cancelTasks();
 			}
-			if (!robot.drive.hasTasks()) {
+			if (!robot.drive.isDone()) {
 				wait = false;
 				showNums();
 				telemetry.update();
@@ -56,7 +56,7 @@ public class DriveHandlerTweak extends OpMode {
 			return;
 		}
 		boolean changed = false;
-		if (!robot.drive.hasTasks()) {
+		if (!robot.drive.isDone()) {
 			if (Math.abs(gamepad1.left_stick_y) > 0.4) {
 				distance += -(Math.abs(gamepad1.left_stick_y) - 0.4) * Math.signum(gamepad1.left_stick_y) / 200;
 				changed = true;
