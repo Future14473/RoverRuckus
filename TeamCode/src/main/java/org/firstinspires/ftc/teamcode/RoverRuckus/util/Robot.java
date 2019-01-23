@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
-import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Robot {
@@ -9,7 +12,7 @@ public class Robot {
 	public Servo marker, flicker, opener;
 	//public CRServo tape;
 	public ElapsedTime period = new ElapsedTime();
-	public DriveHandler drive;
+	public OldDriveHandlerImpl drive;
 	//Expansion Hub 1
 	public DcMotor rightFront, rightBack, leftFront, leftBack;
 	private HardwareMap hwMap;
@@ -26,7 +29,11 @@ public class Robot {
 		rightFront = hwMap.get(DcMotor.class, "FrontRight");
 		leftBack = hwMap.get(DcMotor.class, "BackLeft");
 		rightBack = hwMap.get(DcMotor.class, "BackRight");
-		drive = new DriveHandler(this);
+		
+		leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+		
+		drive = new OldDriveHandlerImpl(this);
 		drive.setModeEncoder();
 		
 		hooke = hwMap.get(DcMotor.class, "Hooke");
@@ -49,16 +56,5 @@ public class Robot {
 		opener = hwMap.get(Servo.class, "Opener");
 		/*tape = hwMap.get(CRServo.class, "Tape");
 		tape.setPower(0.5);*/
-		
-		leftBack.setDirection(DcMotorSimple.Direction.REVERSE); // sets the power of left back wheel to reverse
-		leftFront.setDirection(DcMotorSimple.Direction.REVERSE); // same for this one
-		
-		drive = new DriveHandler(this);
-		
-		drive.setModeEncoder();
-		rotation.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		rotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 	}
 }

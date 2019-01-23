@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.DriveHandler;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldDriveHandlerImpl;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @TeleOp(name = "DriveTweak", group = "measure")
@@ -33,8 +33,8 @@ public class DriveHandlerTweak extends OpMode {
 		telemetry.addData("Distance, arbitrary units: ", distance);
 		telemetry.addData("Speed (0-1):", speed);
 		telemetry.addData("Direction (deg):", Math.toDegrees(angle));
-		telemetry.addData("MOVE_MULT:", DriveHandler.MOVE_MULT);
-		telemetry.addData("TURN_MULT:", DriveHandler.TURN_MULT);
+		telemetry.addData("MOVE_MULT:", OldDriveHandlerImpl.MOVE_MULT);
+		telemetry.addData("TURN_MULT:", OldDriveHandlerImpl.TURN_MULT);
 		telemetry.addLine("Left stick up/down is distance, right/left is speed");
 		telemetry.addLine("Right stick is direction");
 		telemetry.addLine("Left/right bumpers to change MOVE_MULT");
@@ -70,19 +70,19 @@ public class DriveHandlerTweak extends OpMode {
 				changed = true;
 			}
 			if (gamepad1.left_bumper) {
-				DriveHandler.MOVE_MULT -= 0.5;
+				OldDriveHandlerImpl.MOVE_MULT -= 0.5;
 				changed = true;
 			}
 			if (gamepad1.right_bumper) {
-				DriveHandler.MOVE_MULT += 0.5;
+				OldDriveHandlerImpl.MOVE_MULT += 0.5;
 				changed = true;
 			}
 			if (gamepad1.dpad_left) {
-				DriveHandler.TURN_MULT -= 0.02;
+				OldDriveHandlerImpl.TURN_MULT -= 0.02;
 				changed = true;
 			}
 			if (gamepad1.dpad_right) {
-				DriveHandler.TURN_MULT += 0.02;
+				OldDriveHandlerImpl.TURN_MULT += 0.02;
 				changed = true;
 			}
 			if (changed) {
@@ -92,7 +92,7 @@ public class DriveHandlerTweak extends OpMode {
 			//*
 			try {
 				if (gamepad1.a) {
-					robot.drive.move(angle, speed, distance);
+					robot.drive.move(angle, distance, speed);
 					wait = true;
 				} else if (gamepad1.b) {
 					robot.drive.turn((float) Math.toDegrees(angle), speed);

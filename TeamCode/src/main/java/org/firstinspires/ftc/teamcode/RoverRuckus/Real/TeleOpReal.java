@@ -32,7 +32,7 @@ public class TeleOpReal extends OpMode {
 		if (reverseDrive) angle += Math.PI;
 		double speed = Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y), 1.7) * speedMult;
 		double turnRate = gamepad1.right_stick_x * speedMult * 2; //prioritize turning over moving.
-		robot.drive.moveAt(angle, speed, turnRate);
+		robot.drive.moveAt(angle, turnRate, speed);
 		telemetry.addData("DIRECTION", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
 		//TAPE
 		/*if (gamepad1.a) {

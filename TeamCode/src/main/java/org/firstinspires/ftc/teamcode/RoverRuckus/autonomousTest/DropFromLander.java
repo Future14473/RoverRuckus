@@ -21,9 +21,9 @@ public class DropFromLander extends LinearOpMode {
 		
 		runTo(robot.hooke.getCurrentPosition() - 31000, robot.hooke);
 		
-		robot.drive.move(270, 0.5, 0.1);
-		robot.drive.move(0, 0.5, 0.1);
-		robot.drive.move(90, 0.5, 0.1);
+		robot.drive.move(270, 0.1, 0.5);
+		robot.drive.move(0, 0.1, 0.5);
+		robot.drive.move(90, 0.1, 0.5);
 		
 	}
 	

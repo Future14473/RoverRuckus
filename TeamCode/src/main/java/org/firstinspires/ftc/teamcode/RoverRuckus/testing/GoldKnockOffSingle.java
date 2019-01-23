@@ -31,8 +31,8 @@ public class GoldKnockOffSingle extends LinearOpMode {
 		//runto(-32000);
 		goldLookSingle.start();
 		
-		robot.drive.move(290, 1, .1);
-		robot.drive.move(55, 1, .57);
+		robot.drive.move(290, .1, 1);
+		robot.drive.move(55, .57, 1);
 		robot.drive.waitForDone();
 		int i, look; // -1 means nothing, 0 means white, 1 means gold
 		for (i = 1; i >= -1; i--) {// -1 is left, 0 is center, 1 is right position
@@ -43,15 +43,15 @@ public class GoldKnockOffSingle extends LinearOpMode {
 			telemetry.addData("look is:", look);
 			telemetry.update();
 			if (look == 1) { //found gold
-				robot.drive.move(0, .5, .3); // move forwards to hit gold
-				robot.drive.move(180, .5, .3); // move back
+				robot.drive.move(0, .3, .5); // move forwards to hit gold
+				robot.drive.move(180, .3, .5); // move back
 				robot.drive.waitForDone();
 				found = true;
 				break;
 			}
 			//is white.
 			if (i != -1) {// has not traverse the 3 positions yet
-				robot.drive.move(270, 1, 17.0 / 36);
+				robot.drive.move(270, 17.0 / 36, 1);
 				robot.drive.waitForDone();
 			}
 		}
@@ -61,9 +61,9 @@ public class GoldKnockOffSingle extends LinearOpMode {
 		}
 		
 		if (i == 1) {
-			robot.drive.move(270, 1, 34.0 / 36);
+			robot.drive.move(270, 34.0 / 36, 1);
 		} else if (i == 0) {
-			robot.drive.move(270, 1, 17.0 / 36);
+			robot.drive.move(270, 17.0 / 36, 1);
 		}
 	}
 	

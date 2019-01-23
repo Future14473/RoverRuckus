@@ -15,7 +15,7 @@ public class ParkInCrater extends LinearOpMode {
 		robot.drive.addLinearOpMode(this);
 		waitForStart();
 		robot.init(hardwareMap);
-		robot.drive.move(0, 1f, 2f);
+		robot.drive.move(0, 2f, 1f);
 		robot.rotation.setPower(-1);
 		sleep(1000);
 		robot.rotation.setPower(0);

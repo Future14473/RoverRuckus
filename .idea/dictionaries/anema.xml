@@ -4,6 +4,7 @@
       <w>gamepad</w>
       <w>mecanum</w>
       <w>mult</w>
+      <w>rotater</w>
       <w>tele</w>
       <w>teleop</w>
       <w>tfod</w>

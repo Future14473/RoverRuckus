@@ -79,7 +79,7 @@ public abstract class AbstractAuto extends LinearOpMode {
 		robot.drive.waitForDone();
 	}
 	
-	protected abstract void positionForDepot() throws InterruptedException; //THE ONLY ABSTRACT METHOD
+	protected abstract void positionForDepot() throws InterruptedException;
 	
 	private void putMarkerInDepot() throws InterruptedException {
 		robot.drive.waitForDone();

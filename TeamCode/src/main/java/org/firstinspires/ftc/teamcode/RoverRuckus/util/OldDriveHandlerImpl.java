@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Separate utility class to handle omnidirectional motion on mecanum wheels.
  */
-public class DriveHandler {
+public class OldDriveHandlerImpl implements DriveHandlerIntf {
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
 	private static final Object moveLock = new Object();
 	private static final Object doneLock = new Object();
@@ -29,7 +29,7 @@ public class DriveHandler {
 	/**
 	 * construct by motors
 	 */
-	private DriveHandler(DcMotor leftFront, DcMotor rightFront, DcMotor backLeft, DcMotor backRight) {
+	private OldDriveHandlerImpl(DcMotor leftFront, DcMotor rightFront, DcMotor backLeft, DcMotor backRight) {
 		motors = new DcMotor[4];
 		motors[0] = leftFront;
 		motors[1] = rightFront;
@@ -46,14 +46,14 @@ public class DriveHandler {
 	/**
 	 * construct by Ben Bielin Code
 	 */
-	DriveHandler(Robot r) {
+	OldDriveHandlerImpl(Robot r) {
 		this(r.leftFront, r.rightFront, r.leftBack, r.rightBack);
 	}
 	
 	/**
 	 * Generates a MotorPowerSet that corresponds to turning the robot in the specified direction
 	 */
-	private static MotorPowerSet calcPowerSet(double direction, double speed, double turnRate) {
+	private static MotorPowerSet calcPowerSet(double direction, double turnRate, double speed) {
 		double robotAngle = direction + Math.PI / 4;
 		double v1 = speed * Math.sin(robotAngle) + turnRate;
 		double v2 = speed * Math.cos(robotAngle) - turnRate;
@@ -101,10 +101,10 @@ public class DriveHandler {
 	/**
 	 * adds a MoveTask to move in a straight line a specified direction and distance.
 	 */
-	public void move(double direction, double speed, double distance) throws InterruptedException { // maybe has some
+	public void move(double direction, double distance, double speed) throws InterruptedException { // maybe has some
 		// problems here
 		direction = Math.toRadians(direction);
-		addTask(new MoveTask(calcPowerSet(direction, speed, 0), distance * MOVE_MULT / speed));
+		addTask(new MoveTask(calcPowerSet(direction, 0, speed), distance * MOVE_MULT / speed));
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class DriveHandler {
 	public void moveXY(double x, double y, double speed) throws InterruptedException {
 		double direction = Math.toDegrees(Math.atan2(x, y));
 		double distance = Math.hypot(x, y);
-		move(direction, speed, distance);
+		move(direction, distance, speed);
 	}
 	
 	/**
@@ -121,7 +121,7 @@ public class DriveHandler {
 	 */
 	public void turn(double degrees, double speed) throws InterruptedException {
 		degrees = Math.toRadians(degrees);
-		addTask(new MoveTask(calcPowerSet(0, 0, speed * Math.signum(degrees)), Math.abs(degrees) * TURN_MULT / speed));
+		addTask(new MoveTask(calcPowerSet(0, speed * Math.signum(degrees), 0), Math.abs(degrees) * TURN_MULT / speed));
 	}
 	
 	private boolean threadRunning() {
@@ -167,8 +167,8 @@ public class DriveHandler {
 	 * Can handle motor power levels greater than 1 -- it will scale them down.
 	 * If you're not turning and moving at the same time, and speed <=1, that wont be a problem
 	 */
-	public void moveAt(double direction, double speed, double turnRate) {
-		setPower(calcPowerSet(direction, speed, turnRate));
+	public void moveAt(double direction, double turnRate, double speed) {
+		setPower(calcPowerSet(direction, turnRate, speed));
 	}
 	
 	/**
