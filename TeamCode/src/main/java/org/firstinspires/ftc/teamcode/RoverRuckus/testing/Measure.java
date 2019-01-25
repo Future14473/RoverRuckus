@@ -4,11 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldRobot;
 
 @TeleOp(name = "Measurement", group = "measure")
 public class Measure extends OpMode {
-	private Robot robot = new Robot();
+	private OldRobot robot = new OldRobot();
 	private DcMotor motor;
 	private Servo servo;
 	

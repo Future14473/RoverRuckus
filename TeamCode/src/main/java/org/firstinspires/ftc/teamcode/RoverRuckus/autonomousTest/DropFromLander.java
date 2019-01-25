@@ -4,13 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldRobot;
 
 @SuppressWarnings("ALL")
 @Autonomous(name = "DropFromLander", group = "Test")
 @Disabled
 public class DropFromLander extends LinearOpMode {
-	private Robot robot = new Robot();
+	private OldRobot robot = new OldRobot();
 	
 	@Override
 	public void runOpMode() throws InterruptedException {

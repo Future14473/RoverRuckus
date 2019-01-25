@@ -266,6 +266,16 @@
           <section>
             <rule>
               <match>
+                <AND>
+                  <ABSTRACT>true</ABSTRACT>
+                  <METHOD>true</METHOD>
+                </AND>
+              </match>
+            </rule>
+          </section>
+          <section>
+            <rule>
+              <match>
                 <METHOD>true</METHOD>
               </match>
               <order>BY_NAME</order>

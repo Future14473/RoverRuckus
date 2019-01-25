@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldRobot;
 
 @Autonomous(name = "Old Auto Next to Depot", group = "autonomous")
 @Disabled
 public class OldAutoNextToDepot extends LinearOpMode {
-	private Robot robot = new Robot();
+	private OldRobot robot = new OldRobot();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	
 	@Override

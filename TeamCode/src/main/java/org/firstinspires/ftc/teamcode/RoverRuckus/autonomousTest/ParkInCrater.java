@@ -3,12 +3,12 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.autonomousTest;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldRobot;
 
 @Autonomous(name = "ParkInCrater", group = "Test")
 @Disabled
 public class ParkInCrater extends LinearOpMode {
-	private Robot robot = new Robot();
+	private OldRobot robot = new OldRobot();
 	
 	@Override
 	public void runOpMode() throws InterruptedException {
