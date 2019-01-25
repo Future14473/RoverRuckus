@@ -20,3 +20,6 @@ android {
         sourceCompatibility 1.8
     }
 }
+dependencies {
+    implementation 'org.jetbrains:annotations:15.0'
+}
