@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldRobot;
 
 @TeleOp(name = "Forward Test", group = "Test")
 @Disabled
 public class SimpleForward extends OpMode {
-	private Robot robot = new Robot();
+	private OldRobot robot = new OldRobot();
 	
 	@Override
 	public void start() {

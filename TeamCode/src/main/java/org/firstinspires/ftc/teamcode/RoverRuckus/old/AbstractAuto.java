@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.Real;
+package org.firstinspires.ftc.teamcode.RoverRuckus.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldRobot;
 
 public abstract class AbstractAuto extends LinearOpMode {
 	private static final int HOOK_TURN = -25700;
 	// --Commented out by Inspection (1/22/2019 6:58 PM):private static final int ARM_TURN = -1500;
-	protected Robot robot = new Robot();
+	protected OldRobot robot = new OldRobot();
 	private ElapsedTime timer = new ElapsedTime();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	private int look = -1;

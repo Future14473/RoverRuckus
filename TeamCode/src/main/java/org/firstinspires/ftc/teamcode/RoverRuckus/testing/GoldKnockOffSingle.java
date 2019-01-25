@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookSingle;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldRobot;
 
 @SuppressWarnings("ALL")
 @Autonomous(name = "Gold Knocking Tester", group = "Test")
@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 public class GoldKnockOffSingle extends LinearOpMode {
 	
 	private GoldLookSingle goldLookSingle = new GoldLookSingle();
-	private Robot robot = new Robot();
+	private OldRobot robot = new OldRobot();
 	private boolean found = false;
 	//private int pos = -1;
 	

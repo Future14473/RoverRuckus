@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.Real;
+package org.firstinspires.ftc.teamcode.RoverRuckus.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldRobot;
 
 @Autonomous(name = "Reset", group = "reset")
 @Disabled
 public class Reset extends LinearOpMode {
-	private Robot robot = new Robot();
+	private OldRobot robot = new OldRobot();
 	
 	@SuppressWarnings("RedundantThrows")
 	@Override

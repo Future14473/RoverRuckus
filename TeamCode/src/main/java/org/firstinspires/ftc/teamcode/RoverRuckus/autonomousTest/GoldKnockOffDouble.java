@@ -4,13 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldRobot;
 
 @Autonomous(name = "Gold knockOff double look", group = "Test")
 @Disabled
 public class GoldKnockOffDouble extends LinearOpMode {
 	private GoldLookDouble goldLooker = new GoldLookDouble();
-	private Robot robot = new Robot();
+	private OldRobot robot = new OldRobot();
 	
 	@Override
 	public void runOpMode() throws InterruptedException {

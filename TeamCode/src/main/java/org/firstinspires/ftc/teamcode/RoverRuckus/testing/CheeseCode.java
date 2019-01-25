@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldRobot;
 
 
 @SuppressWarnings("ALL")
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 @Disabled
 public class CheeseCode extends LinearOpMode {
 	
-	private Robot robot = new Robot();
+	private OldRobot robot = new OldRobot();
 	
 	
 	@Override

@@ -9,8 +9,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Separate utility class to handle omnidirectional motion on mecanum wheels.
  */
-@Deprecated
-public class OldDriveHandlerImpl implements DriveHandlerIntf {
+public class OldDriveHandler {
+	public static double MOVE_MULT = 4450; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
+	public static double TURN_MULT = 1205; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
 	private final Object moveLock = new Object();
 	private final Object doneLock = new Object();
@@ -28,7 +29,7 @@ public class OldDriveHandlerImpl implements DriveHandlerIntf {
 	/**
 	 * construct by motors
 	 */
-	OldDriveHandlerImpl(DcMotor leftFront, DcMotor rightFront, DcMotor backLeft, DcMotor backRight) {
+	OldDriveHandler(DcMotor leftFront, DcMotor rightFront, DcMotor backLeft, DcMotor backRight) {
 		motors = new DcMotor[]{leftFront, rightFront, backLeft, backRight};
 		moveThread = null;
 		moveTasks = new ConcurrentLinkedQueue<>();
@@ -41,20 +42,8 @@ public class OldDriveHandlerImpl implements DriveHandlerIntf {
 	/**
 	 * construct by Ben Bielin Code
 	 */
-	OldDriveHandlerImpl(Robot r) {
+	OldDriveHandler(OldRobot r) {
 		this(r.leftFront, r.rightFront, r.leftBack, r.rightBack);
-	}
-	
-	/**
-	 * Generates a MotorPowerSet that corresponds to turning the robot in the specified direction
-	 */
-	private static MotorPowerSet calcPowerSet(double direction, double turnRate, double speed) {
-		double robotAngle = direction + Math.PI / 4;
-		double v1 = speed * Math.sin(robotAngle) + turnRate;
-		double v2 = speed * Math.cos(robotAngle) - turnRate;
-		double v3 = speed * Math.cos(robotAngle) + turnRate;
-		double v4 = speed * Math.sin(robotAngle) - turnRate;
-		return new MotorPowerSet(v1, v2, v3, v4);
 	}
 	
 	void setModeEncoder() {
@@ -99,7 +88,7 @@ public class OldDriveHandlerImpl implements DriveHandlerIntf {
 	public void move(double direction, double distance, double speed) throws InterruptedException { // maybe has some
 		// problems here
 		direction = Math.toRadians(direction);
-		addTask(new MoveTask(calcPowerSet(direction, 0, speed), distance * MOVE_MULT / speed));
+		addTask(new MoveTask(MotorPowerSet.calcPowerSet(direction, 0, speed), distance * MOVE_MULT / speed));
 	}
 	
 	/**
@@ -116,7 +105,7 @@ public class OldDriveHandlerImpl implements DriveHandlerIntf {
 	 */
 	public void turn(double degrees, double speed) throws InterruptedException {
 		degrees = Math.toRadians(degrees);
-		addTask(new MoveTask(calcPowerSet(0, speed * Math.signum(degrees), 0), Math.abs(degrees) * TURN_MULT / speed));
+		addTask(new MoveTask(MotorPowerSet.calcPowerSet(0, speed * Math.signum(degrees), 0), Math.abs(degrees) * TURN_MULT / speed));
 	}
 	
 	private boolean threadRunning() {
@@ -163,7 +152,7 @@ public class OldDriveHandlerImpl implements DriveHandlerIntf {
 	 * If you're not turning and moving at the same time, and speed <=1, that wont be a problem
 	 */
 	public void moveAt(double direction, double turnRate, double speed) {
-		setPower(calcPowerSet(direction, turnRate, speed));
+		setPower(MotorPowerSet.calcPowerSet(direction, turnRate, speed));
 	}
 	
 	/**
@@ -217,6 +206,18 @@ public class OldDriveHandlerImpl implements DriveHandlerIntf {
 				set.power[i] = power[i] / max;
 			}
 			return set;
+		}
+		
+		/**
+		 * Generates a MotorPowerSet that corresponds to turning the robot in the specified direction
+		 */
+		private static MotorPowerSet calcPowerSet(double direction, double turnRate, double speed) {
+			double robotAngle = direction + Math.PI / 4;
+			double v1 = speed * Math.sin(robotAngle) + turnRate;
+			double v2 = speed * Math.cos(robotAngle) - turnRate;
+			double v3 = speed * Math.cos(robotAngle) + turnRate;
+			double v4 = speed * Math.sin(robotAngle) - turnRate;
+			return new MotorPowerSet(v1, v2, v3, v4);
 		}
 	}
 	
