@@ -117,10 +117,9 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 			throw this.runner.getRuntimeException();
 		}
 		// check for condition.
-		if (waitCondition != null) {
+		if (waitCondition != null) { //since no one else can set it to null, this is fine.
 			synchronized (this) {
-				theCondition = waitCondition.getAsBoolean();
-				if (theCondition) {
+				if (waitCondition.getAsBoolean()) {
 					waitCondition = null;
 					this.notifyAll();
 				}
@@ -167,13 +166,12 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	/**
 	 * Pauses the current thread until a given condition (checked with loop) occurs.
 	 *
-	 * @throws InterruptedException if this thread is interrupted while sleeping (op mode stopped).
+	 * @throws InterruptedException if this thread is interrupted while waiting (op mode stopped).
 	 */
 	protected void waitUntil(BooleanSupplier condition) throws InterruptedException {
 		synchronized (this) {
-			this.theCondition = false;
 			this.waitCondition = condition;
-			while (!theCondition) {
+			while (waitCondition != null) {
 				this.wait();
 			}
 		}

@@ -76,10 +76,12 @@ public class MecanumDrive {
 		waitUntilDone();
 		Thread.sleep(millis);
 	}
+	
 	/**
 	 * Stops the internal thread and any tasks.
 	 */
 	public void stop() {
 		taskExecutor.stop();
+		motors.stop();
 	}
 }

@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.DrivingOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.DecoratedOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 
-public abstract class AbstractAuto extends DrivingOpMode {
+public abstract class AbstractAuto extends DecoratedOpMode {
 	private static final int HOOK_TURN = -25700;
+	protected MecanumDrive drive;
 	private ElapsedTime timer = new ElapsedTime();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	private int look = -1;
@@ -15,9 +17,8 @@ public abstract class AbstractAuto extends DrivingOpMode {
 	
 	@Override
 	protected void initialize() {
-		
+		drive = new MecanumDrive(robot.wheels);
 		goldLooker.init(hardwareMap);
-		
 	}
 	
 	@Override
@@ -29,13 +30,14 @@ public abstract class AbstractAuto extends DrivingOpMode {
 		drive.waitUntilDone();
 		putMarkerInDepot();
 		
-		extra();
+		afterDepot();
 		
 		parkInCrater();
 	}
 	
 	@Override
-	protected void finish() {
+	protected void cleanup() {
+		drive.stop();
 		goldLooker.stop();
 	}
 	
@@ -79,7 +81,7 @@ public abstract class AbstractAuto extends DrivingOpMode {
 		sleep(1000);
 	}
 	
-	public void extra() throws InterruptedException {}
+	protected void afterDepot() throws InterruptedException {}
 	
 	private void parkInCrater() throws InterruptedException {
 		drive.moveXY(0, 1.7, 10);

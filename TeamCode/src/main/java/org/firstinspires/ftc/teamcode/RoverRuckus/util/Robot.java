@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -13,10 +14,11 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MotorPowerSet.calcPowerSet;
 
 public class Robot {
+	public final MotorSet wheels;
 	public final DcMotor hook, rotater, extender, scorer;
 	public final Servo marker, flicker, door;
 	public final CRServo collector;
-	public MotorSet wheels;
+	public final BNO055IMU imu;
 	
 	public Robot(HardwareMap hwMap) {
 		
@@ -52,6 +54,8 @@ public class Robot {
 		marker = hwMap.get(Servo.class, "Marker");
 		flicker = hwMap.get(Servo.class, "Flicker");
 		door = hwMap.get(Servo.class, "Door");
+		
+		imu = hwMap.get(BNO055IMU.class, "imu");
 	}
 	
 	/**

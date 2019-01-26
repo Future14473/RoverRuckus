@@ -13,7 +13,7 @@ public class AutoImpCraterHelper extends AbstractAuto {
 	}
 	
 	@Override
-	public void extra() throws InterruptedException {
+	public void afterDepot() throws InterruptedException {
 		drive.turn(40, 10);
 		drive.moveXY(0, -0.1, 10);
 		knockOffGold();
