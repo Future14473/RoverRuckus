@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive;
 
+/**
+ * A OpMode that includes a {@link MecanumDrive} and handling around it.
+ */
 public abstract class DrivingLinearOpMode extends ModifiedLinearOpMode {
 	protected Robot robot;
 	protected MecanumDrive drive;
@@ -13,6 +16,7 @@ public abstract class DrivingLinearOpMode extends ModifiedLinearOpMode {
 		initialize();
 		waitForStart();
 		run();
+		drive.waitUntilDone();
 	}
 	
 	/**
@@ -31,15 +35,15 @@ public abstract class DrivingLinearOpMode extends ModifiedLinearOpMode {
 	 */
 	protected abstract void run() throws InterruptedException;
 	
-	@Override
-	protected final void cleanup() {
-		drive.stop();
-		finish();
-	}
-	
 	/**
 	 * This method is run during cleanup.
 	 * Put additional cleanup code here.
 	 */
 	protected void finish() {}
+	
+	@Override
+	protected final void cleanup() {
+		drive.stop();
+		finish();
+	}
 }

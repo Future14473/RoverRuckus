@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Separate utility class to handle omnidirectional motion on mecanum wheels.
  */
-public class OldDriveHandler {
+public class DriveHandler {
 	public static double MOVE_MULT = 4450; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
 	public static double TURN_MULT = 1205; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
@@ -29,7 +29,7 @@ public class OldDriveHandler {
 	/**
 	 * construct by motors
 	 */
-	OldDriveHandler(DcMotor leftFront, DcMotor rightFront, DcMotor backLeft, DcMotor backRight) {
+	DriveHandler(DcMotor leftFront, DcMotor rightFront, DcMotor backLeft, DcMotor backRight) {
 		motors = new DcMotor[]{leftFront, rightFront, backLeft, backRight};
 		moveThread = null;
 		moveTasks = new ConcurrentLinkedQueue<>();
@@ -42,7 +42,7 @@ public class OldDriveHandler {
 	/**
 	 * construct by Ben Bielin Code
 	 */
-	OldDriveHandler(OldRobot r) {
+	DriveHandler(OldRobot r) {
 		this(r.leftFront, r.rightFront, r.leftBack, r.rightBack);
 	}
 	

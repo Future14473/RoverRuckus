@@ -77,6 +77,13 @@ public class MecanumDrive {
 	}
 	
 	/**
+	 * Waits until all tasks are finished, then sleeps a specified number of milliseconds
+	 */
+	public void sleep(int millis) throws InterruptedException {
+		waitUntilDone();
+		Thread.sleep(millis);
+	}
+	/**
 	 * Stops the internal thread and any tasks.
 	 */
 	public void stop() {

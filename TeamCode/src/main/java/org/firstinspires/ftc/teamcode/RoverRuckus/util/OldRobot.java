@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class OldRobot {
 	public DcMotor hooke, rotation, arm, collection;
 	public Servo marker, flicker, opener;
-	public OldDriveHandler drive;
+	public DriveHandler drive;
 	public DcMotor rightFront, rightBack, leftFront, leftBack;
 	
 	
@@ -25,7 +25,7 @@ public class OldRobot {
 		leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 		
-		drive = new OldDriveHandler(this);
+		drive = new DriveHandler(this);
 		
 		hooke = hwMap.get(DcMotor.class, "Hooke");
 		hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
