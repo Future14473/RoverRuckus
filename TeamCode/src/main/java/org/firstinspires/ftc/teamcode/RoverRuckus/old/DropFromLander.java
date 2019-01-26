@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.autonomousTest;
+package org.firstinspires.ftc.teamcode.RoverRuckus.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.OldRobot;
 
 @SuppressWarnings("ALL")
 @Autonomous(name = "DropFromLander", group = "Test")

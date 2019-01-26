@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
  * calculations on motor power levels
  * @see MotorSet
  */
-class MotorPowerSet {
+public class MotorPowerSet {
 	static final MotorPowerSet ZERO = new MotorPowerSet();
 	private static final double MAX_POWER = 0.95;
 	static double MOVE_MULT = 4450; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
@@ -46,7 +46,7 @@ class MotorPowerSet {
 	 * @param speed the speed of all these operations
 	 * @return the calculated MotorPowerSet
 	 */
-	static MotorPowerSet calcPowerSet(double direction, double turnRate, double speed) {
+	public static MotorPowerSet calcPowerSet(double direction, double turnRate, double speed) {
 		double robotAngle = direction + Math.PI / 4;
 		double v1 = speed * Math.sin(robotAngle) + turnRate;
 		double v2 = speed * Math.cos(robotAngle) - turnRate;

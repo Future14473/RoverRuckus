@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.Real;
+package org.firstinspires.ftc.teamcode.RoverRuckus.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name = "Auto Next to Depot", group = "Autonomous")
+@Disabled
 public class AutoImplDepot extends AbstractAuto {
 	@Override
 	protected void positionForDepot() throws InterruptedException {

@@ -35,13 +35,6 @@ public class MecanumDrive {
 	}
 	
 	/**
-	 * Utility: set the motors right now to move in the specified direction, turnRate, and speed.
-	 */
-	public void moveAt(double direction, double turnRate, double speed) {
-		motors.setPowerTo(calcPowerSet(direction, turnRate, speed));
-	}
-	
-	/**
 	 * Adds a MoveTask that represents moving the robot in a straight line the specified direction and distance
 	 */
 	public void move(double direction, double distance, double speed) {

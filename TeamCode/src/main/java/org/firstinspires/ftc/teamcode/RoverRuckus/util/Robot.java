@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSet;
 
+import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorPowerSet.calcPowerSet;
+
 public class Robot {
 	public final DcMotor hook, rotater, extender, scorer;
 	public final Servo marker, flicker, door;
@@ -43,4 +45,12 @@ public class Robot {
 		flicker = hwMap.get(Servo.class, "Flicker");
 		door = hwMap.get(Servo.class, "Door");
 	}
+	
+	/**
+	 * Utility: set the motors right now to move in the specified direction, turnRate, and speed.
+	 */
+	public void moveAt(double direction, double turnRate, double speed) {
+		wheels.setPowerTo(calcPowerSet(direction, turnRate, speed));
+	}
+	
 }

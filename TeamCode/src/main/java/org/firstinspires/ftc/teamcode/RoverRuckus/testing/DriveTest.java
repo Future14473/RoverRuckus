@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.DrivingLinearOpMode;
 
 @Autonomous
-public class NewDriveTest extends DrivingLinearOpMode {
+public class DriveTest extends DrivingLinearOpMode {
 	@Override
 	protected void initialize() throws InterruptedException {
 	

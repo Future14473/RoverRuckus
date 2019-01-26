@@ -29,10 +29,10 @@ public final class MotorSet {
 	/**
 	 * Sets all the motors' power to the given {@link MotorPowerSet}
 	 */
-	void setPowerTo(MotorPowerSet powerSet) {
+	public void setPowerTo(MotorPowerSet powerSet) {
 		powerSet = powerSet.scaled();
 		for (int i = 0; i < 4; i++) {
-			this.get(i).setPower(powerSet.power[i]);
+			motors[i].setPower(powerSet.power[i]);
 		}
 	}
 	
@@ -41,7 +41,16 @@ public final class MotorSet {
 	 *
 	 * @return the motor.
 	 */
-	public DcMotor get(int i) {
+	DcMotor get(int i) {
 		return motors[i];
+	}
+	
+	/**
+	 * Sets all the motors' mode
+	 */
+	public void setModeTo(DcMotor.RunMode mode) {
+		for (int i = 0; i < 4; i++) {
+			motors[i].setMode(mode);
+		}
 	}
 }
