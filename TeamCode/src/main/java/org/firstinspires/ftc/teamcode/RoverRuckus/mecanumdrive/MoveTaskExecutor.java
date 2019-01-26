@@ -71,8 +71,8 @@ class MoveTaskExecutor {
 	 * @throws InterruptedException if the thread is interrupted while waiting
 	 */
 	void waitUntilDone() throws InterruptedException {
-		while (!taskRunner.isDone()) {
-			synchronized (taskRunner) {
+		synchronized (taskRunner) {
+			while (!taskRunner.isDone()) {
 				taskRunner.wait();
 			}
 		}
@@ -108,8 +108,8 @@ class MoveTaskExecutor {
 		public void run() {
 			while (!Thread.interrupted()) try {
 				if (queue.isEmpty()) { //if we're done, notify people.
-					done = true;
 					synchronized (this) {
+						done = true;
 						this.notifyAll();
 					}
 				}

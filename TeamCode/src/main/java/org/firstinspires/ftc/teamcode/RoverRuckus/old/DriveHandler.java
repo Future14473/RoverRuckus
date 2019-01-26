@@ -10,9 +10,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Separate utility class to handle omnidirectional motion on mecanum wheels.
  */
 public class DriveHandler {
-	public static double MOVE_MULT = 4450; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
-	public static double TURN_MULT = 1205; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
 	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
+	static double MOVE_MULT = 4450; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
+	static double TURN_MULT = 1205; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
 	private final Object moveLock = new Object();
 	private final Object doneLock = new Object();
 	//we have a separate thread handling moveTasks. This is so the robot can still do other stuff
@@ -105,7 +105,8 @@ public class DriveHandler {
 	 */
 	public void turn(double degrees, double speed) throws InterruptedException {
 		degrees = Math.toRadians(degrees);
-		addTask(new MoveTask(MotorPowerSet.calcPowerSet(0, speed * Math.signum(degrees), 0), Math.abs(degrees) * TURN_MULT / speed));
+		addTask(new MoveTask(MotorPowerSet.calcPowerSet(0, speed * Math.signum(degrees), 0),
+				Math.abs(degrees) * TURN_MULT / speed));
 	}
 	
 	private boolean threadRunning() {
@@ -166,9 +167,9 @@ public class DriveHandler {
 	 * Waits until either there are no tasks left or not running.
 	 */
 	public void waitForDone() throws InterruptedException {
-		while (isDone() && isRunning()) {
-			if (mode != null) mode.idle();
-			synchronized (doneLock) {
+		synchronized (doneLock) {
+			while (isDone() && isRunning()) {
+				if (mode != null) mode.idle();
 				doneLock.wait();
 			}
 		}
@@ -179,46 +180,6 @@ public class DriveHandler {
 	 */
 	public void addLinearOpMode(LinearOpMode mode) {
 		this.mode = mode;
-	}
-	
-	/**
-	 * a set of power levels for all 4 motors;
-	 * just a container around double[]
-	 */
-	public static class MotorPowerSet {
-		double[] power;
-		
-		MotorPowerSet(double leftFront, double rightFront, double backLeft, double backRight) {
-			this.power = new double[]{leftFront, rightFront, backLeft, backRight};
-		}
-		
-		MotorPowerSet() {
-			this.power = new double[4];
-		}
-		
-		MotorPowerSet scaled() {
-			MotorPowerSet set = new MotorPowerSet();
-			double max = 1;
-			for (int i = 0; i < 4; i++) {
-				max = Math.max(max, Math.abs(power[i]));
-			}
-			for (int i = 0; i < 4; i++) {
-				set.power[i] = power[i] / max;
-			}
-			return set;
-		}
-		
-		/**
-		 * Generates a MotorPowerSet that corresponds to turning the robot in the specified direction
-		 */
-		private static MotorPowerSet calcPowerSet(double direction, double turnRate, double speed) {
-			double robotAngle = direction + Math.PI / 4;
-			double v1 = speed * Math.sin(robotAngle) + turnRate;
-			double v2 = speed * Math.cos(robotAngle) - turnRate;
-			double v3 = speed * Math.cos(robotAngle) + turnRate;
-			double v4 = speed * Math.sin(robotAngle) - turnRate;
-			return new MotorPowerSet(v1, v2, v3, v4);
-		}
 	}
 	
 	private class MoveTask { //NOT STATIC, to access DC motors
@@ -304,6 +265,46 @@ public class DriveHandler {
 				e.printStackTrace();
 			} catch (InterruptedException ignored) {} //jump to next cycle.
 			cancelTasks();
+		}
+	}
+	
+	/**
+	 * a set of power levels for all 4 motors;
+	 * just a container around double[]
+	 */
+	public static class MotorPowerSet {
+		double[] power;
+		
+		MotorPowerSet(double leftFront, double rightFront, double backLeft, double backRight) {
+			this.power = new double[]{leftFront, rightFront, backLeft, backRight};
+		}
+		
+		MotorPowerSet() {
+			this.power = new double[4];
+		}
+		
+		MotorPowerSet scaled() {
+			MotorPowerSet set = new MotorPowerSet();
+			double max = 1;
+			for (int i = 0; i < 4; i++) {
+				max = Math.max(max, Math.abs(power[i]));
+			}
+			for (int i = 0; i < 4; i++) {
+				set.power[i] = power[i] / max;
+			}
+			return set;
+		}
+		
+		/**
+		 * Generates a MotorPowerSet that corresponds to turning the robot in the specified direction
+		 */
+		private static MotorPowerSet calcPowerSet(double direction, double turnRate, double speed) {
+			double robotAngle = direction + Math.PI / 4;
+			double v1 = speed * Math.sin(robotAngle) + turnRate;
+			double v2 = speed * Math.cos(robotAngle) - turnRate;
+			double v3 = speed * Math.cos(robotAngle) + turnRate;
+			double v4 = speed * Math.sin(robotAngle) - turnRate;
+			return new MotorPowerSet(v1, v2, v3, v4);
 		}
 	}
 }

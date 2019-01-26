@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(group = "test")
-public class SimpleTest extends OpMode {
+public class MotorsTest extends OpMode {
 	private DcMotor motor;
 	private Servo servo;
 	private CRServo crServo;

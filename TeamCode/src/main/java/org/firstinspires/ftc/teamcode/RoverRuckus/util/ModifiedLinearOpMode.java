@@ -13,7 +13,6 @@ import java.util.function.BooleanSupplier;
  * Base class for our custom modified operation modes (similar to Linear op mode).
  * Redundant code and weird things removed.
  */
-@SuppressWarnings("unused")
 public abstract class ModifiedLinearOpMode extends OpMode {
 	private DrivingOpModeRunner runner = null;
 	private ExecutorService executorService = null;
@@ -59,12 +58,10 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 * From the normal OpMode; do not override
 	 */
 	@Override
-	final public void start() {
+	final synchronized public void start() {
 		this.isStarted = true;
 		//notify waitForStart();
-		synchronized (this) {
-			this.notifyAll();
-		}
+		this.notifyAll();
 	}
 	
 	/**
@@ -120,14 +117,13 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 			throw this.runner.getRuntimeException();
 		}
 		// check for condition.
-		// ASSUMES only one thread per instance.
 		if (waitCondition != null) {
-			theCondition = waitCondition.getAsBoolean();
-			if (theCondition) {
-				synchronized (this) {
+			synchronized (this) {
+				theCondition = waitCondition.getAsBoolean();
+				if (theCondition) {
+					waitCondition = null;
 					this.notifyAll();
 				}
-				waitCondition = null;
 			}
 		}
 		//no notifying necessary -- no one is waiting (no waitForHardwareCycle)
@@ -143,8 +139,18 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 * @see #runOpMode()
 	 * @see #isStarted()
 	 */
-	public final boolean opModeIsActive() {
+	protected final boolean opModeIsActive() {
 		return this.isStarted && !isStopRequested();
+	}
+	
+	/**
+	 * Checks if the opMode is active. If the OpMode is not active and should not
+	 * be running, this will terminate the OpMode throwing an {@link InterruptedException}.
+	 * Otherwise returns true.
+	 */
+	protected final boolean checkOpModeIsActive() throws InterruptedException {
+		if (!opModeIsActive()) throw new InterruptedException();
+		return true;
 	}
 	
 	/**
@@ -154,19 +160,20 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 * @see #opModeIsActive()
 	 * @see #isStarted()
 	 */
-	public boolean isStopRequested() {
+	public final boolean isStopRequested() {
 		return this.stopRequested || Thread.currentThread().isInterrupted();
 	}
 	
 	/**
 	 * Pauses the current thread until a given condition (checked with loop) occurs.
-	 *  @throws InterruptedException if this thread is interrupted while sleeping (op mode stopped).
+	 *
+	 * @throws InterruptedException if this thread is interrupted while sleeping (op mode stopped).
 	 */
-	public void waitUntil(BooleanSupplier condition) throws InterruptedException {
-		this.theCondition = false;
-		this.waitCondition = condition;
-		while (!theCondition) {
-			synchronized (this) {
+	protected void waitUntil(BooleanSupplier condition) throws InterruptedException {
+		synchronized (this) {
+			this.theCondition = false;
+			this.waitCondition = condition;
+			while (!theCondition) {
 				this.wait();
 			}
 		}
@@ -239,7 +246,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 				} catch (RuntimeException e) {
 					this.exception = e;
 				} finally {
-					//since telemetry statements will very soon be replaced with the default op mode, it is not
+					// since telemetry statements will very soon be replaced with the default op mode, it is not
 					// worth it to try and update the telemetry.
 					try {
 						ModifiedLinearOpMode.this.cleanup();

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
 @TeleOp(name = "Moving Test", group = "test")
-public class SimpleForward extends OpMode {
+public class MovingTest extends OpMode {
 	private Robot robot;
 	
 	public void sleep(int millis){
