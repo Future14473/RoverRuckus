@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
 
 /**
  * A OpMode that includes a {@link MecanumDrive} and handling around it.
  */
-public abstract class DrivingLinearOpMode extends ModifiedLinearOpMode {
+public abstract class DrivingOpMode extends ModifiedLinearOpMode {
 	protected Robot robot;
 	protected MecanumDrive drive;
 	
@@ -13,7 +13,13 @@ public abstract class DrivingLinearOpMode extends ModifiedLinearOpMode {
 	protected final void runOpMode() throws InterruptedException {
 		robot = new Robot(hardwareMap);
 		drive = new MecanumDrive(robot.wheels);
+		telemetry.addLine("Init started...");
+		telemetry.addLine("Please wait before pressing start");
+		telemetry.update();
 		initialize();
+		telemetry.addLine("Init done");
+		telemetry.addLine("You may now press start");
+		telemetry.update();
 		waitForStart();
 		run();
 		drive.waitUntilDone();

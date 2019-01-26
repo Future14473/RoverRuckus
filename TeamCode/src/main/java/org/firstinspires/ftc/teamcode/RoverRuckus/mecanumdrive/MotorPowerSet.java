@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
 /**
  * Represents a set of power levels for motors, and surrounding
  * calculations on motor power levels
+ *
  * @see MotorSet
  */
 public class MotorPowerSet {
@@ -15,12 +16,16 @@ public class MotorPowerSet {
 	/**
 	 * Construct via 4 power levels
 	 */
-	MotorPowerSet(double fl, double fr, double bl, double br) {
+	public MotorPowerSet(double fl, double fr, double bl, double br) {
 		this.power = new double[]{fl, fr, bl, br};
 	}
 	
 	MotorPowerSet() {
 		this.power = new double[4];
+	}
+	
+	public MotorPowerSet(double v) {
+		this(v, v, v, v);
 	}
 	
 	/**
@@ -41,9 +46,10 @@ public class MotorPowerSet {
 	
 	/**
 	 * Creates a new MotorPowerSet that represents moving the robot in the specified direction, turnRate, and speed.
+	 *
 	 * @param direction the direction to move the robot
-	 * @param turnRate the wait at which the robot turns
-	 * @param speed the speed of all these operations
+	 * @param turnRate  the wait at which the robot turns
+	 * @param speed     the speed of all these operations
 	 * @return the calculated MotorPowerSet
 	 */
 	public static MotorPowerSet calcPowerSet(double direction, double turnRate, double speed) {

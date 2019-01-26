@@ -5,19 +5,19 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.Button.State.*;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.util.Button.State.PRESSED;
 
 @TeleOp(name = "The Teleop")
 public class ActualTeleOp extends OpMode {
-	Button gp1y = new Button(() -> gamepad1.y);
+	private Button gp1y = new Button(() -> gamepad1.y);
 	private Robot robot;
 	private boolean reverseDrive = false;
 	
 	@Override
 	public void init() {
 		robot = new Robot(hardwareMap);
-		robot.wheels.setModeTo(RUN_USING_ENCODER);
+		robot.wheels.setMode(RUN_USING_ENCODER);
 	}
 	
 	@Override
@@ -35,6 +35,7 @@ public class ActualTeleOp extends OpMode {
 		if (gp1y.getState() == PRESSED) reverseDrive = !reverseDrive;
 		if (reverseDrive) direction += Math.PI;
 		robot.moveAt(direction, turnRate, speed);
+		telemetry.addData("Right Stick X", gamepad1.right_stick_x);
 		telemetry.addData("DIRECTION", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
 		/*-----------------*\
 		 |    GAMEPAD 2    |

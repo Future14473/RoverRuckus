@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ThreadPool;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
 
 /**
  * Base class for our custom modified operation modes (similar to Linear op mode).
@@ -18,6 +19,8 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	private ExecutorService executorService = null;
 	private volatile boolean isStarted = false;
 	private volatile boolean stopRequested = false;
+	private BooleanSupplier waitCondition = null;
+	private boolean theCondition = false;
 	
 	/**
 	 * Override this method and place your code here.
@@ -116,6 +119,17 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 		if (this.runner.hasRuntimeException()) {
 			throw this.runner.getRuntimeException();
 		}
+		// check for condition.
+		// ASSUMES only one thread per instance.
+		if (waitCondition != null) {
+			theCondition = waitCondition.getAsBoolean();
+			if (theCondition) {
+				synchronized (this) {
+					this.notifyAll();
+				}
+				waitCondition = null;
+			}
+		}
 		//no notifying necessary -- no one is waiting (no waitForHardwareCycle)
 	}
 	
@@ -142,6 +156,20 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 */
 	public boolean isStopRequested() {
 		return this.stopRequested || Thread.currentThread().isInterrupted();
+	}
+	
+	/**
+	 * Pauses the current thread until a given condition (checked with loop) occurs.
+	 *  @throws InterruptedException if this thread is interrupted while sleeping (op mode stopped).
+	 */
+	public void waitUntil(BooleanSupplier condition) throws InterruptedException {
+		this.theCondition = false;
+		this.waitCondition = condition;
+		while (!theCondition) {
+			synchronized (this) {
+				this.wait();
+			}
+		}
 	}
 	
 	/**

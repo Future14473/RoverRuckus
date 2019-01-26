@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.old;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "THE ACTUAL TELEOP", group = "teleop")
+@Disabled
 public class TeleOpReal extends OpMode {
 	private static final int ARM_MIN = 10;
 	private OldRobot robot = new OldRobot();

@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorPowerSet.*;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MotorPowerSet.*;
 
 /**
  * The publicly available class to interact with {@link MoveTaskExecutor}

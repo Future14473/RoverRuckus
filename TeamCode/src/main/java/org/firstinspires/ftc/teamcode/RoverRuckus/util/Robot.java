@@ -1,9 +1,16 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
-import com.qualcomm.robotcore.hardware.*;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSet;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MotorSet;
 
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorPowerSet.calcPowerSet;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MotorPowerSet.calcPowerSet;
 
 public class Robot {
 	public final DcMotor hook, rotater, extender, scorer;
@@ -18,26 +25,27 @@ public class Robot {
 		DcMotor bl = hwMap.get(DcMotor.class, "BackLeft");
 		DcMotor br = hwMap.get(DcMotor.class, "BackRight");
 		
-		bl.setDirection(DcMotorSimple.Direction.REVERSE);
-		fl.setDirection(DcMotorSimple.Direction.REVERSE);
+		bl.setDirection(REVERSE);
+		fl.setDirection(REVERSE);
 		
 		wheels = new MotorSet(fl, fr, bl, br);
+		wheels.setZeroPowerBehavior(BRAKE);
 		
 		hook = hwMap.get(DcMotor.class, "Hook");
-		hook.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		hook.setMode(RUN_USING_ENCODER);
+		hook.setZeroPowerBehavior(BRAKE);
 		
 		extender = hwMap.get(DcMotor.class, "Extender");
-		extender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		extender.setMode(RUN_USING_ENCODER);
+		extender.setZeroPowerBehavior(BRAKE);
 		
 		rotater = hwMap.get(DcMotor.class, "Rotater");
-		rotater.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		rotater.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		rotater.setMode(RUN_USING_ENCODER);
+		rotater.setZeroPowerBehavior(FLOAT);
 		
 		scorer = hwMap.get(DcMotor.class, "Scorer");
-		scorer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		scorer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		scorer.setMode(RUN_USING_ENCODER);
+		scorer.setZeroPowerBehavior(BRAKE);
 		
 		collector = hwMap.get(CRServo.class, "Collector");
 		
@@ -50,7 +58,7 @@ public class Robot {
 	 * Utility: set the motors right now to move in the specified direction, turnRate, and speed.
 	 */
 	public void moveAt(double direction, double turnRate, double speed) {
-		wheels.setPowerTo(calcPowerSet(direction, turnRate, speed));
+		wheels.setPower(calcPowerSet(direction, turnRate, speed));
 	}
 	
 }

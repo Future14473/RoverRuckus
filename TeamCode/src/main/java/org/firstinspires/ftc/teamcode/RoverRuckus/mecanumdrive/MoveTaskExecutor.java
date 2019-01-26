@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -71,7 +71,7 @@ class MoveTaskExecutor {
 	 * @throws InterruptedException if the thread is interrupted while waiting
 	 */
 	void waitUntilDone() throws InterruptedException {
-		while (taskRunner.isDone()) {
+		while (!taskRunner.isDone()) {
 			synchronized (taskRunner) {
 				taskRunner.wait();
 			}

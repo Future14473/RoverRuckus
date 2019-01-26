@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -27,7 +27,7 @@ public class StraightMoveTask implements MoveTask {
 			motors.get(i).setMode(DcMotor.RunMode.RUN_TO_POSITION);
 			motors.get(i).setTargetPosition(targPos[i]);
 		}
-		motors.setPowerTo(targetPower);
+		motors.setPower(targetPower);
 	}
 	
 	//read motor positions and adjust them as necessary if they go off track relative to everyone else.
@@ -47,7 +47,7 @@ public class StraightMoveTask implements MoveTask {
 		for (int i = 0; i < 4; i++) {
 			actualPower.power[i] = (targetPower.power[i] * (1 - 3 * (progress[i] - avgProgress))) * speed;
 		}
-		motors.setPowerTo(actualPower);
+		motors.setPower(actualPower);
 		return maxOff < 100;
 	}
 	
