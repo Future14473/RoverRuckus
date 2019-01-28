@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.util.ThreadPool;
+import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryInternal;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
@@ -125,8 +126,11 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 				}
 			}
 		}
+		//telemetry
+		if (telemetry instanceof TelemetryInternal) {
+			((TelemetryInternal) telemetry).tryUpdateIfDirty();
+		}
 		Thread.yield();
-		//no notifying necessary -- no one is waiting (no waitForHardwareCycle)
 	}
 	
 	/**

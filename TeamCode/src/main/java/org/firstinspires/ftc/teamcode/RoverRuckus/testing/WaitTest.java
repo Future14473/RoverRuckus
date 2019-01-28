@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.DecoratedLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive;
 
 @TeleOp(group = "test")
+@Disabled
 public class WaitTest extends DecoratedLinearOpMode {
 	
 	protected MecanumDrive drive;

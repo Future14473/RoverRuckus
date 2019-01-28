@@ -16,7 +16,7 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.Motor
 public class Robot {
 	public final MotorSet wheels;
 	public final DcMotor hook, scooper, collectArm, scoreArm;
-	public final Servo marker, flicker, collectDoor, scoreDoor;
+	public final Servo flicker, markerDoor, collectDoor, scoreDoor;
 	public final CRServo angler;
 	public final BNO055IMU imu;
 	
@@ -47,8 +47,8 @@ public class Robot {
 		scoreArm.setMode(RUN_USING_ENCODER);
 		scoreArm.setZeroPowerBehavior(BRAKE);
 		
-		marker = hardwareMap.get(Servo.class, "Marker");
 		flicker = hardwareMap.get(Servo.class, "Flicker");
+		markerDoor = hardwareMap.get(Servo.class, "MarkerDoor");
 		collectDoor = hardwareMap.get(Servo.class, "CollectDoor");
 		scoreDoor = hardwareMap.get(Servo.class, "ScoreDoor");
 		

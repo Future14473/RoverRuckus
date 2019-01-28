@@ -87,7 +87,7 @@ public abstract class AbstractAuto extends DecoratedLinearOpMode {
 	
 	private void putMarkerInDepot() throws InterruptedException {
 		//deposit
-		robot.marker.setPosition(0.9);
+		robot.markerDoor.setPosition(0.9);
 		sleep(1000);
 		robot.flicker.setPosition(0.65);
 		sleep(1000);
