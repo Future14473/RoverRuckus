@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -106,32 +106,34 @@ class MoveTaskExecutor {
 		
 		@Override
 		public void run() {
-			while (!Thread.interrupted()) try {
-				if (queue.isEmpty()) { //if we're done, notify people.
-					synchronized (this) {
-						done = true;
-						this.notifyAll();
+			try {
+				while (!Thread.interrupted()) {
+					if (queue.isEmpty()) { //if we're done, notify people.
+						synchronized (this) {
+							done = true;
+							this.notifyAll();
+						}
 					}
-				}
-				try {
-					curTask = queue.poll(2, TimeUnit.MINUTES);
-					if (curTask == null) break;
-				} catch (InterruptedException e) {
-					break;
-				}
-				//we have a new task
-				done = false;
-				//run the task
-				curTask.start(motors);
-				while (!Thread.currentThread().isInterrupted()) {
-					if (skip) {
-						skip = false;
+					try {
+						curTask = queue.poll(2, TimeUnit.MINUTES);
+						if (curTask == null) break;
+					} catch (InterruptedException e) {
 						break;
 					}
-					if (curTask.run(motors)) break;
+					//we have a new task
+					done = false;
+					//run the task
+					curTask.start(motors);
+					while (!Thread.currentThread().isInterrupted()) {
+						if (skip) {
+							skip = false;
+							break;
+						}
+						if (curTask.run(motors)) break;
+					}
+					motors.stop();
+					skip = false;
 				}
-				motors.stop();
-				skip = false;
 			} finally {
 				motors.stop();
 				synchronized (this) { //tell waiters to stop waiting: we are done

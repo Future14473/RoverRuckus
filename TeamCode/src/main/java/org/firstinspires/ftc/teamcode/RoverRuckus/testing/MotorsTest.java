@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(group = "test")
+@Disabled
 public class MotorsTest extends OpMode {
 	private DcMotor motor;
 	private Servo servo;

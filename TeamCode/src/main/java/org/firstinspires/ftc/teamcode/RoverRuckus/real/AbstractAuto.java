@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.DecoratedOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.DecoratedLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive;
 
-public abstract class AbstractAuto extends DecoratedOpMode {
+public abstract class AbstractAuto extends DecoratedLinearOpMode {
 	private static final int HOOK_TURN = -25700;
 	protected MecanumDrive drive;
 	private ElapsedTime timer = new ElapsedTime();
@@ -16,9 +16,20 @@ public abstract class AbstractAuto extends DecoratedOpMode {
 	protected abstract void positionForDepot() throws InterruptedException;
 	
 	@Override
-	protected void initialize() {
-		drive = new MecanumDrive(robot.wheels);
+	protected void initialize() throws InterruptedException {
 		goldLooker.init(hardwareMap);
+		/*
+		robot.imu.initialize(new BNO055IMU.Parameters() {
+			{
+				angleUnit = BNO055IMU.AngleUnit.DEGREES;
+			}
+		});
+		drive = new MecanumDrive(robot.wheels, new AdjustedCumulativeOrientation(robot.imu::getAngularOrientation));
+		waitUntil(robot.imu::isGyroCalibrated);
+		/*/
+		drive = new MecanumDrive(robot.wheels);
+		//*/
+		
 	}
 	
 	@Override
@@ -39,6 +50,7 @@ public abstract class AbstractAuto extends DecoratedOpMode {
 	protected void cleanup() {
 		drive.stop();
 		goldLooker.stop();
+		robot.imu.close();
 	}
 	
 	private void unHook() throws InterruptedException {
@@ -85,14 +97,14 @@ public abstract class AbstractAuto extends DecoratedOpMode {
 	
 	private void parkInCrater() throws InterruptedException {
 		drive.moveXY(0, 1.7, 10);
-		robot.rotater.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		robot.rotater.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		robot.rotater.setPower(0.6);
+		robot.scooper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		robot.scooper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		robot.scooper.setPower(0.6);
 		sleep(1000);
-		robot.rotater.setPower(0);
-		robot.extender.setPower(-1);
+		robot.scooper.setPower(0);
+		robot.collectArm.setPower(-1);
 		sleep(1000);
-		robot.extender.setPower(0);
+		robot.collectArm.setPower(0);
 		drive.waitUntilDone();
 		waitUntil(() -> Math.abs(robot.hook.getCurrentPosition()/* - 0 */) > 20);
 		robot.hook.setPower(0);

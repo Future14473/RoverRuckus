@@ -116,7 +116,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 		if (this.runner.hasRuntimeException()) {
 			throw this.runner.getRuntimeException();
 		}
-		// check for condition.
+		// check for condition -- waitUntil impl.
 		if (waitCondition != null) { //since no one else can set it to null, this is fine.
 			synchronized (this) {
 				if (waitCondition.getAsBoolean()) {
@@ -125,6 +125,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 				}
 			}
 		}
+		Thread.yield();
 		//no notifying necessary -- no one is waiting (no waitForHardwareCycle)
 	}
 	
@@ -164,17 +165,30 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	}
 	
 	/**
-	 * Pauses the current thread until a given condition (checked with loop) occurs.
+	 * Pauses the current thread indefinitely until a given condition (checked with loop) occurs
 	 *
 	 * @throws InterruptedException if this thread is interrupted while waiting (op mode stopped).
 	 */
-	protected void waitUntil(BooleanSupplier condition) throws InterruptedException {
+	protected void waitUntil(BooleanSupplier waitCondition) throws InterruptedException {
+		RobotLog.d("WaitUntil started: " + waitCondition.toString());
 		synchronized (this) {
-			this.waitCondition = condition;
-			while (waitCondition != null) {
+			this.waitCondition = waitCondition;
+			while (this.waitCondition != null) {
 				this.wait();
 			}
 		}
+		RobotLog.d("WaitUntil ended " + waitCondition.toString());
+	}
+	
+	/**
+	 * Pauses the current thread until a given condition occurs, or after timeout.
+	 *
+	 * @throws InterruptedException if this thread is interrupted while waiting (op mode stopped).
+	 */
+	protected void waitUntil(BooleanSupplier waitCondition, long timeout, TimeUnit unit) throws InterruptedException {
+		long nanos = unit.toNanos(timeout);
+		final long stopTime = System.nanoTime() + nanos;
+		waitUntil(() -> waitCondition.getAsBoolean() && System.nanoTime() < stopTime);
 	}
 	
 	/**

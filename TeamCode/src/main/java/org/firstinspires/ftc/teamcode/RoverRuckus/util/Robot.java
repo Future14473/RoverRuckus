@@ -5,64 +5,63 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MotorSet;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSet;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MotorPowerSet.calcPowerSet;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPower.calcPower;
 
 public class Robot {
 	public final MotorSet wheels;
-	public final DcMotor hook, rotater, extender, scorer;
-	public final Servo marker, flicker, door;
-	public final CRServo collector;
+	public final DcMotor hook, scooper, collectArm, scoreArm;
+	public final Servo marker, flicker, collectDoor, scoreDoor;
+	public final CRServo angler;
 	public final BNO055IMU imu;
 	
-	public Robot(HardwareMap hwMap) {
+	public Robot(HardwareMap hardwareMap) {
 		
-		DcMotor fl = hwMap.get(DcMotor.class, "FrontLeft");
-		DcMotor fr = hwMap.get(DcMotor.class, "FrontRight");
-		DcMotor bl = hwMap.get(DcMotor.class, "BackLeft");
-		DcMotor br = hwMap.get(DcMotor.class, "BackRight");
-		
+		DcMotor fl = hardwareMap.get(DcMotor.class, "FrontLeft");
+		DcMotor fr = hardwareMap.get(DcMotor.class, "FrontRight");
+		DcMotor bl = hardwareMap.get(DcMotor.class, "BackLeft");
+		DcMotor br = hardwareMap.get(DcMotor.class, "BackRight");
 		bl.setDirection(REVERSE);
 		fl.setDirection(REVERSE);
-		
 		wheels = new MotorSet(fl, fr, bl, br);
 		wheels.setZeroPowerBehavior(BRAKE);
 		
-		hook = hwMap.get(DcMotor.class, "Hook");
+		hook = hardwareMap.get(DcMotor.class, "Hook");
 		hook.setMode(RUN_USING_ENCODER);
 		hook.setZeroPowerBehavior(BRAKE);
 		
-		extender = hwMap.get(DcMotor.class, "Extender");
-		extender.setMode(RUN_USING_ENCODER);
-		extender.setZeroPowerBehavior(BRAKE);
+		scooper = hardwareMap.get(DcMotor.class, "Scooper");
+		scooper.setMode(RUN_USING_ENCODER);
+		scooper.setZeroPowerBehavior(FLOAT);
 		
-		rotater = hwMap.get(DcMotor.class, "Rotater");
-		rotater.setMode(RUN_USING_ENCODER);
-		rotater.setZeroPowerBehavior(FLOAT);
+		collectArm = hardwareMap.get(DcMotor.class, "CollectArm");
+		collectArm.setMode(RUN_USING_ENCODER);
+		collectArm.setZeroPowerBehavior(BRAKE);
 		
-		scorer = hwMap.get(DcMotor.class, "Scorer");
-		scorer.setMode(RUN_USING_ENCODER);
-		scorer.setZeroPowerBehavior(BRAKE);
+		scoreArm = hardwareMap.get(DcMotor.class, "ScoreArm");
+		scoreArm.setMode(RUN_USING_ENCODER);
+		scoreArm.setZeroPowerBehavior(BRAKE);
 		
-		collector = hwMap.get(CRServo.class, "Collector");
+		marker = hardwareMap.get(Servo.class, "Marker");
+		flicker = hardwareMap.get(Servo.class, "Flicker");
+		collectDoor = hardwareMap.get(Servo.class, "CollectDoor");
+		scoreDoor = hardwareMap.get(Servo.class, "ScoreDoor");
 		
-		marker = hwMap.get(Servo.class, "Marker");
-		flicker = hwMap.get(Servo.class, "Flicker");
-		door = hwMap.get(Servo.class, "Door");
+		angler = hardwareMap.get(CRServo.class, "Angler");
 		
-		imu = hwMap.get(BNO055IMU.class, "imu");
+		imu = hardwareMap.get(BNO055IMU.class, "imu");
 	}
 	
 	/**
 	 * Utility: set the motors right now to move in the specified direction, turnRate, and speed.
 	 */
 	public void moveAt(double direction, double turnRate, double speed) {
-		wheels.setPower(calcPowerSet(direction, turnRate, speed));
+		wheels.setPower(calcPower(direction, turnRate, speed));
 	}
 	
 }

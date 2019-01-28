@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.DecoratedOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.DecoratedLinearOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive;
 
 @TeleOp(group = "test")
-public class WaitTest extends DecoratedOpMode {
+public class WaitTest extends DecoratedLinearOpMode {
 	
 	protected MecanumDrive drive;
 	
@@ -20,5 +20,10 @@ public class WaitTest extends DecoratedOpMode {
 			waitUntil(() -> !gamepad1.a);
 			drive.move(0, -0.1, 1);
 		}
+	}
+	
+	@Override
+	protected void cleanup() {
+	
 	}
 }

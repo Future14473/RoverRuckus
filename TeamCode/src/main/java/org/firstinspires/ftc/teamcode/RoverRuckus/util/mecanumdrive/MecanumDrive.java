@@ -1,21 +1,44 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
 
-import static org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MotorPowerSet.*;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.AdjustedCumulativeOrientation;
+
+import java.util.function.Supplier;
+
+import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPower.calcPower;
 
 /**
  * The publicly available class to interact with {@link MoveTaskExecutor}
- * (One day we might add a interface abstraction)
+ * <p>
+ * Orientation: <br>
+ * <pre>
+ *       -deg<-(0)->+deg
+ *             +Y
+ *              |
+ * -90deg  -X --O-- +X  +90deg
+ *              |
+ *             -Y
+ *          +/-180deg
+ * </pre>
+ * Factory, Wrapper, and Decorator (too much?)
  */
 public class MecanumDrive {
 	private final MoveTaskExecutor taskExecutor;
-	private final MotorSet motors;
+	private final Supplier<Orientation> orientation;
+	
+	/**
+	 * Construct, given a set of motors to run on.
+	 *
+	 * @param motors
+	 */
+	public MecanumDrive(MotorSet motors) {this(motors, null);}
 	
 	/**
 	 * Construct, given a set of motors to run on.
 	 */
-	public MecanumDrive(MotorSet motors) {
+	public MecanumDrive(MotorSet motors, Supplier<Orientation> curOrientation) {
 		taskExecutor = new MoveTaskExecutor(motors);
-		this.motors = motors;
+		this.orientation = new AdjustedCumulativeOrientation(curOrientation);
 	}
 	
 	
@@ -39,7 +62,7 @@ public class MecanumDrive {
 	 */
 	public void move(double direction, double distance, double speed) {
 		direction = Math.toRadians(direction);
-		taskExecutor.add(new StraightMoveTask(calcPowerSet(direction, 0, 1), distance * MOVE_MULT, speed));
+		taskExecutor.add(new StraightMoveTask(calcPower(direction, 0, 1), distance * MotorSetPosition.MOVE_MULT, speed));
 	}
 	
 	/**
@@ -55,9 +78,13 @@ public class MecanumDrive {
 	 * Adds a task the represents turning the robot a specific number of degrees.
 	 */
 	public void turn(double angle, double speed) {
-		angle = Math.toRadians(angle);
-		taskExecutor.add(new StraightMoveTask(calcPowerSet(0, Math.signum(angle), 0), Math.abs(angle) * TURN_MULT,
-				speed));
+		if (orientation == null) {
+			angle = Math.toRadians(angle);
+			taskExecutor.add(new StraightMoveTask(calcPower(0, Math.signum(angle), 0),
+					Math.abs(angle) * MotorSetPosition.TURN_MULT, speed));
+		} else {
+			taskExecutor.add(new TurnMoveTask(angle, speed, orientation));
+		}
 	}
 	
 	/**
@@ -82,6 +109,5 @@ public class MecanumDrive {
 	 */
 	public void stop() {
 		taskExecutor.stop();
-		motors.stop();
 	}
 }

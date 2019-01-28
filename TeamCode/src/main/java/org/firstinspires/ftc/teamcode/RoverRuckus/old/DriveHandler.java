@@ -296,7 +296,7 @@ public class DriveHandler {
 		}
 		
 		/**
-		 * Generates a MotorPowerSet that corresponds to turning the robot in the specified direction
+		 * Generates a MotorSetPower that corresponds to turning the robot in the specified direction
 		 */
 		private static MotorPowerSet calcPowerSet(double direction, double turnRate, double speed) {
 			double robotAngle = direction + Math.PI / 4;

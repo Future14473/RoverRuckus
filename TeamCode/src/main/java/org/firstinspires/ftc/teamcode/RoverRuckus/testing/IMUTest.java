@@ -1,38 +1,40 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Button;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.DecoratedOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.ModifiedLinearOpMode;
 
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.Button.State.PRESSED;
-
-public class IMUTest extends DecoratedOpMode {
+@TeleOp(group = "test")
+public class IMUTest extends ModifiedLinearOpMode {
 	private Button gp1a = new Button(() -> gamepad1.a);
+	private BNO055IMU imu;
 	
 	@Override
-	protected void initialize() throws InterruptedException {
-		robot.imu.initialize(new BNO055IMU.Parameters() {
+	protected void runOpMode() throws InterruptedException {
+		imu = hardwareMap.get(BNO055IMU.class, "imu");
+		imu.initialize(new BNO055IMU.Parameters() {
 			{
 				angleUnit = BNO055IMU.AngleUnit.DEGREES;
 			}
 		});
-		robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 10);
-	}
-	
-	@Override
-	protected void run() throws InterruptedException {
-		if (gp1a.getState() == PRESSED) {
-			robot.imu.startAccelerationIntegration(, new Velocity(), 10);
-		}
-		telemetry.addData("ACCELERATION:", robot.imu.getAcceleration());
-		telemetry.addData("VELOCITY:", robot.imu.getVelocity());
+		telemetry.addLine("Calibrating...");
+		telemetry.update();
+		waitUntil(() -> imu.isGyroCalibrated() || gamepad1.a);
+		telemetry.addLine("Calibration done, waiting for start");
+		telemetry.update();
+		waitForStart();
 		
+		while (opModeIsActive()) {
+			telemetry.addData("ANGULAR ORIENTATION:",
+					imu.getAngularOrientation().toAxesOrder(AxesOrder.ZYX).toString());
+			telemetry.update();
+		}
 	}
 	
 	@Override
 	protected void cleanup() {
-		robot.imu.close();
+		imu.close();
 	}
 }

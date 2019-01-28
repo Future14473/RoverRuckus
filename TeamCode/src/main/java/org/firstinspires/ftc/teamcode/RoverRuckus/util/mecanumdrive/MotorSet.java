@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -6,14 +6,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MotorPowerSet.ZERO;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPower.ZERO;
 
 /**
  * Represents a set of motors in the following order: <br>
  * [fl, fr, bl, br]
  * Immutable.
  *
- * @see MotorPowerSet
+ * @see MotorSetPower
  */
 //immutable
 public final class MotorSet implements Iterable<DcMotor> {
@@ -31,14 +31,32 @@ public final class MotorSet implements Iterable<DcMotor> {
 	}
 	
 	/**
-	 * Sets all the motors' power to the given {@link MotorPowerSet}
+	 * Sets all the motors' power to the given {@link MotorSetPower}
 	 */
-	public void setPower(MotorPowerSet powerSet) {
-		powerSet = powerSet.scaled();
+	public void setPower(MotorSetPower power) {
+		power = power.scaled();
 		for (int i = 0; i < 4; i++) {
-			motors.get(i).setPower(powerSet.power[i]);
+			motors.get(i).setPower(power.power[i]);
 		}
 	}
+	
+	public MotorSetPosition getCurrentPosition() {
+		MotorSetPosition o = new MotorSetPosition();
+		for (int i = 0; i < 4; i++) {
+			o.position[i] = motors.get(i).getCurrentPosition();
+		}
+		return o;
+	}
+	
+	/**
+	 * Sets all the motors' target position to the given {@link MotorSetPosition}
+	 */
+	public void setTargetPosition(MotorSetPosition position) {
+		for (int i = 0; i < 4; i++) {
+			motors.get(i).setTargetPosition(position.position[i]);
+		}
+	}
+	
 	/**
 	 * Gets a motor.
 	 *

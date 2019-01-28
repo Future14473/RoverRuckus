@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.DecoratedOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.DecoratedLinearOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive;
 
 @Autonomous
-public class DriveTest extends DecoratedOpMode {
+@Disabled
+public class DriveTest extends DecoratedLinearOpMode {
 	protected MecanumDrive drive;
 	
 	@Override
@@ -20,4 +22,7 @@ public class DriveTest extends DecoratedOpMode {
 		drive.move(180, 0.5, 1);
 		drive.move(90, 0.5, 1);
 	}
+	
+	@Override
+	protected void cleanup() {}
 }
