@@ -33,7 +33,7 @@ public class ActualTeleOp extends OpMode {
 		double speed = Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y), 1.7) * speedMult;
 		if (gp1y.pressed()) reverseDrive = !reverseDrive;
 		if (reverseDrive) direction += Math.PI;
-		robot.moveAt(direction, turnRate, speed);
+		robot.moveAt(direction, speed, turnRate);
 		telemetry.addData("Right Stick X", gamepad1.right_stick_x);
 		telemetry.addData("DIRECTION", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
 		/*-----------------*\

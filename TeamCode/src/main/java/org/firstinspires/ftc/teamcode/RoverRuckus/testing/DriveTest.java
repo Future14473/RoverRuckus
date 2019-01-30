@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.DecoratedLinearOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive;
 
 @Autonomous
 @Disabled
-public class DriveTest extends DecoratedLinearOpMode {
+public class DriveTest extends OurLinearOpMode {
 	protected MecanumDrive drive;
 	
 	@Override

@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
 
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.ExternalSignalingWaiter;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
  * Actually handles the running of {@link MoveTask}s, given a
@@ -14,7 +18,8 @@ import java.util.concurrent.TimeUnit;
  * Although Object#finalize() is overriden as a backup and the thread
  * will stop itself after 2 minutes of inactivity: <br>
  * IT IS THE RESPONSIBILITY OF THE CLIENT TO CALL {@link #stop()} ON
- * THIS METHOD TO END THE INTERNAL THREAD GRACEFULLY.
+ * THIS METHOD TO END THE INTERNAL THREAD GRACEFULLY. ELSE IT MAY NEVER
+ * STOP WHEN ITS SUPPOSED TO.
  *
  * @see MoveTask
  */
@@ -23,7 +28,10 @@ class MoveTaskExecutor {
 	private final MotorSet motors;
 	//executors are too complex for us to need em.
 	private final Thread theThread;
-	private final TaskRunner taskRunner;
+	
+	private final AtomicBoolean done = new AtomicBoolean(true);
+	private final ExternalSignalingWaiter isDone = new ExternalSignalingWaiter(done::get);
+	private final AtomicBoolean skip = new AtomicBoolean(false);
 	
 	/**
 	 * Construct via motors
@@ -32,7 +40,7 @@ class MoveTaskExecutor {
 	 */
 	MoveTaskExecutor(MotorSet motors) {
 		this.motors = motors;
-		taskRunner = new TaskRunner();
+		TaskRunner taskRunner = new TaskRunner();
 		theThread = new Thread(taskRunner);
 		theThread.setName("Move Task Executor");
 		theThread.setDaemon(true);
@@ -41,11 +49,11 @@ class MoveTaskExecutor {
 	
 	/**
 	 * Adds a MoveTask to the queue
+	 *
+	 * @throws IllegalStateException if the thread has already stopped.
 	 */
 	void add(MoveTask task) {
-		try {
-			if (!theThread.isAlive()) theThread.start();
-		} catch (IllegalStateException e) { return;}
+		if (!theThread.isAlive()) theThread.start();
 		queue.add(task);
 	}
 	
@@ -55,27 +63,23 @@ class MoveTaskExecutor {
 	 */
 	void cancel() {
 		queue.clear();
-		taskRunner.stopTask();
+		skip.set(true);
 	}
 	
 	/**
-	 * @return true if no tasks are running, false if running
+	 * @return true if no tasks are running, false otherwise
 	 */
 	boolean isDone() {
-		return taskRunner.isDone();
+		return done.get();
 	}
 	
 	/**
-	 * waits (blocks the current thread) until all tasks are finished.
+	 * waits until all current tasks are finished.
 	 *
 	 * @throws InterruptedException if the thread is interrupted while waiting
 	 */
 	void waitUntilDone() throws InterruptedException {
-		synchronized (taskRunner) {
-			while (!taskRunner.isDone()) {
-				taskRunner.wait();
-			}
-		}
+		isDone.waitUntilTrue();
 	}
 	
 	/**
@@ -95,55 +99,36 @@ class MoveTaskExecutor {
 	 */
 	private class TaskRunner implements Runnable {
 		
-		private boolean done = true;
-		
-		private boolean skip = false;
-		private MoveTask curTask = null;
-		
-		boolean isDone() {
-			return done;
-		}
-		
 		@Override
 		public void run() {
 			try {
-				while (!Thread.interrupted()) {
-					if (queue.isEmpty()) { //if we're done, notify people.
-						synchronized (this) {
-							done = true;
-							this.notifyAll();
-						}
+				while (!Thread.currentThread().isInterrupted()) {
+					if (queue.isEmpty()) { //if we're done, set and notify
+						done.set(true);
+						isDone.update();
 					}
+					MoveTask curTask;
 					try {
-						curTask = queue.poll(2, TimeUnit.MINUTES);
+						curTask = queue.poll(2, MINUTES);
 						if (curTask == null) break;
 					} catch (InterruptedException e) {
 						break;
 					}
-					//we have a new task
-					done = false;
+					//we have a new task, NOT DONE.
+					done.set(false);
 					//run the task
 					curTask.start(motors);
 					while (!Thread.currentThread().isInterrupted()) {
-						if (skip) {
-							skip = false;
-							break;
-						}
-						if (curTask.run(motors)) break;
+						if (skip.compareAndSet(true, false)) break; //skip this task.
+						if (curTask.run(motors)) break; //task is actually done
 					}
+					skip.set(false);
 					motors.stop();
-					skip = false;
 				}
 			} finally {
-				motors.stop();
-				synchronized (this) { //tell waiters to stop waiting: we are done
-					this.notifyAll();
-				}
+				done.set(true);
+				isDone.update();
 			}
-		}
-		
-		void stopTask() {
-			skip = true;
 		}
 	}
 }

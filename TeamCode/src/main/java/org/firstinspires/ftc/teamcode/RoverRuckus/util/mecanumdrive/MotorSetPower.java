@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
 
+import java.util.Arrays;
+
 /**
  * Represents a set of power levels for motors, and surrounding
  * calculations on motor power levels
@@ -43,17 +45,21 @@ public class MotorSetPower {
 	 * Creates a new MotorSetPower that represents moving the robot in the specified direction, turnRate, and speed.
 	 *
 	 * @param direction the direction to move the robot
+	 * @param moveSpeed the speed of all these operations
 	 * @param turnRate  the wait at which the robot turns
-	 * @param speed     the speed of all these operations
 	 * @return the calculated MotorSetPower
 	 */
-	public static MotorSetPower calcPower(double direction, double turnRate, double speed) {
+	public static MotorSetPower calcPower(double direction, double moveSpeed, double turnRate) {
 		double robotAngle = direction + Math.PI / 4;
-		double v1 = speed * Math.sin(robotAngle) + turnRate;
-		double v2 = speed * Math.cos(robotAngle) - turnRate;
-		double v3 = speed * Math.cos(robotAngle) + turnRate;
-		double v4 = speed * Math.sin(robotAngle) - turnRate;
+		double v1 = moveSpeed * Math.sin(robotAngle) + turnRate;
+		double v2 = moveSpeed * Math.cos(robotAngle) - turnRate;
+		double v3 = moveSpeed * Math.cos(robotAngle) + turnRate;
+		double v4 = moveSpeed * Math.sin(robotAngle) - turnRate;
 		return new MotorSetPower(v1, v2, v3, v4);
 	}
 	
+	@Override
+	public String toString() {
+		return Arrays.toString(power);
+	}
 }

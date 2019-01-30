@@ -15,12 +15,11 @@ import java.util.function.BooleanSupplier;
  * Redundant code and weird things removed.
  */
 public abstract class ModifiedLinearOpMode extends OpMode {
-	private DrivingOpModeRunner runner = null;
+	private OpModeRunner runner = null;
 	private ExecutorService executorService = null;
 	private volatile boolean isStarted = false;
 	private volatile boolean stopRequested = false;
-	private BooleanSupplier waitCondition = null;
-	private boolean theCondition = false;
+	private ExternalSignalingWaiter condition = null;
 	
 	/**
 	 * Override this method and place your code here.
@@ -43,7 +42,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	@Override
 	final public void init() {
 		this.executorService = ThreadPool.newSingleThreadExecutor("ModifiedLinearOpMode");
-		this.runner = new DrivingOpModeRunner();
+		this.runner = new OpModeRunner();
 		this.executorService.execute(this.runner);
 	}
 	
@@ -114,22 +113,20 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	private void handleLoop() {
 		// if there is a runtime exception in user code; throw it so the normal error
 		// reporting process can handle it
-		if (this.runner.hasRuntimeException()) {
-			throw this.runner.getRuntimeException();
+		if (runner.hasRuntimeException()) {
+			throw runner.getRuntimeException();
 		}
 		// check for condition -- waitUntil impl.
-		if (waitCondition != null) { //since no one else can set it to null, this is fine.
-			synchronized (this) {
-				if (waitCondition.getAsBoolean()) {
-					waitCondition = null;
-					this.notifyAll();
-				}
-			}
+		if (condition != null) {
+			//no one sets to null; so no synchronize needed.
+			condition.update();
 		}
+		
 		//telemetry
 		if (telemetry instanceof TelemetryInternal) {
 			((TelemetryInternal) telemetry).tryUpdateIfDirty();
 		}
+		//slight efficiency
 		Thread.yield();
 	}
 	
@@ -173,15 +170,11 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 *
 	 * @throws InterruptedException if this thread is interrupted while waiting (op mode stopped).
 	 */
-	protected void waitUntil(BooleanSupplier waitCondition) throws InterruptedException {
-		RobotLog.d("WaitUntil started: " + waitCondition.toString());
-		synchronized (this) {
-			this.waitCondition = waitCondition;
-			while (this.waitCondition != null) {
-				this.wait();
-			}
-		}
-		RobotLog.d("WaitUntil ended " + waitCondition.toString());
+	protected void waitUntil(BooleanSupplier condition) throws InterruptedException {
+		RobotLog.d("WaitUntil started: " + condition.toString());
+		this.condition = new ExternalSignalingWaiter(condition);
+		this.condition.waitUntilTrue();
+		RobotLog.d("WaitUntil ended " + condition.toString());
 	}
 	
 	/**
@@ -192,7 +185,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	protected void waitUntil(BooleanSupplier waitCondition, long timeout, TimeUnit unit) throws InterruptedException {
 		long nanos = unit.toNanos(timeout);
 		final long stopTime = System.nanoTime() + nanos;
-		waitUntil(() -> waitCondition.getAsBoolean() && System.nanoTime() < stopTime);
+		waitUntil(() -> waitCondition.getAsBoolean() || System.nanoTime() >= stopTime);
 	}
 	
 	/**
@@ -228,12 +221,12 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 		return this.isStarted || Thread.currentThread().isInterrupted();
 	}
 	
-	private class DrivingOpModeRunner implements Runnable {
+	private class OpModeRunner implements Runnable {
 		RuntimeException exception = null;
 		
 		boolean isShutdown = false;
 		
-		DrivingOpModeRunner() {
+		OpModeRunner() {
 		}
 		
 		RuntimeException getRuntimeException() {

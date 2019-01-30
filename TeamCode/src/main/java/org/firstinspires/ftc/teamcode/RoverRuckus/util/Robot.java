@@ -5,12 +5,17 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSet;
 
+import static com.qualcomm.hardware.bosch.BNO055IMU.AngleUnit.DEGREES;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPower.calcPower;
 
 public class Robot {
@@ -42,10 +47,12 @@ public class Robot {
 		collectArm = hardwareMap.get(DcMotor.class, "CollectArm");
 		collectArm.setMode(RUN_USING_ENCODER);
 		collectArm.setZeroPowerBehavior(BRAKE);
+		//collectArm.setDirection(REVERSE);
 		
 		scoreArm = hardwareMap.get(DcMotor.class, "ScoreArm");
 		scoreArm.setMode(RUN_USING_ENCODER);
 		scoreArm.setZeroPowerBehavior(BRAKE);
+		//scoreArm.setDirection(REVERSE);
 		
 		flicker = hardwareMap.get(Servo.class, "Flicker");
 		markerDoor = hardwareMap.get(Servo.class, "MarkerDoor");
@@ -60,8 +67,37 @@ public class Robot {
 	/**
 	 * Utility: set the motors right now to move in the specified direction, turnRate, and speed.
 	 */
-	public void moveAt(double direction, double turnRate, double speed) {
-		wheels.setPower(calcPower(direction, turnRate, speed));
+	public void moveAt(double direction, double moveSpeed, double turnRate) {
+		wheels.setPower(calcPower(direction, moveSpeed, turnRate));
 	}
 	
+	/**
+	 * Initializes the robot's imu. This if for consistent parameters in the
+	 * IMU throughout our code.
+	 *
+	 * @implNote this does not wait for gyro calibration.
+	 */
+	public void initIMU() {
+		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+		parameters.angleUnit = DEGREES;
+		imu.initialize(parameters);
+	}
+	
+	/**
+	 * Gets the orientation of hte robot as read from the IMU.
+	 * Used for consistent parameters in our code.
+	 */
+	public Orientation getOrientation() {
+		return imu.getAngularOrientation(INTRINSIC, ZYX, RADIANS);
+	}
+	
+	/**
+	 * Gets the orientation of the robot, on a plane parallel to the floor.
+	 * In RADIANS.
+	 * Positive is counterclockwise. this is not the same as in
+	 * {@link org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive MecanumDrive}!!
+	 */
+	public float getDirection() {
+		return getOrientation().firstAngle;
+	}
 }

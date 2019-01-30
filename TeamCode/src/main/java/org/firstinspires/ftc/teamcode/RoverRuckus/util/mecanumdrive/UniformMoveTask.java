@@ -46,17 +46,21 @@ public abstract class UniformMoveTask implements MoveTask {
 		motors.setMode(STOP_AND_RESET_ENCODER);
 		motors.setMode(RUN_TO_POSITION);
 		motors.setTargetPosition(getTargPos());
-		motors.setPower(targPower);
 	}
 	
 	protected void setPower(double avgProgress, MotorSet motors) {
 		for (int i = 0; i < 4; i++) {
 			actualPower.power[i] = (targPower.power[i] * (1 - 3 * (progress[i] - avgProgress))) * speed;
 		}
+		//RobotLog.v("SET POWER: %s", actualPower.toString());
 		motors.setPower(actualPower);
 	}
 	
 	public MotorSetPosition getTargPos() {
 		return targPos;
+	}
+	
+	public MotorSetPosition getCurPos() {
+		return curPos;
 	}
 }

@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.AdjustedCumulativeOrientation;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.CumulativeDirection;
 
-import java.util.function.Supplier;
+import java.util.function.DoubleSupplier;
 
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPower.calcPower;
 
@@ -24,21 +23,24 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.Motor
  */
 public class MecanumDrive {
 	private final MoveTaskExecutor taskExecutor;
-	private final Supplier<Orientation> orientation;
+	private final DoubleSupplier direction;
 	
 	/**
 	 * Construct, given a set of motors to run on.
 	 *
 	 * @param motors
 	 */
-	public MecanumDrive(MotorSet motors) {this(motors, null);}
+	public MecanumDrive(MotorSet motors) {
+		taskExecutor = new MoveTaskExecutor(motors);
+		this.direction = null;
+	}
 	
 	/**
 	 * Construct, given a set of motors to run on.
 	 */
-	public MecanumDrive(MotorSet motors, Supplier<Orientation> curOrientation) {
+	public MecanumDrive(MotorSet motors, DoubleSupplier direction) {
 		taskExecutor = new MoveTaskExecutor(motors);
-		this.orientation = new AdjustedCumulativeOrientation(curOrientation);
+		this.direction = new CumulativeDirection(direction);
 	}
 	
 	
@@ -62,7 +64,8 @@ public class MecanumDrive {
 	 */
 	public void move(double direction, double distance, double speed) {
 		direction = Math.toRadians(direction);
-		taskExecutor.add(new StraightMoveTask(calcPower(direction, 0, 1), distance * MotorSetPosition.MOVE_MULT, speed));
+		taskExecutor.add(new StraightMoveTask(calcPower(direction, 1, 0), distance * MotorSetPosition.MOVE_MULT,
+				speed));
 	}
 	
 	/**
@@ -77,13 +80,13 @@ public class MecanumDrive {
 	/**
 	 * Adds a task the represents turning the robot a specific number of degrees.
 	 */
-	public void turn(double angle, double speed) {
-		if (orientation == null) {
-			angle = Math.toRadians(angle);
-			taskExecutor.add(new StraightMoveTask(calcPower(0, Math.signum(angle), 0),
-					Math.abs(angle) * MotorSetPosition.TURN_MULT, speed));
+	public void turn(double degreesToTurn, double speed) {
+		if (direction == null) {
+			degreesToTurn = Math.toRadians(degreesToTurn);
+			taskExecutor.add(new StraightMoveTask(calcPower(0, 0, Math.signum(degreesToTurn)),
+					Math.abs(degreesToTurn) * MotorSetPosition.TURN_MULT, speed));
 		} else {
-			taskExecutor.add(new TurnMoveTask(angle, speed, orientation));
+			taskExecutor.add(new TurnMoveTask(degreesToTurn, speed, direction));
 		}
 	}
 	
