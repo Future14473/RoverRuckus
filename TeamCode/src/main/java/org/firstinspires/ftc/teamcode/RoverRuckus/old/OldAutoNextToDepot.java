@@ -77,6 +77,7 @@ public class OldAutoNextToDepot extends LinearOpMode {
 		sleep(500);
 		robot.flicker.setPosition(0.65);
 	}
+	
 	private void parkInCrater() throws InterruptedException {
 		robot.drive.moveXY(0, 1.7, 10);
 		robot.arm.setPower(1);

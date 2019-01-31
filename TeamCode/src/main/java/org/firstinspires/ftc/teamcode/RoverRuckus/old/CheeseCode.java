@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
-@SuppressWarnings("ALL")
 @Autonomous(name = "Cheese", group = "Test")
 @Disabled
 public class CheeseCode extends LinearOpMode {

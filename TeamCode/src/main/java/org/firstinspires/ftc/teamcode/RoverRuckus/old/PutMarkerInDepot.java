@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@SuppressWarnings("ALL")
 @Autonomous(name = "PutMarkerInDepot", group = "Test")
 @Disabled
 public class PutMarkerInDepot extends LinearOpMode {

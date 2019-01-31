@@ -26,7 +26,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 class MoveTaskExecutor {
 	private final BlockingQueue<MoveTask> queue = new LinkedBlockingQueue<>();
 	private final MotorSet motors;
-	//executors are too complex for us to need em.
+	//executors are too complicated for us to need em. Simple is faster and simpler.
 	private final Thread theThread;
 	
 	private final AtomicBoolean done = new AtomicBoolean(true);
@@ -40,8 +40,7 @@ class MoveTaskExecutor {
 	 */
 	MoveTaskExecutor(MotorSet motors) {
 		this.motors = motors;
-		TaskRunner taskRunner = new TaskRunner();
-		theThread = new Thread(taskRunner);
+		theThread = new Thread(new TaskRunner());
 		theThread.setName("Move Task Executor");
 		theThread.setDaemon(true);
 		theThread.start();
@@ -95,7 +94,8 @@ class MoveTaskExecutor {
 	}
 	
 	/**
-	 * The Runnable for the thread to run MoveTasks
+	 * The Runnable that is sent to the thread.
+	 * No fields for simplicity
 	 */
 	private class TaskRunner implements Runnable {
 		

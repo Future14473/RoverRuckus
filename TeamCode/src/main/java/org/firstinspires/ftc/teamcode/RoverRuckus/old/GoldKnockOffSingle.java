@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@SuppressWarnings("ALL")
 @Autonomous(name = "Gold Knocking Tester", group = "Test")
 @Disabled
 public class GoldKnockOffSingle extends LinearOpMode {

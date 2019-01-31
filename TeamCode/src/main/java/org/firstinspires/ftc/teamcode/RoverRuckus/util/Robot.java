@@ -47,12 +47,12 @@ public class Robot {
 		collectArm = hardwareMap.get(DcMotor.class, "CollectArm");
 		collectArm.setMode(RUN_USING_ENCODER);
 		collectArm.setZeroPowerBehavior(BRAKE);
-		//collectArm.setDirection(REVERSE);
+		collectArm.setDirection(REVERSE);
 		
 		scoreArm = hardwareMap.get(DcMotor.class, "ScoreArm");
 		scoreArm.setMode(RUN_USING_ENCODER);
 		scoreArm.setZeroPowerBehavior(BRAKE);
-		//scoreArm.setDirection(REVERSE);
+		scoreArm.setDirection(REVERSE);
 		
 		flicker = hardwareMap.get(Servo.class, "Flicker");
 		markerDoor = hardwareMap.get(Servo.class, "MarkerDoor");

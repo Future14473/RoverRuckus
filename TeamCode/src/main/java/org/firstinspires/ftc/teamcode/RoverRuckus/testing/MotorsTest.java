@@ -18,9 +18,9 @@ public class MotorsTest extends OpMode {
 	@Override
 	public void init() {
 		robot = new Robot(hardwareMap);
-		motor = robot.collectArm;
+		motor = robot.scoreArm;
 		//motor.setDirection(DcMotorSimple.Direction.REVERSE);
-		//servo = hardwareMap.get(Servo.class, "MarkerDoor");
+		//servo = hardwareMap.get(Servo.class, "ScoreDoor");
 		//crServo = hardwareMap.get(CRServo.class, "Collector");
 	}
 	
@@ -34,9 +34,9 @@ public class MotorsTest extends OpMode {
 		telemetry.addData("Gamepad1 Right stick Y(negated):", -gamepad1.right_stick_y);
 		telemetry.addData("Motor pos:", motor.getCurrentPosition());
 //		if (gamepad1.dpad_up) {
-//			if (pos < 0.99) pos += 0.01;
+//			if (pos < 0.995) pos += 0.002;
 //		} else if (gamepad1.dpad_down) {
-//			if (pos > 0.01) pos -= 0.01;
+//			if (pos > 0.005) pos -= 0.002;
 //		}
 //		servo.setPosition(pos);
 //		telemetry.addData("POS", pos);

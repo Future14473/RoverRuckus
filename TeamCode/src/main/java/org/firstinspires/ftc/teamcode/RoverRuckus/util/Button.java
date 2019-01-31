@@ -39,7 +39,10 @@ public class Button implements BooleanSupplier {
 	}
 	
 	public enum State {
-		UP, PRESSED, DOWN, RELEASED
+		UP,
+		PRESSED,
+		DOWN,
+		RELEASED
 	}
 	
 }

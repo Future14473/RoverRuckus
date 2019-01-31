@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@SuppressWarnings("ALL")
 @Autonomous(name = "DropFromLander", group = "Test")
 @Disabled
 public class DropFromLander extends LinearOpMode {

@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class Reset extends LinearOpMode {
 	private OldRobot robot = new OldRobot();
 	
-	@SuppressWarnings("RedundantThrows")
 	@Override
 	public void runOpMode() throws InterruptedException {
 		robot.init(hardwareMap);

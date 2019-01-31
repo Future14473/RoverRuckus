@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
-import org.firstinspires.ftc.teamcode.RoverRuckus.old.OldRobot;
 
 @Autonomous(name = "Old Auto Next to Crater", group = "autonomous")
 @Disabled
@@ -78,6 +77,7 @@ public class OldAutoNextToCrater extends LinearOpMode {
 		sleep(500);
 		robot.flicker.setPosition(0.65);
 	}
+	
 	private void parkInCrater() throws InterruptedException {
 		robot.drive.moveXY(0, 1.7, 10);
 		robot.arm.setPower(1);
