@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
+package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor;
@@ -15,17 +14,17 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.Button.State.*;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State.LOWER;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State.UPPER;
 
-@TeleOp(group = "test")
-public class TeleOpTesting extends OurLinearOpMode {
+@TeleOp(group = "1real")
+public class TheTeleop extends OurLinearOpMode {
 	//Encoder limits
 	private static final int MOTOR_MIN = 100; //"at home" position for all encoders
-	private static final int ARM_MAX = 4400; //maximum arm extension (both arms)
+	private static final int ARM_MAX = 4450; //maximum arm extension (both arms)
 	private static final int HOOK_MAX = 26000; //maximum hook extension
-	private static final int COLLECT_ARM_INITIAL_EXTENSION = 4000; //initial extensions during auto extend
-	private static final int SCORE_ARM_INITIAL_EXTENSION = 4000;
+	private static final int COLLECT_ARM_INITIAL_EXTENSION = 2000; //initial extensions during auto extend
+	private static final int SCORE_ARM_INITIAL_EXTENSION = ARM_MAX;
 	//Servo positions
-	private static final double COLLECT_DOOR_CLOSED = 0; //TODO: FIND VALUES
-	private static final double COLLECT_DOOR_OPEN = 1;
+	private static final double COLLECT_DOOR_CLOSED = 0.71; //Collect door positions
+	private static final double COLLECT_DOOR_OPEN = 0.39;
 	private static final double SCORE_DOOR_CLOSED = 0.9; //score door positions;
 	private static final double SCORE_DOOR_READY = 0.85;
 	private static final double SCORE_DOOR_GOLD = 0.79;
@@ -33,9 +32,10 @@ public class TeleOpTesting extends OurLinearOpMode {
 	//Other constants
 	private static final double SPEED_FAST_MULT = 100;
 	private static final double SPEED_NORMAL_MULT = 1;
-	private static final double SPEED_SLOW_MULT = 0.3;
+	private static final double SPEED_SLOW_MULT = 0.4;
 	private static final double IDLE_POWER_IN = -0.5;
-	private static final double IDLE_POWER_OUT = 0.2;
+	private static final double IDLE_POWER_OUT = 0.03;
+	private static final double IDLE_POWER_SCOOPER = 0.5;
 	//Variables for driving
 	private boolean gyroDrive = true;
 	private boolean reverseDrive = false;
@@ -49,13 +49,13 @@ public class TeleOpTesting extends OurLinearOpMode {
 	//Buttons.
 	private Button gp1y = new Button(() -> gamepad1.y); //toggle direction / reset gyro
 	private Button gp1b = new Button(() -> gamepad1.b); //toggle gyro drive
+	private Button gp1dpadlr = new Button(() -> gamepad1.dpad_left || gamepad1.dpad_right); //reset HOOK encoder
 	private Button gp2a = new Button(() -> gamepad2.a); //to next stage
 	private Button gp2b = new Button(() -> gamepad2.b); //to prev stage.
 	private Button gp2lbp = new Button(() -> gamepad2.left_bumper);//opening scoreDoor
 	private Button gp2rbp = new Button(() -> gamepad2.right_bumper);
-	private Button gp2lsb = new Button(() -> gamepad2.left_stick_button); //reset LEFT encoder
-	private Button gp2rsb = new Button(() -> gamepad2.right_stick_button); //reset RIGHT encoder
-	private Button gp2dpadLR = new Button(() -> gamepad2.dpad_left || gamepad2.dpad_right); //reset HOOK encoder
+	private Button gp2lsb = new Button(() -> gamepad2.left_stick_button); //reset COLLECT encoder
+	private Button gp2rsb = new Button(() -> gamepad2.right_stick_button); //reset SCORE encoder
 	//State
 	private int scoreDoorState = 0;
 	private ArmState armState = ArmState.COLLECT;
@@ -100,7 +100,7 @@ public class TeleOpTesting extends OurLinearOpMode {
 				scoreArm.setPowerLimited(IDLE_POWER_IN);
 				scoreDoor.setPosition(SCORE_DOOR_CLOSED);
 				break;
-			case TO_TRANSFER: scooper.setPower(0.5); //keep balls from falling
+			case TO_TRANSFER: scooper.setPower(IDLE_POWER_SCOOPER); //keep balls from falling
 				collectArm.setPowerLimited(-1); //bring IN!!
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED); //keep door closed; no fa;; pit
 				scoreArm.setPowerLimited(IDLE_POWER_IN); //keep in
@@ -158,11 +158,6 @@ public class TeleOpTesting extends OurLinearOpMode {
 			if (gp2rsb.pressed()) {
 				scoreArm.resetEncoder();
 			}
-			//hook
-			hook.setPowerLimited(gamepad2.dpad_up ? 1 : gamepad2.dpad_down ? -1 : 0, gamepad2.x);
-			if (gp2dpadLR.pressed()) {
-				hook.resetEncoder();
-			}
 			/*-----------------*\
 		    |     GAMEPAD 1     |
 			\* ----------------*/
@@ -189,6 +184,11 @@ public class TeleOpTesting extends OurLinearOpMode {
 			double turnRate = gamepad1.right_stick_x * speedMult;
 			double speed = Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y), 1.7) * speedMult;
 			robot.moveAt(direction, speed, turnRate);
+			//hook
+			hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0, gamepad1.dpad_down);
+			if (gp1dpadlr.pressed()) {
+				hook.resetEncoder();
+			}
 			
 			telemetry.update();
 		}
@@ -196,8 +196,6 @@ public class TeleOpTesting extends OurLinearOpMode {
 	
 	@Override
 	protected void cleanup() {
-		DcMotorEx a;
-		a.
 	}
 	
 	private enum ArmState {

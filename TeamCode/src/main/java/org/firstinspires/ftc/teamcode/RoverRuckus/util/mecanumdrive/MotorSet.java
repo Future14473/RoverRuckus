@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -16,10 +17,10 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.Motor
  * @see MotorSetPower
  */
 //immutable
-public final class MotorSet implements Iterable<DcMotor> {
-	private final List<DcMotor> motors;
+public final class MotorSet implements Iterable<DcMotorEx> {
+	private final List<DcMotorEx> motors;
 	
-	public MotorSet(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br) {
+	public MotorSet(DcMotorEx fl, DcMotorEx fr, DcMotorEx bl, DcMotorEx br) {
 		motors = Arrays.asList(fl, fr, bl, br);
 	}
 	
@@ -32,6 +33,8 @@ public final class MotorSet implements Iterable<DcMotor> {
 	
 	/**
 	 * Sets all the motors' power to the given {@link MotorSetPower}
+	 *
+	 * @param power the power to set the motors
 	 */
 	public void setPower(MotorSetPower power) {
 		power = power.scaled();
@@ -40,6 +43,11 @@ public final class MotorSet implements Iterable<DcMotor> {
 		}
 	}
 	
+	/**
+	 * returns a MotorSetPosition representing all the motors's current position.
+	 *
+	 * @return a MotorSetPosition representing all the motors's current position.
+	 */
 	public MotorSetPosition getCurrentPosition() {
 		MotorSetPosition o = new MotorSetPosition();
 		for (int i = 0; i < 4; i++) {
@@ -50,6 +58,8 @@ public final class MotorSet implements Iterable<DcMotor> {
 	
 	/**
 	 * Sets all the motors' target position to the given {@link MotorSetPosition}
+	 *
+	 * @param position the target position
 	 */
 	public void setTargetPosition(MotorSetPosition position) {
 		for (int i = 0; i < 4; i++) {
@@ -68,21 +78,54 @@ public final class MotorSet implements Iterable<DcMotor> {
 	
 	/**
 	 * Sets all the motors' mode
+	 *
+	 * @param mode the mode to set
 	 */
 	public void setMode(DcMotor.RunMode mode) {
-		for (DcMotor i : this) {
-			i.setMode(mode);
+		for (DcMotor m : this) {
+			m.setMode(mode);
 		}
 	}
 	
+	/**
+	 * Sets all motors' zero power behavior.
+	 *
+	 * @param behavior the zero power behavior
+	 */
 	public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
-		for (DcMotor t : this) {
-			t.setZeroPowerBehavior(behavior);
+		for (DcMotor m : this) {
+			m.setZeroPowerBehavior(behavior);
 		}
 	}
 	
+	/**
+	 * Returns an iterator to the motors in this MotorSet
+	 *
+	 * @return an iterator to the motors
+	 */
 	@Override
-	public Iterator<DcMotor> iterator() {
+	public Iterator<DcMotorEx> iterator() {
 		return motors.iterator();
+	}
+	
+	/**
+	 * Returns the target position tolerance of the first motor, in encoder ticks, usually indicating what all the
+	 * motors's target position is.
+	 *
+	 * @return the target position tolerance of the first motor, in encoder ticks.
+	 */
+	public int getTargetPositionTolerance() {
+		return motors.get(0).getTargetPositionTolerance();
+	}
+	
+	/**
+	 * Sets all the motors's target position tolerance to the given tolerance
+	 *
+	 * @param tolerance the desired tolerance, in encoder ticks.
+	 */
+	public void setTargetPositionTolerance(int tolerance) {
+		for (DcMotorEx m : this) {
+			m.setTargetPositionTolerance(tolerance);
+		}
 	}
 }

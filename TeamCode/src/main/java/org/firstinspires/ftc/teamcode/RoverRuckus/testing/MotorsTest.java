@@ -40,7 +40,7 @@ public class MotorsTest extends OpMode {
 			if (pos > 0.005) pos -= 0.002;
 		}
 		servo.setPosition(pos);
-		telemetry.addData("POS", pos);
+		telemetry.addData("Set pos", pos);
 		telemetry.addData("Servo pos:", servo.getPosition());
 
 //		crServo.setPower(0.5 - gamepad1.left_stick_y / 2);

@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSet;
 
 import static com.qualcomm.hardware.bosch.BNO055IMU.AngleUnit.DEGREES;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
-import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
@@ -27,22 +24,22 @@ public class Robot {
 	
 	public Robot(HardwareMap hardwareMap) {
 		
-		DcMotor fl = hardwareMap.get(DcMotor.class, "FrontLeft");
-		DcMotor fr = hardwareMap.get(DcMotor.class, "FrontRight");
-		DcMotor bl = hardwareMap.get(DcMotor.class, "BackLeft");
-		DcMotor br = hardwareMap.get(DcMotor.class, "BackRight");
+		DcMotorEx fl = hardwareMap.get(DcMotorEx.class, "FrontLeft");
+		DcMotorEx fr = hardwareMap.get(DcMotorEx.class, "FrontRight");
+		DcMotorEx bl = hardwareMap.get(DcMotorEx.class, "BackLeft");
+		DcMotorEx br = hardwareMap.get(DcMotorEx.class, "BackRight");
 		bl.setDirection(REVERSE);
 		fl.setDirection(REVERSE);
 		wheels = new MotorSet(fl, fr, bl, br);
 		wheels.setZeroPowerBehavior(BRAKE);
-		
+		wheels.setTargetPositionTolerance(30);
 		hook = hardwareMap.get(DcMotor.class, "Hook");
 		hook.setMode(RUN_USING_ENCODER);
 		hook.setZeroPowerBehavior(BRAKE);
 		
 		scooper = hardwareMap.get(DcMotor.class, "Scooper");
-		scooper.setMode(RUN_USING_ENCODER);
-		scooper.setZeroPowerBehavior(FLOAT);
+		scooper.setMode(RUN_WITHOUT_ENCODER);
+		scooper.setZeroPowerBehavior(BRAKE);
 		
 		collectArm = hardwareMap.get(DcMotor.class, "CollectArm");
 		collectArm.setMode(RUN_USING_ENCODER);

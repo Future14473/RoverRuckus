@@ -60,7 +60,4 @@ public abstract class UniformMoveTask implements MoveTask {
 		return targPos;
 	}
 	
-	public MotorSetPosition getCurPos() {
-		return curPos;
-	}
 }

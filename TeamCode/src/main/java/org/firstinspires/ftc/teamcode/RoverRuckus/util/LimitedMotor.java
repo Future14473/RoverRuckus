@@ -3,8 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 
 /**
  * A wrapper around a DcMotor that limits the motor's range of motion by reading
@@ -31,7 +30,7 @@ public class LimitedMotor {
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 		this.encoderMult = encoderReverse ? -1 : 1;
-		motor.setMode(RUN_USING_ENCODER);
+		motor.setMode(encoderReverse ? RUN_WITHOUT_ENCODER : RUN_USING_ENCODER);
 	}
 	
 	public void resetEncoder() {

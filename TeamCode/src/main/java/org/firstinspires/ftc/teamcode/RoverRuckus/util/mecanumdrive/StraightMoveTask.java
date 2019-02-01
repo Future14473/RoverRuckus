@@ -15,7 +15,7 @@ public class StraightMoveTask extends UniformMoveTask {
 	public boolean run(MotorSet motors) {
 		updateCurPos(motors);
 		setPower(getAvgProgress(), motors);
-		return getMaxOff() < 80;
+		return getMaxOff() < motors.getTargetPositionTolerance() * 2;
 	}
 	
 }
