@@ -17,7 +17,7 @@ public class LimitedMotor {
 	private final int encoderMult;
 	
 	private int targetPosition;
-	private LimitState lastLimitState = LimitState.NONE;
+	private State lastState = State.NONE;
 	
 	/**
 	 * @param motor          the motor
@@ -39,38 +39,38 @@ public class LimitedMotor {
 		motor.setMode(RUN_USING_ENCODER);
 	}
 	
-	public LimitState setPowerLimited(double power) {
+	public State setPowerLimited(double power) {
 		return setPowerLimited(power, null, null, false);
 	}
 	
-	public LimitState setPowerLimited(double power, boolean override) {
+	public State setPowerLimited(double power, boolean override) {
 		return setPowerLimited(power, null, null, override);
 	}
 	
-	public LimitState setPowerLimited(double power, Integer lowerLimit, Integer upperLimit) {
+	public State setPowerLimited(double power, Integer lowerLimit, Integer upperLimit) {
 		return setPowerLimited(power, lowerLimit, upperLimit, false);
 	}
 	
-	public LimitState setPowerLimited(double power, Integer lowerLimit, Integer upperLimit, boolean override) {
+	public State setPowerLimited(double power, Integer lowerLimit, Integer upperLimit, boolean override) {
 		if (lowerLimit == null) lowerLimit = this.lowerLimit;
 		if (upperLimit == null) upperLimit = this.upperLimit;
-		LimitState limitState = LimitState.NONE;
+		State state = State.NONE;
 		if (power < 0) {
 			if (getCurrentPositionAdjusted() < lowerLimit) {
-				limitState = LimitState.LOWER;
+				state = State.LOWER;
 			}
 		} else if (power > 0) {
 			if (getCurrentPositionAdjusted() > upperLimit) {
-				limitState = LimitState.UPPER;
+				state = State.UPPER;
 			}
 		}
-		motor.setPower(override || limitState == LimitState.NONE ? power : 0);
-		lastLimitState = limitState;
-		return limitState;
+		motor.setPower(override || state == State.NONE ? power : 0);
+		lastState = state;
+		return state;
 	}
 	
-	public LimitState getLastLimitState() {
-		return lastLimitState;
+	public State getLastState() {
+		return lastState;
 	}
 	
 	private int getCurrentPositionAdjusted() {
@@ -82,7 +82,7 @@ public class LimitedMotor {
 		targetPosition = position;
 	}
 	
-	public enum LimitState {
+	public enum State {
 		NONE,
 		LOWER,
 		UPPER
