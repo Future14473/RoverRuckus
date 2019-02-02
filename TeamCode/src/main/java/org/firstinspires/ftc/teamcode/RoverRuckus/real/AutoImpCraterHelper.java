@@ -2,21 +2,16 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Crater With Double Sampling", group = "Autonomous")
-public class AutoImpCraterHelper extends AbstractAuto {
-	@Override
-	protected void positionForDepot() throws InterruptedException {
-		drive.turn(50, 10);
-		drive.moveXY(-0.7, 0, 10);
-		drive.moveXY(0.05, 0, 10);
-		drive.moveXY(0, -1.3, 10);
-	}
-	
+@Autonomous(name = "Auto Crater with Double Sample", group = "Helper")
+public class AutoImpCraterHelper extends AutoImplCrater {
 	@Override
 	public void afterDepot() throws InterruptedException {
-		drive.turn(40, 10);
-		drive.moveXY(0, -0.1, 10);
-		knockOffGold();
-		drive.turn(-40, 10);
+		throw new IHaveNotDoneThisYetException("NO DOUBLE SAMPLE YET");
+	}
+	
+	private class IHaveNotDoneThisYetException extends RuntimeException {
+		public IHaveNotDoneThisYetException(String s) {
+			super(s);
+		}
 	}
 }

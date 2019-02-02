@@ -42,7 +42,7 @@ public class OldAutoNextToDepot extends LinearOpMode {
 		robot.drive.moveXY(-0.15, 0, 10);
 		robot.drive.moveXY(0, 0.1, 10);
 		int look;
-		do look = goldLooker.look(); while (look == -1 && opModeIsActive());
+		do look = goldLooker.getLook(); while (look == -1 && opModeIsActive());
 		look = (look + 2) % 3;
 		goldLooker.stop();
 		telemetry.addData("Gold is at:", look);

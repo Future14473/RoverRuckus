@@ -53,6 +53,7 @@ class MoveTaskExecutor {
 	 */
 	void add(MoveTask task) {
 		if (!theThread.isAlive()) theThread.start();
+		done.set(false);
 		queue.add(task);
 	}
 	
@@ -115,6 +116,7 @@ class MoveTaskExecutor {
 						break;
 					}
 					//we have a new task, NOT DONE.
+					//also not needed but paranoia.
 					done.set(false);
 					//run the task
 					curTask.start(motors);

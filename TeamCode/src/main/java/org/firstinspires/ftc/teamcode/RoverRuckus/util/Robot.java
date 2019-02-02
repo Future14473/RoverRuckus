@@ -4,23 +4,30 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSet;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPower;
 
 import static com.qualcomm.hardware.bosch.BNO055IMU.AngleUnit.DEGREES;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
+import static java.lang.Math.atan2;
+import static java.lang.Math.hypot;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPower.calcPower;
 
 public class Robot {
+	//maximum acceleration in powerLevel/second
+	private static final double MAX_ACCELERATION = 4.0;
 	public final MotorSet wheels;
 	public final DcMotor hook, scooper, collectArm, scoreArm;
 	public final Servo flicker, markerDoor, collectDoor, scoreDoor;
 	public final CRServo angler;
 	public final BNO055IMU imu;
+	private long pastUpdateTime;
+	private MotorSetPower pastPower = new MotorSetPower();
 	
 	public Robot(HardwareMap hardwareMap) {
 		
@@ -33,6 +40,7 @@ public class Robot {
 		wheels = new MotorSet(fl, fr, bl, br);
 		wheels.setZeroPowerBehavior(BRAKE);
 		wheels.setTargetPositionTolerance(30);
+		
 		hook = hardwareMap.get(DcMotor.class, "Hook");
 		hook.setMode(RUN_USING_ENCODER);
 		hook.setZeroPowerBehavior(BRAKE);
@@ -59,13 +67,28 @@ public class Robot {
 		angler = hardwareMap.get(CRServo.class, "Angler");
 		
 		imu = hardwareMap.get(BNO055IMU.class, "imu");
+		pastUpdateTime = System.nanoTime();
 	}
 	
 	/**
 	 * Utility: set the motors right now to move in the specified direction, turnRate, and speed.
 	 */
 	public void moveAt(double direction, double moveSpeed, double turnRate) {
-		wheels.setPower(calcPower(direction, moveSpeed, turnRate));
+		pastPower = calcPower(direction, moveSpeed, turnRate);
+		wheels.setPower(pastPower);
+	}
+	
+	public void moveAtXY(double x, double y, double turnRate) {
+		moveAt(atan2(y, x), hypot(x, y), turnRate);
+	}
+	
+	public void smoothMoveAt(double direction, double speed, double turnRate) {
+		MotorSetPower targPower = calcPower(direction, speed, turnRate);
+		long curUpdateTime = System.nanoTime();
+		targPower.smoothPower(pastPower, MAX_ACCELERATION / 1e9 * (curUpdateTime - pastUpdateTime));
+		pastUpdateTime = curUpdateTime;
+		pastPower = targPower;
+		wheels.setPower(targPower);
 	}
 	
 	/**
@@ -83,6 +106,7 @@ public class Robot {
 	/**
 	 * Gets the orientation of hte robot as read from the IMU.
 	 * Used for consistent parameters in our code.
+	 * Configured for INTRINSIC, ZYX, RADIANS. First Angle is plane parallel to floor.
 	 */
 	public Orientation getOrientation() {
 		return imu.getAngularOrientation(INTRINSIC, ZYX, RADIANS);

@@ -20,7 +20,7 @@ public class MotorSetPower {
 		this.power = new double[]{fl, fr, bl, br};
 	}
 	
-	MotorSetPower() {
+	public MotorSetPower() {
 		this.power = new double[4];
 	}
 	
@@ -42,6 +42,26 @@ public class MotorSetPower {
 	}
 	
 	/**
+	 * adjusts the current power so the acceleration from pastPower
+	 * to currentPower is no greater than maxAcceleration.
+	 */
+	public void smoothPower(MotorSetPower pastPower, double maxAcceleration) {
+		for (int i = 0; i < 4; i++) {
+			if (Math.abs(this.power[i] - pastPower.power[i]) <= maxAcceleration) continue;
+			if (this.power[i] > pastPower.power[i]) {
+				this.power[i] = this.power[i] - maxAcceleration;
+			} else {
+				this.power[i] = this.power[i] + maxAcceleration;
+			}
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return Arrays.toString(power);
+	}
+	
+	/**
 	 * Creates a new MotorSetPower that represents moving the robot in the specified direction, turnRate, and speed.
 	 *
 	 * @param direction the direction to move the robot
@@ -56,10 +76,5 @@ public class MotorSetPower {
 		double v3 = moveSpeed * Math.cos(robotAngle) + turnRate;
 		double v4 = moveSpeed * Math.sin(robotAngle) - turnRate;
 		return new MotorSetPower(v1, v2, v3, v4);
-	}
-	
-	@Override
-	public String toString() {
-		return Arrays.toString(power);
 	}
 }

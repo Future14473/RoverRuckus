@@ -28,7 +28,6 @@
     <codeStyleSettings language="JAVA">
       <option name="KEEP_LINE_BREAKS" value="false" />
       <option name="INDENT_CASE_FROM_SWITCH" value="false" />
-      <option name="CASE_STATEMENT_ON_NEW_LINE" value="false" />
       <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="true" />
       <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
       <option name="KEEP_SIMPLE_LAMBDAS_IN_ONE_LINE" value="true" />

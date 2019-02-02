@@ -27,21 +27,21 @@ public class GoldKnockOffDouble extends LinearOpMode {
 		robot.drive.moveXY(-0.15, 0, 10);
 		robot.drive.moveXY(0, 0.1, 10);
 		int look;
-		do look = goldLooker.look(); while (look == -1 && opModeIsActive());
+		do look = goldLooker.getLook(); while (look == -1 && opModeIsActive());
 		look = (look + 2) % 3;
 		goldLooker.stop();
 		telemetry.addData("Gold is at:", look);
 		telemetry.update();
 		switch (look) {
-			case 0:
-				robot.drive.moveXY(-.25, .4, 10);
-				break;
-			case 1:
-				robot.drive.moveXY(.25, .4, 10);
-				break;
-			case 2:
-				robot.drive.moveXY(.75, .4, 10);
-				break;
+		case 0:
+			robot.drive.moveXY(-.25, .4, 10);
+			break;
+		case 1:
+			robot.drive.moveXY(.25, .4, 10);
+			break;
+		case 2:
+			robot.drive.moveXY(.75, .4, 10);
+			break;
 		}
 		robot.drive.moveXY(0, 0.2, 10);
 		robot.drive.moveXY(0, -0.2, 10);

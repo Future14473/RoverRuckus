@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.Button.State.*;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State.LOWER;
@@ -33,11 +34,13 @@ public class TheTeleop extends OurLinearOpMode {
 	private static final double SPEED_FAST_MULT = 100;
 	private static final double SPEED_NORMAL_MULT = 1;
 	private static final double SPEED_SLOW_MULT = 0.4;
-	private static final double IDLE_POWER_IN = -0.5;
-	private static final double IDLE_POWER_OUT = 0.03;
+	private static final double IDLE_IN_POWER = -0.5;
+	private static final double IDLE_COLLECT_ARM_POWER = 0.05;
+	private static final double IDLE_SCORE_ARM_POWER = 0.1;
 	private static final double IDLE_POWER_SCOOPER = 0.5;
+	private static final int TRANSFER_SLEEP_TIME = 200;
 	//Variables for driving
-	private boolean gyroDrive = true;
+	private boolean gyroDrive = false;
 	private boolean reverseDrive = false;
 	private double rotationOffSet = 0;
 	//Motors and servos, for readability and functionality
@@ -59,11 +62,14 @@ public class TheTeleop extends OurLinearOpMode {
 	//State
 	private int scoreDoorState = 0;
 	private ArmState armState = ArmState.COLLECT;
+	//pseudo sleep
+	private long sleepEndTime;
 	
 	@Override
 	protected void initialize() throws InterruptedException {
 		robot.initIMU();
 		robot.wheels.setMode(RUN_USING_ENCODER);
+		robot.wheels.setZeroPowerBehavior(FLOAT);
 		scoreArm = new LimitedMotor(robot.scoreArm, MOTOR_MIN, ARM_MAX, true);
 		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, ARM_MAX, true);
 		hook = new LimitedMotor(robot.hook, MOTOR_MIN, HOOK_MAX, true);
@@ -71,6 +77,7 @@ public class TheTeleop extends OurLinearOpMode {
 		collectDoor = robot.collectDoor;
 		scoreDoor = robot.scoreDoor;
 		angler = robot.angler;
+		sleepEndTime = System.nanoTime();
 		waitUntil(robot.imu::isGyroCalibrated, 2500, MILLISECONDS);
 	}
 	
@@ -87,36 +94,45 @@ public class TheTeleop extends OurLinearOpMode {
 			if (gamepad2.right_bumper) triggerSum = 1;
 			else if (gamepad2.left_bumper) triggerSum = -1;
 			switch (armState) {
-			case TO_COLLECT: scooper.setPower(0); //idle
+			case TO_COLLECT:
+				scooper.setPower(0); //idle
 				collectArm.setPowerLimited(1, null, COLLECT_ARM_INITIAL_EXTENSION); //extend to initial
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED); //close door
-				scoreArm.setPowerLimited(IDLE_POWER_IN); //keep in
+				scoreArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				scoreDoor.setPosition(SCORE_DOOR_CLOSED); //close door.
 				autoAdvance = collectArm.getLastState() == UPPER;
 				break;
-			case COLLECT: scooper.setPower(triggerSum);
-				collectArm.setPowerLimited(-gamepad2.right_stick_y + IDLE_POWER_OUT, gamepad2.x);
+			case COLLECT:
+				scooper.setPower(triggerSum);
+				collectArm.setPowerLimited(-gamepad2.right_stick_y + IDLE_COLLECT_ARM_POWER, gamepad2.x);
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
-				scoreArm.setPowerLimited(IDLE_POWER_IN);
+				scoreArm.setPowerLimited(IDLE_IN_POWER);
 				scoreDoor.setPosition(SCORE_DOOR_CLOSED);
 				break;
-			case TO_TRANSFER: scooper.setPower(IDLE_POWER_SCOOPER); //keep balls from falling
+			case TO_TRANSFER:
+				scooper.setPower(IDLE_POWER_SCOOPER); //keep balls from falling
 				collectArm.setPowerLimited(-1); //bring IN!!
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED); //keep door closed; no fa;; pit
-				scoreArm.setPowerLimited(IDLE_POWER_IN); //keep in
+				scoreArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				scoreDoor.setPosition(SCORE_DOOR_READY);
 				autoAdvance = collectArm.getLastState() == LOWER && scoreArm.getLastState() == LOWER;
+				if (autoAdvance) {
+					collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR NOW...
+					sleepEndTime = System.nanoTime() + MILLISECONDS.toNanos(TRANSFER_SLEEP_TIME); //pseudo sleep.
+				}
 				userAdvance = false;
 				break;
-			case TRANSFER: scooper.setPower(1 + triggerSum); //PUSH THINGS UP!
-				collectArm.setPowerLimited(IDLE_POWER_IN); //keep in
+			case TRANSFER:
+				if (System.nanoTime() - sleepEndTime < 0) break;
+				scooper.setPower(1 + triggerSum); //PUSH THINGS UP!
+				collectArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
-				scoreArm.setPowerLimited(IDLE_POWER_IN); //keep in
+				scoreArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				scoreDoor.setPosition(SCORE_DOOR_READY);
 				break;
-			case TO_SCORE: //TODO
+			case TO_SCORE:
 				scooper.setPower(0); //idle
-				collectArm.setPowerLimited(IDLE_POWER_IN); //keep in
+				collectArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				collectDoor.setPosition(COLLECT_DOOR_OPEN); //keep open
 				scoreArm.setPowerLimited(1, null, SCORE_ARM_INITIAL_EXTENSION);
 				scoreDoor.setPosition(SCORE_DOOR_READY);
@@ -128,10 +144,11 @@ public class TheTeleop extends OurLinearOpMode {
 				double scoreDoorPos = scoreDoorState == 0 ? SCORE_DOOR_READY : scoreDoorState == 1 ? SCORE_DOOR_GOLD :
 						SCORE_DOOR_OPEN;
 				scooper.setPower(0); //idle
-				collectArm.setPowerLimited(IDLE_POWER_IN); //keep in
+				collectArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
-				scoreArm.setPowerLimited(-gamepad2.right_stick_y + IDLE_POWER_OUT, gamepad1.x);
+				scoreArm.setPowerLimited(-gamepad2.right_stick_y + IDLE_SCORE_ARM_POWER, gamepad1.x);
 				scoreDoor.setPosition(scoreDoorPos);
+				speedMode = 0; // GO SLOW
 				if (gp2rbp.pressed()) {
 					scoreDoorState++;
 					if (scoreDoorState >= 3) scoreDoorState = 2;
@@ -183,7 +200,7 @@ public class TheTeleop extends OurLinearOpMode {
 			
 			double turnRate = gamepad1.right_stick_x * speedMult;
 			double speed = Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y), 1.7) * speedMult;
-			robot.moveAt(direction, speed, turnRate);
+			robot.smoothMoveAt(direction, speed, turnRate);
 			//hook
 			hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0, gamepad1.dpad_down);
 			if (gp1dpadlr.pressed()) {
@@ -196,6 +213,8 @@ public class TheTeleop extends OurLinearOpMode {
 	
 	@Override
 	protected void cleanup() {
+		collectDoor.setPosition(COLLECT_DOOR_CLOSED);
+		scoreDoor.setPosition(SCORE_DOOR_CLOSED);
 	}
 	
 	private enum ArmState {

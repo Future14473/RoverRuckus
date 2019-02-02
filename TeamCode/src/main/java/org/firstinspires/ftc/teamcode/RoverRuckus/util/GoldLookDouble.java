@@ -11,17 +11,26 @@ import java.util.List;
 
 
 public class GoldLookDouble {
+	public static final double MIN_CONFIDENCE = 0.75;
 	private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-	
 	private static final String VUFORIA_KEY = "Aavay7//////AAABmS26wV70nE/XoqC91tMM/rlwbqInv/YUads4QRll085q/yT" +
 			"+qW0qdyrUwXPXbvwDkGhnffFMGIizzvfrXviNCbfAAgJzSwDJuL0MJl3LRE2FU4JMKKU2v7V" +
 			"+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz/LaIEh4phJs35awBUu+g" +
-			"+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG/jRUsWLH1cs35" +
-			"/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT+485YdwnaxuS8K9";
+			"+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG/jRUsWLH1cs35" + "/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT+485YdwnaxuS8K9";
+	private int look = -1;
 	private VuforiaLocalizer vuforia;
 	private TFObjectDetector tfod;
+	private List<Recognition> listRecognitions;
+	/**
+	 * returns 2 if both is white, 1 if right is gold, 0 if left is gold, -1 if none detected.
+	 */
+	private int pastVerdict = -1;
+	private Thread lookThread = new Thread(() -> {
+		do look = detect(); while (look == -1 && !Thread.interrupted());
+		tfod.shutdown();
+	});
 	
 	public void init(HardwareMap hardwareMap) {
 		initVuforia();
@@ -32,29 +41,46 @@ public class GoldLookDouble {
 		}
 	}
 	
-	public void start() {
-		tfod.activate();
+	public boolean hasDetected() {
+		return look != -1;
 	}
 	
-	public void pause() {
-		tfod.deactivate();
+	public void start() {
+		tfod.activate();
+		lookThread.start();
 	}
 	
 	public void stop() {
+		lookThread.interrupt();
 		tfod.shutdown();
 	}
 	
+	public int getLook() {
+		if (look == -1) return pastVerdict;
+		return look;
+	}
 	
-	/**
-	 * returns 1 if current screen is gold, 0 if is white, -1 if none detected.
-	 */
-	public int look() {
+	public int detect() {
+		int verdict = determineGold();
+		if (verdict == -1) return -1; //ignore if -1;
+		if (verdict == pastVerdict) return verdict;
+		pastVerdict = verdict;
+		return -1;
+	}
+	
+	private int determineGold() {
 		List<Recognition> listRecognitions = tfod.getUpdatedRecognitions();
 		if (listRecognitions == null || listRecognitions.size() < 2) return -1;
 		int ax = -1, bx = -1;
 		boolean ag = false, bg = false;
 		
 		Recognition[] recognitions = listRecognitions.toArray(new Recognition[0]);
+		
+		for (int i = 0; i < Math.min(recognitions.length, 6); i++) {
+			if (recognitions[i].getConfidence() < MIN_CONFIDENCE) {
+				recognitions[i] = null;
+			}
+		}
 		for (int i = 0; i < Math.min(recognitions.length, 6); i++) {
 			if (recognitions[i] == null) continue;
 			//if it overlaps closely with other recognitions and is silver, override it with silver.
@@ -69,7 +95,6 @@ public class GoldLookDouble {
 			}
 		}
 		for (Recognition recognition : recognitions) {
-			if (recognition == null || recognition.getConfidence() < 0.65) continue;
 			if (ax == -1) {
 				ag = recognition.getLabel().equals(LABEL_GOLD_MINERAL);
 				ax = (int) recognition.getTop();
@@ -104,5 +129,9 @@ public class GoldLookDouble {
 		TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
 		tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 		tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+	}
+	
+	public void activate() {
+		tfod.activate();
 	}
 }

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 
+@Deprecated
 public abstract class AbstractAuto extends LinearOpMode {
 	private static final int HOOK_TURN = -25700;
 	// --Commented out by Inspection (1/22/2019 6:58 PM):private static final int ARM_TURN = -1500;
@@ -53,7 +54,7 @@ public abstract class AbstractAuto extends LinearOpMode {
 			idle();
 		}
 		robot.hooke.setPower(0);
-		robot.drive.moveXY(-0.15,  0.1, 10);
+		robot.drive.moveXY(-0.15, 0.1, 10);
 		robot.drive.moveXY(0, 0.1, 10);
 		robot.drive.turn(-10, 10);
 	}
@@ -61,12 +62,12 @@ public abstract class AbstractAuto extends LinearOpMode {
 	protected void knockOffGold() throws InterruptedException {
 		goldLooker.start();
 		timer.reset();
-		while (look == -1 && timer.milliseconds() < 5000 && opModeIsActive()) look = goldLooker.look();
+		while (look == -1 && timer.milliseconds() < 5000 && opModeIsActive()) look = goldLooker.getLook();
 		if (look == -1) {
 			look = 2;
 			telemetry.addLine("FAIL-SAFE HAPPENED");
 		} else look = (look + 2) % 3;
-		goldLooker.pause();
+		goldLooker.stop();
 		telemetry.addData("Gold is at:", (look == 0) ? "left" : ((look == 1) ? "middle" : "right"));
 		telemetry.update();
 		robot.drive.waitForDone();

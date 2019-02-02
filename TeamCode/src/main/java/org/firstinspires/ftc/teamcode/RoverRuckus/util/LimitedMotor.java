@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 
@@ -13,12 +12,13 @@ public class LimitedMotor {
 	public final DcMotor motor;
 	private final Integer lowerLimit;
 	private final Integer upperLimit;
-	private final int encoderMult;
 	
-	private int targetPosition;
 	private State lastState = State.NONE;
+	private boolean encoderReverse;
 	
 	/**
+	 * Creates a new LimitedMotor.
+	 *
 	 * @param motor          the motor
 	 * @param lowerLimit     encoder lower limit;
 	 * @param upperLimit     encoder upper limit;
@@ -29,13 +29,13 @@ public class LimitedMotor {
 		this.motor = motor;
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
-		this.encoderMult = encoderReverse ? -1 : 1;
+		this.encoderReverse = encoderReverse;
 		motor.setMode(encoderReverse ? RUN_WITHOUT_ENCODER : RUN_USING_ENCODER);
 	}
 	
 	public void resetEncoder() {
 		motor.setMode(STOP_AND_RESET_ENCODER);
-		motor.setMode(RUN_USING_ENCODER);
+		motor.setMode(encoderReverse ? RUN_WITHOUT_ENCODER : RUN_USING_ENCODER);
 	}
 	
 	public State setPowerLimited(double power) {
@@ -73,12 +73,7 @@ public class LimitedMotor {
 	}
 	
 	private int getCurrentPositionAdjusted() {
-		return motor.getCurrentPosition() * encoderMult;
-	}
-	
-	public void pseudoSetTargetPosition(int position) {
-		position = Range.clip(position, lowerLimit, upperLimit);
-		targetPosition = position;
+		return motor.getCurrentPosition() * (encoderReverse ? -1 : 1);
 	}
 	
 	public enum State {
