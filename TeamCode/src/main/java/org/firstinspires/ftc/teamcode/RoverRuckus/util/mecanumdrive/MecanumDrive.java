@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.CumulativeDirection;
-
 import java.util.function.DoubleSupplier;
 
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPower.calcPower;
