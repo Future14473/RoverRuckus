@@ -38,6 +38,7 @@ public class TheTeleop extends OurLinearOpMode {
 	private static final double IDLE_COLLECT_ARM_POWER = 0.05;
 	private static final double IDLE_SCORE_ARM_POWER = 0.1;
 	private static final double IDLE_POWER_SCOOPER = 0.5;
+	private static final double PARKER_POSITION_HOME = 0.37;
 	private static final int TRANSFER_SLEEP_TIME = 200;
 	//Variables for driving
 	private boolean gyroDrive = false;
@@ -78,12 +79,13 @@ public class TheTeleop extends OurLinearOpMode {
 		scoreDoor = robot.scoreDoor;
 		angler = robot.angler;
 		sleepEndTime = System.nanoTime();
-		waitUntil(robot.imu::isGyroCalibrated, 2500, MILLISECONDS);
 	}
 	
 	@Override
 	protected void run() {
-		while (opModeIsActive()) {//FOR GAMEPAD1, CHANGED BY GAMEPAD2 2 is fast, 1 is normal, 0 is slow.
+		robot.parker.setPosition(PARKER_POSITION_HOME);
+		while (opModeIsActive()) {
+			//FOR GAMEPAD1, CHANGED BY GAMEPAD2 2 is fast, 1 is normal, 0 is slow.
 			int speedMode = gamepad1.right_bumper ? 2 : (gamepad1.left_bumper ? 0 : 1);
 			/*----------------*\
 		    |    GAMEPAD 2     |

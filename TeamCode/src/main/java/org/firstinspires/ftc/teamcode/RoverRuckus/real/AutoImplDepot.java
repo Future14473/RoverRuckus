@@ -6,9 +6,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class AutoImplDepot extends AbstractAuto {
 	@Override
 	protected void positionForDepot() throws InterruptedException {
-		drive.turn(-120, 10);
+		drive.turn(-125, 10);
 		drive.moveXY(0.45, 0, 10);
-		drive.moveXY(-0.05, 0, 10);
+		drive.moveXY(-0.07, 0, 10);
 		drive.moveXY(0, -1.3, 10);
+	}
+	
+	@Override
+	protected void parkInCrater() {
+		drive.moveXY(0.1, 2, 10);
 	}
 }

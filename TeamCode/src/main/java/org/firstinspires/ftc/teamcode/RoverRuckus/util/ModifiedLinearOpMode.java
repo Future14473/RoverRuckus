@@ -83,13 +83,13 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 		
 		if (this.executorService != null) {
 			
-			// interrupt the Driving opMode and shutdown it's service thread
+			// interrupt the Linear opMode and shutdown it's service thread
 			// interrupted status should also be a indicator of needing to stop.
 			this.executorService.shutdownNow();
 			/* Wait, forever, for the OpMode to stop. If this takes too long, then
 			  {@link OpModeManagerImpl#callActiveOpModeStop()} will catch that and take action */
 			try {
-				ThreadPool.awaitTermination(this.executorService, 100, TimeUnit.DAYS, "User Driving op mode");
+				ThreadPool.awaitTermination(this.executorService, 100, TimeUnit.DAYS, "User Linear op mode");
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
@@ -201,7 +201,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	}
 	
 	/**
-	 * Pauses the Driving Op Mode until start.
+	 * Pauses the Linear Op Mode until start.
 	 *
 	 * @throws InterruptedException if this thread is interrupted while waiting (op mode stopped).
 	 */
@@ -249,9 +249,9 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 					ModifiedLinearOpMode.this.runOpMode();
 					requestOpModeStop();
 				} catch (InterruptedException ie) {
-					RobotLog.d("ModifiedLinearOpMode received an InterruptedException; shutting down this Driving op " + "mode");
+					RobotLog.d("ModifiedLinearOpMode received an InterruptedException; shutting down this Linear op " + "mode");
 				} catch (CancellationException ie) {
-					RobotLog.d("ModifiedLinearOpMode received a CancellationException; shutting down this Driving op " + "mode");
+					RobotLog.d("ModifiedLinearOpMode received a CancellationException; shutting down this Linear op " + "mode");
 				} catch (RuntimeException e) {
 					this.exception = e;
 				} finally {

@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class GoldLookDouble {
@@ -15,20 +16,18 @@ public class GoldLookDouble {
 	private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
+	@SuppressWarnings("SpellCheckingInspection")
 	private static final String VUFORIA_KEY = "Aavay7//////AAABmS26wV70nE/XoqC91tMM/rlwbqInv/YUads4QRll085q/yT" +
 			"+qW0qdyrUwXPXbvwDkGhnffFMGIizzvfrXviNCbfAAgJzSwDJuL0MJl3LRE2FU4JMKKU2v7V" +
 			"+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz/LaIEh4phJs35awBUu+g" +
-			"+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG/jRUsWLH1cs35" + "/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT+485YdwnaxuS8K9";
-	private int look = -1;
+			"+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG/jRUsWLH1cs35" +
+			"/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT+485YdwnaxuS8K9";
+	private final AtomicInteger look = new AtomicInteger(-1);
 	private VuforiaLocalizer vuforia;
 	private TFObjectDetector tfod;
-	private List<Recognition> listRecognitions;
-	/**
-	 * returns 2 if both is white, 1 if right is gold, 0 if left is gold, -1 if none detected.
-	 */
-	private int pastVerdict = -1;
 	private Thread lookThread = new Thread(() -> {
-		do look = detect(); while (look == -1 && !Thread.interrupted());
+		tfod.activate();
+		do look.set(detect()); while (look.get() == -1 && !Thread.interrupted());
 		tfod.shutdown();
 	});
 	
@@ -42,11 +41,10 @@ public class GoldLookDouble {
 	}
 	
 	public boolean hasDetected() {
-		return look != -1;
+		return look.get() != -1;
 	}
 	
 	public void start() {
-		tfod.activate();
 		lookThread.start();
 	}
 	
@@ -55,20 +53,20 @@ public class GoldLookDouble {
 		tfod.shutdown();
 	}
 	
+	/**
+	 * Gets the look value, or best guess.
+	 * STOPS THE LOOK THREAD.
+	 */
 	public int getLook() {
-		if (look == -1) return pastVerdict;
-		return look;
+		lookThread.interrupt();
+		return look.get();
 	}
 	
+	
+	/**
+	 * returns 2 if both is white, 1 if right is gold, 0 if left is gold, -1 if none detected.
+	 */
 	public int detect() {
-		int verdict = determineGold();
-		if (verdict == -1) return -1; //ignore if -1;
-		if (verdict == pastVerdict) return verdict;
-		pastVerdict = verdict;
-		return -1;
-	}
-	
-	private int determineGold() {
 		List<Recognition> listRecognitions = tfod.getUpdatedRecognitions();
 		if (listRecognitions == null || listRecognitions.size() < 2) return -1;
 		int ax = -1, bx = -1;
@@ -86,21 +84,21 @@ public class GoldLookDouble {
 			//if it overlaps closely with other recognitions and is silver, override it with silver.
 			for (int j = i + 1; j < Math.min(recognitions.length, 6); j++) {
 				if (recognitions[j] == null) continue;
-				if (Math.hypot(recognitions[j].getTop() - recognitions[i].getTop(),
-						recognitions[j].getBottom() - recognitions[i].getBottom()) < Math.max(recognitions[i].getHeight(), recognitions[j].getHeight())) {
+				if (Math.hypot(recognitions[j].getTop() - recognitions[i].getTop(), recognitions[j].getBottom() - recognitions[i].getBottom()) < Math.max(recognitions[i].getHeight(), recognitions[j].getHeight())) {
 					if (recognitions[j].getLabel().equals(LABEL_GOLD_MINERAL)) recognitions[j] = null;
 					else recognitions[i] = null;
 					break;
 				}
 			}
 		}
-		for (Recognition recognition : recognitions) {
+		for (int i = 0; i < Math.min(recognitions.length, 6); i++) {
+			if (recognitions[i] == null) continue;
 			if (ax == -1) {
-				ag = recognition.getLabel().equals(LABEL_GOLD_MINERAL);
-				ax = (int) recognition.getTop();
+				ag = recognitions[i].getLabel().equals(LABEL_GOLD_MINERAL);
+				ax = (int) recognitions[i].getTop();
 			} else if (bx == -1) {
-				bg = recognition.getLabel().equals(LABEL_GOLD_MINERAL);
-				bx = (int) recognition.getTop();
+				bg = recognitions[i].getLabel().equals(LABEL_GOLD_MINERAL);
+				bx = (int) recognitions[i].getTop();
 			} else return -1;
 		}
 		if (bx == -1 || ag && bg) return -1;

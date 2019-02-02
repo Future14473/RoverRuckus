@@ -15,7 +15,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENC
 public abstract class AbstractAuto extends OurLinearOpMode {
 	private static final int HOOK_TURN_START_LOOK = -24000;
 	private static final int HOOK_TURN_END = -26000;
-	private static final int ARM_TURN = -3800;
+	private static final double PARKER_POSITION_OUT = 0.73;
 	protected MecanumDrive drive;
 	private ElapsedTime timer = new ElapsedTime();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
@@ -42,21 +42,19 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		positionForDepot();
 		drive.waitUntilDone();
 		
-		checkHook();
-		putMarkerInDepot();
-		checkHook();
-		afterDepot();
-		checkHook();
-		parkInCrater();
-		
-		waitUntil(() -> Math.abs(robot.hook.getCurrentPosition()/* - 0 */) > 40);
 		robot.hook.setPower(0);
-		
+		putMarkerInDepot();
+		robot.parker.setPosition(PARKER_POSITION_OUT);
+		parkInCrater();
+		finishHook();
 		drive.waitUntilDone();
+		
 	}
 	
-	private void checkHook() {
-		if (Math.abs(robot.hook.getCurrentPosition()/* - 0 */) > 40) robot.hook.setPower(0);
+	private void finishHook() throws InterruptedException {
+		robot.hook.setPower(-0.7);
+		waitUntil(() -> Math.abs(robot.hook.getCurrentPosition()/* - 0 */) > 40);
+		robot.hook.setPower(0);
 	}
 	
 	@Override
@@ -93,9 +91,9 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		telemetry.update();
 		drive.waitUntilDone();
 		robot.hook.setPower(-0.7); //INTERLUDE
-		drive.moveXY(-0.35 + 0.5 * look, 0.37, 10);
-		drive.moveXY(0, 0.15, 10);
-		drive.moveXY(0, -0.15, 10);
+		drive.moveXY(-0.35 + 0.5 * look, 0.45, 10);
+		drive.moveXY(0, 0.2, 10);
+		drive.moveXY(0, -0.2, 10);
 		drive.moveXY(-0.6 - 0.5 * look, 0.05, 10);
 		drive.waitUntilDone();
 	}
@@ -103,21 +101,11 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	private void putMarkerInDepot() throws InterruptedException {
 		//deposit
 		robot.markerDoor.setPosition(0.9);
-		sleep(800);
+		sleep(1000);
 		robot.flicker.setPosition(0);
 		sleep(500);
 	}
 	
-	protected void afterDepot() throws InterruptedException {}
 	
-	private void parkInCrater() throws InterruptedException {
-		drive.moveXY(-0.12, 1.5, 10);
-		drive.waitUntilDone();
-		drive.moveXY(-0.03, 0.5, 10);
-		robot.collectArm.setPower(1);
-		robot.scooper.setPower(1);
-		waitUntil(() -> robot.collectArm.getCurrentPosition() < ARM_TURN);
-		sleep(3000);
-		robot.scooper.setPower(0);
-	}
+	protected abstract void parkInCrater() throws InterruptedException;
 }

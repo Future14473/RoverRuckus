@@ -11,8 +11,6 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
-import static java.lang.Math.atan2;
-import static java.lang.Math.hypot;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
@@ -23,7 +21,7 @@ public class Robot {
 	private static final double MAX_ACCELERATION = 4.0;
 	public final MotorSet wheels;
 	public final DcMotor hook, scooper, collectArm, scoreArm;
-	public final Servo flicker, markerDoor, collectDoor, scoreDoor;
+	public final Servo flicker, markerDoor, collectDoor, scoreDoor, parker;
 	public final CRServo angler;
 	public final BNO055IMU imu;
 	private long pastUpdateTime;
@@ -39,7 +37,7 @@ public class Robot {
 		fl.setDirection(REVERSE);
 		wheels = new MotorSet(fl, fr, bl, br);
 		wheels.setZeroPowerBehavior(BRAKE);
-		wheels.setTargetPositionTolerance(30);
+		wheels.setTargetPositionTolerance(25);
 		
 		hook = hardwareMap.get(DcMotor.class, "Hook");
 		hook.setMode(RUN_USING_ENCODER);
@@ -63,6 +61,7 @@ public class Robot {
 		markerDoor = hardwareMap.get(Servo.class, "MarkerDoor");
 		collectDoor = hardwareMap.get(Servo.class, "CollectDoor");
 		scoreDoor = hardwareMap.get(Servo.class, "ScoreDoor");
+		parker = hardwareMap.get(Servo.class, "Parker");
 		
 		angler = hardwareMap.get(CRServo.class, "Angler");
 		
@@ -76,10 +75,6 @@ public class Robot {
 	public void moveAt(double direction, double moveSpeed, double turnRate) {
 		pastPower = calcPower(direction, moveSpeed, turnRate);
 		wheels.setPower(pastPower);
-	}
-	
-	public void moveAtXY(double x, double y, double turnRate) {
-		moveAt(atan2(y, x), hypot(x, y), turnRate);
 	}
 	
 	public void smoothMoveAt(double direction, double speed, double turnRate) {
@@ -108,7 +103,7 @@ public class Robot {
 	 * Used for consistent parameters in our code.
 	 * Configured for INTRINSIC, ZYX, RADIANS. First Angle is plane parallel to floor.
 	 */
-	public Orientation getOrientation() {
+	private Orientation getOrientation() {
 		return imu.getAngularOrientation(INTRINSIC, ZYX, RADIANS);
 	}
 	
