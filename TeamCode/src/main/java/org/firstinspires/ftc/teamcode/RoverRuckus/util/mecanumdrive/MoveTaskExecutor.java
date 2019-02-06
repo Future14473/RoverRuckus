@@ -125,7 +125,7 @@ class MoveTaskExecutor {
 						if (curTask.run(motors)) break; //task is actually done
 					}
 					skip.set(false);
-					motors.stop();
+					//motors.stop(); //TODO TEST
 				}
 			} finally {
 				done.set(true);

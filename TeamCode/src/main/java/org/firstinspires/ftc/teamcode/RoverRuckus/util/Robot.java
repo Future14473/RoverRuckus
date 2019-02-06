@@ -19,6 +19,7 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.Motor
 public class Robot {
 	//maximum acceleration in powerLevel/second
 	private static final double MAX_ACCELERATION = 4.0;
+	private static final int TARGET_POSITION_TOLERANCE = 25;
 	public final MotorSet wheels;
 	public final DcMotor hook, scooper, collectArm, scoreArm;
 	public final Servo flicker, markerDoor, collectDoor, scoreDoor, parker;
@@ -33,11 +34,11 @@ public class Robot {
 		DcMotorEx fr = hardwareMap.get(DcMotorEx.class, "FrontRight");
 		DcMotorEx bl = hardwareMap.get(DcMotorEx.class, "BackLeft");
 		DcMotorEx br = hardwareMap.get(DcMotorEx.class, "BackRight");
-		bl.setDirection(REVERSE);
 		fl.setDirection(REVERSE);
+		bl.setDirection(REVERSE);
 		wheels = new MotorSet(fl, fr, bl, br);
 		wheels.setZeroPowerBehavior(BRAKE);
-		wheels.setTargetPositionTolerance(25);
+		wheels.setTargetPositionTolerance(TARGET_POSITION_TOLERANCE);
 		
 		hook = hardwareMap.get(DcMotor.class, "Hook");
 		hook.setMode(RUN_USING_ENCODER);

@@ -24,7 +24,7 @@ public class LimitedMotor {
 	 * @param upperLimit     encoder upper limit;
 	 * @param encoderReverse if the encoder values are negated (workaround hardware issues).
 	 */
-	public LimitedMotor(DcMotor motor, int lowerLimit, int upperLimit, boolean encoderReverse) {
+	public LimitedMotor(DcMotor motor, Integer lowerLimit, Integer upperLimit, boolean encoderReverse) {
 		if (upperLimit < lowerLimit) throw new IllegalArgumentException();
 		this.motor = motor;
 		this.lowerLimit = lowerLimit;

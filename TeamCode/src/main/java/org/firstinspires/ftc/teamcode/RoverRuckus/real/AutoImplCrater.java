@@ -9,7 +9,7 @@ public class AutoImplCrater extends AbstractAuto {
 		drive.turn(50, 10);
 		drive.moveXY(-0.65, 0, 10);
 		drive.moveXY(0.05, 0, 10);
-		drive.moveXY(0, -1.4, 10);
+		drive.moveXY(0, -1.35, 10);
 	}
 	
 	@Override

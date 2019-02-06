@@ -10,8 +10,6 @@ public class ResetEncoders extends OpMode {
 	
 	@Override
 	public void init() {
-		telemetry.addLine("ENCODERS RESET");
-		telemetry.update();
 		Robot robot = new Robot(hardwareMap);
 		robot.scoreArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		robot.collectArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

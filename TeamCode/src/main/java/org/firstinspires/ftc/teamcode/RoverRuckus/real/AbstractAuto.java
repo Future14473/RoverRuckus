@@ -13,14 +13,16 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENC
  */
 @SuppressWarnings("Duplicates")
 public abstract class AbstractAuto extends OurLinearOpMode {
-	private static final int HOOK_TURN_START_LOOK = -24000;
+	private static final int HOOK_TURN_START_LOOK = -22000;
 	private static final int HOOK_TURN_END = -26000;
-	private static final double PARKER_POSITION_OUT = 0.73;
+	private static final double PARKER_POSITION_OUT = 0;
 	protected MecanumDrive drive;
 	private ElapsedTime timer = new ElapsedTime();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	
 	protected abstract void positionForDepot() throws InterruptedException;
+	
+	protected abstract void parkInCrater() throws InterruptedException;
 	
 	@Override
 	protected void initialize() {
@@ -48,12 +50,11 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		parkInCrater();
 		finishHook();
 		drive.waitUntilDone();
-		
 	}
 	
 	private void finishHook() throws InterruptedException {
 		robot.hook.setPower(-0.7);
-		waitUntil(() -> Math.abs(robot.hook.getCurrentPosition()/* - 0 */) > 40);
+		waitUntil(() -> Math.abs(robot.hook.getCurrentPosition()/* - 0 */) < 100);
 		robot.hook.setPower(0);
 	}
 	
@@ -79,6 +80,7 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	
 	private void knockOffGold() throws InterruptedException {
 		drive.waitUntilDone();
+		robot.hook.setPower(-0.6); //HOOK INTERLUDE
 		timer.reset();
 		waitUntil(() -> goldLooker.hasDetected() || timer.seconds() > 3);
 		int look = goldLooker.getLook();
@@ -90,11 +92,10 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		telemetry.addData("Gold is at:", (look == 0) ? "left" : ((look == 1) ? "middle" : "right"));
 		telemetry.update();
 		drive.waitUntilDone();
-		robot.hook.setPower(-0.7); //INTERLUDE
-		drive.moveXY(-0.35 + 0.5 * look, 0.45, 10);
-		drive.moveXY(0, 0.2, 10);
-		drive.moveXY(0, -0.2, 10);
-		drive.moveXY(-0.6 - 0.5 * look, 0.05, 10);
+		drive.moveXY(-0.35 + 0.5 * look, 0.45, 10); //go to
+		drive.moveXY(0, 0.25, 10); //knock off
+		drive.moveXY(0, -0.35, 10);
+		drive.moveXY(-0.6 - 0.5 * look, 0.05, 10); //repos
 		drive.waitUntilDone();
 	}
 	
@@ -105,7 +106,4 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		robot.flicker.setPosition(0);
 		sleep(500);
 	}
-	
-	
-	protected abstract void parkInCrater() throws InterruptedException;
 }

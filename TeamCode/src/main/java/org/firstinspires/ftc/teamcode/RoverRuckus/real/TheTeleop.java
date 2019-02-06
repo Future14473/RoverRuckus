@@ -31,7 +31,7 @@ public class TheTeleop extends OurLinearOpMode {
 	private static final double SCORE_DOOR_READY = 0.85;
 	private static final double SCORE_DOOR_GOLD = 0.79;
 	private static final double SCORE_DOOR_OPEN = 0.65;
-	private static final double PARKER_POSITION_HOME = 0.37;
+	private static final double PARKER_POSITION_HOME = 0.6;
 	//Mults
 	private static final double SPEED_FAST_MULT = 100;
 	private static final double SPEED_NORMAL_MULT = 1;
