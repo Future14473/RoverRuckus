@@ -1,41 +1,38 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive;
 
-import java.util.function.DoubleSupplier;
+import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.IRobot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.MotorSetPosition;
 
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPosition.MOVE_MULT;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPower.calcPower;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.MotorSetPower.calcPower;
 
 /**
- * A {@link MoveTask} that turns the robot that utilizes a orientation sensor
+ * A {@link RobotTaskAdapter} that turns the robot that utilizes a orientation sensor
  * for accurate rotations.
  */
-public class TurnMoveTask extends UniformMoveTask {
-	private final DoubleSupplier direction;
+class TurnMoveRobotTask extends UniformMoveRobotTask {
 	private double targAngle;
 	private double degreesToTurn;
 	
-	TurnMoveTask(double degreesToTurn, double speed, DoubleSupplier direction) {
+	TurnMoveRobotTask(double degreesToTurn, double speed) {
 		super(calcPower(0, 0, Math.signum(degreesToTurn)), speed, MOVE_MULT);
-		this.direction = direction;
 		this.degreesToTurn = degreesToTurn;
 	}
 	
 	@Override
-	public void start(MotorSet motors) {
-		super.start(motors);
+	public void start(IRobot robot) {
+		super.start(robot);
 		targAngle = getDirection() + degreesToTurn;
 		//RobotLog.v("STARTING TURNMOVETASK...");
 		//RobotLog.v("TARG ANGLE: %f", targAngle);
 	}
 	
 	private double getDirection() {
-		return -Math.toDegrees(direction.getAsDouble());
+		return -Math.toDegrees(robot.getDirection());
 	}
 	
 	@Override
-	public boolean run(MotorSet motors) {
-		updateCurPos(motors);
-		
+	public boolean loop() {
+		updateCurPos();
 		double curAngle = getDirection();
 		double angleProgress = 1 - (targAngle - curAngle) / degreesToTurn;
 		double targPosMult = getAvgProgress() / angleProgress;
@@ -50,7 +47,7 @@ public class TurnMoveTask extends UniformMoveTask {
 		motors.setTargetPosition(targPos);
 		//RobotLog.v("TARG POS: %s", targPos.toString());
 		//RobotLog.v("CUR POS: %s", getCurPos().toString());
-		setPower(getAvgProgress(), motors);
+		setPower(getAvgProgress());
 		return Math.abs(curAngle - targAngle) < 10;
 	}
 	

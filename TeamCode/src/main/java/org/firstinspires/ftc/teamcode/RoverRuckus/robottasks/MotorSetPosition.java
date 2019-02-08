@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.robottasks;
 
 import java.util.Arrays;
 
@@ -9,10 +9,8 @@ import java.util.Arrays;
  * @see MotorSet
  */
 public class MotorSetPosition {
-	final static MotorSetPosition ZERO = new MotorSetPosition();
-	final static double MOVE_MULT = 4450; //change to tweak "move x meters" precisely. Degrees wheel turn per unit.
-	final static double TURN_MULT = 1205; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
-	final int[] position;
+	private final static MotorSetPosition ZERO = new MotorSetPosition();
+	public final int[] position;
 	
 	/**
 	 * Construct via 4 power levels
@@ -32,7 +30,7 @@ public class MotorSetPosition {
 		}
 	}
 	
-	int get(int i) {
+	public int get(int i) {
 		return position[i];
 	}
 	

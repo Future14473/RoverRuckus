@@ -10,7 +10,7 @@ public class Reset extends LinearOpMode {
 	private OldRobot robot = new OldRobot();
 	
 	@Override
-	public void runOpMode() throws InterruptedException {
+	public void runOpMode() {
 		robot.init(hardwareMap);
 		robot.drive.addLinearOpMode(this);
 		waitForStart();

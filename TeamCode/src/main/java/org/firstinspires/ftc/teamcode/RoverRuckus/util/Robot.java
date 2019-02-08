@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSet;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPower;
+import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.IRobot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.MotorSet;
+import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.MotorSetPower;
+import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive.MecanumDrive;
 
 import static com.qualcomm.hardware.bosch.BNO055IMU.AngleUnit.DEGREES;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
@@ -14,19 +16,20 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MotorSetPower.calcPower;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.MotorSetPower.calcPower;
 
-public class Robot {
+public class Robot implements IRobot {
 	//maximum acceleration in powerLevel/second
-	private static final double MAX_ACCELERATION = 4.0;
+	private static final double MAX_ACCELERATION = 2.0;
 	private static final int TARGET_POSITION_TOLERANCE = 25;
 	public final MotorSet wheels;
 	public final DcMotor hook, scooper, collectArm, scoreArm;
 	public final Servo flicker, markerDoor, collectDoor, scoreDoor, parker;
 	public final CRServo angler;
-	public final BNO055IMU imu;
+	private final BNO055IMU imu;
 	private long pastUpdateTime;
 	private MotorSetPower pastPower = new MotorSetPower();
+	private CumulativeDirection direction = new CumulativeDirection(() -> this.getOrientation().firstAngle);
 	
 	public Robot(HardwareMap hardwareMap) {
 		
@@ -73,6 +76,7 @@ public class Robot {
 	/**
 	 * Utility: set the motors right now to move in the specified direction, turnRate, and speed.
 	 */
+	@SuppressWarnings("unused")
 	public void moveAt(double direction, double moveSpeed, double turnRate) {
 		pastPower = calcPower(direction, moveSpeed, turnRate);
 		wheels.setPower(pastPower);
@@ -112,9 +116,15 @@ public class Robot {
 	 * Gets the orientation of the robot, on a plane parallel to the floor.
 	 * In RADIANS.
 	 * Positive is counterclockwise. this is not the same as in
-	 * {@link org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive MecanumDrive}!!
+	 * {@link MecanumDrive MecanumDrive}!!
 	 */
-	public float getDirection() {
-		return getOrientation().firstAngle;
+	@Override
+	public double getDirection() {
+		return direction.getAsDouble();
+	}
+	
+	@Override
+	public MotorSet getWheelMotors() {
+		return wheels;
 	}
 }

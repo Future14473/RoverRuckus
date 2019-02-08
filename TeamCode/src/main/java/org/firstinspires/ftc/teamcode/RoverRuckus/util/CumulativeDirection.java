@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
 import java.util.function.DoubleSupplier;
 
@@ -7,7 +7,7 @@ import java.util.function.DoubleSupplier;
  * in angles as opposed to direct angle measurement.
  * position cumulatively (can do multiple revolutions).
  */
-public class CumulativeDirection implements DoubleSupplier {
+class CumulativeDirection implements DoubleSupplier {
 	private final DoubleSupplier directionInDegrees;
 	private double curDirection;
 	

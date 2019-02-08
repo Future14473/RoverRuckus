@@ -9,7 +9,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
  * encoder values.
  */
 public class LimitedMotor {
-	public final DcMotor motor;
+	private final DcMotor motor;
 	private final Integer lowerLimit;
 	private final Integer upperLimit;
 	
@@ -38,19 +38,19 @@ public class LimitedMotor {
 		motor.setMode(encoderReverse ? RUN_WITHOUT_ENCODER : RUN_USING_ENCODER);
 	}
 	
-	public State setPowerLimited(double power) {
-		return setPowerLimited(power, null, null, false);
+	public void setPowerLimited(double power) {
+		setPowerLimited(power, null, null, false);
 	}
 	
-	public State setPowerLimited(double power, boolean override) {
-		return setPowerLimited(power, null, null, override);
+	public void setPowerLimited(double power, boolean override) {
+		setPowerLimited(power, null, null, override);
 	}
 	
-	public State setPowerLimited(double power, Integer lowerLimit, Integer upperLimit) {
-		return setPowerLimited(power, lowerLimit, upperLimit, false);
+	public void setPowerLimited(double power, Integer lowerLimit, Integer upperLimit) {
+		setPowerLimited(power, lowerLimit, upperLimit, false);
 	}
 	
-	public State setPowerLimited(double power, Integer lowerLimit, Integer upperLimit, boolean override) {
+	private void setPowerLimited(double power, Integer lowerLimit, Integer upperLimit, boolean override) {
 		if (lowerLimit == null) lowerLimit = this.lowerLimit;
 		if (upperLimit == null) upperLimit = this.upperLimit;
 		State state = State.NONE;
@@ -65,7 +65,6 @@ public class LimitedMotor {
 		}
 		motor.setPower(override || state == State.NONE ? power : 0);
 		lastState = state;
-		return state;
 	}
 	
 	public State getLastState() {

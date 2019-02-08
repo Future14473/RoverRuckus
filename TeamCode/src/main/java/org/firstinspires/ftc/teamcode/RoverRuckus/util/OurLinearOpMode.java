@@ -7,15 +7,13 @@ public abstract class OurLinearOpMode extends ModifiedLinearOpMode {
 	protected Robot robot;
 	
 	/**
-	 * This method is run once upon initialization.
+	 * This method is loop once upon initialization.
 	 * Put any additional initialization code here.
-	 *
-	 * @throws InterruptedException for when the OpMode early while initializing.
 	 */
-	protected abstract void initialize() throws InterruptedException;
+	protected abstract void initialize();
 	
 	/**
-	 * This method is run after the start button is pressed. OpMode will stop when this
+	 * This method is loop after the start button is pressed. OpMode will stop when this
 	 * method returns or throws InterruptedException
 	 *
 	 * @throws InterruptedException to stop the OpMode early.

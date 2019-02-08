@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
@@ -22,12 +22,12 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	
 	protected abstract void positionForDepot() throws InterruptedException;
 	
-	protected abstract void parkInCrater() throws InterruptedException;
+	protected abstract void parkInCrater();
 	
 	@Override
 	protected void initialize() {
 		goldLooker.init(hardwareMap);
-		drive = new MecanumDrive(robot.wheels);
+		drive = new MecanumDrive(robot, new MecanumDrive.Parameters());
 		robot.collectArm.setMode(STOP_AND_RESET_ENCODER);
 		robot.collectArm.setMode(RUN_WITHOUT_ENCODER);
 		robot.scoreArm.setMode(STOP_AND_RESET_ENCODER);

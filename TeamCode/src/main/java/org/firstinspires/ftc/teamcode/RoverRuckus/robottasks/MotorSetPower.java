@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.robottasks;
 
 import java.util.Arrays;
 
@@ -8,15 +8,16 @@ import java.util.Arrays;
  *
  * @see MotorSet
  */
+@SuppressWarnings("Duplicates")
 public class MotorSetPower {
 	static final MotorSetPower ZERO = new MotorSetPower();
 	private static final double MAX_POWER = 0.95;
-	final double[] power;
+	public final double[] power;
 	
 	/**
 	 * Construct via 4 power levels
 	 */
-	public MotorSetPower(double fl, double fr, double bl, double br) {
+	private MotorSetPower(double fl, double fr, double bl, double br) {
 		this.power = new double[]{fl, fr, bl, br};
 	}
 	

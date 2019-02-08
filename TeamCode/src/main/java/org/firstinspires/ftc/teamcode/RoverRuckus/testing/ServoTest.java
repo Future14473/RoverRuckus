@@ -8,12 +8,11 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 @TeleOp(group = "test")
 @Disabled
 public class ServoTest extends LinearOpMode {
-	private Robot robot;
 	
 	@Override
-	public void runOpMode() throws InterruptedException {
+	public void runOpMode() {
 		
-		robot = new Robot(hardwareMap);
+		Robot robot = new Robot(hardwareMap);
 		waitForStart();
 		
 		robot.markerDoor.setPosition(0.9);

@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryInternal;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -15,11 +16,11 @@ import java.util.function.BooleanSupplier;
  * Redundant code and weird things removed.
  */
 public abstract class ModifiedLinearOpMode extends OpMode {
+	private final SingleWaiter waiter = new SingleWaiter();
 	private OpModeRunner runner = null;
 	private ExecutorService executorService = null;
 	private volatile boolean isStarted = false;
 	private volatile boolean stopRequested = false;
-	private ExternalSignalingWaiter condition = null;
 	
 	/**
 	 * Override this method and place your code here.
@@ -29,10 +30,10 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	protected abstract void runOpMode() throws InterruptedException;
 	
 	/**
-	 * Override this method and place your cleanup code here.
-	 * This method will always run after the OpMode stops: through
+	 * Override this method and place cleanup code here.
+	 * This method will always loop after the OpMode stops: through
 	 * normal exit, exception thrown, or OpMode stopped early.
-	 * If a RuntimeException is thrown, it is ignored.
+	 * If a RuntimeException is thrown during cleanup, it is ignored.
 	 */
 	protected abstract void cleanup();
 	
@@ -116,11 +117,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 		if (runner.hasRuntimeException()) {
 			throw runner.getRuntimeException();
 		}
-		// check for condition -- waitUntil impl.
-		if (condition != null) {
-			//no one sets to null; so no synchronize needed.
-			condition.update();
-		}
+		
 		
 		//telemetry
 		if (telemetry instanceof TelemetryInternal) {
@@ -128,6 +125,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 		}
 		//slight efficiency
 		Thread.yield();
+		doInLoop();
 	}
 	
 	/**
@@ -145,23 +143,13 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	}
 	
 	/**
-	 * Checks if the opMode is active. If the OpMode is not active and should not
-	 * be running, this will terminate the OpMode throwing an {@link InterruptedException}.
-	 * Otherwise returns true.
-	 */
-	protected final boolean checkOpModeIsActive() throws InterruptedException {
-		if (!opModeIsActive()) throw new InterruptedException();
-		return true;
-	}
-	
-	/**
 	 * Has the the stopping of the opMode been requested?
 	 *
 	 * @return whether stopping opMode has been requested or not
 	 * @see #opModeIsActive()
 	 * @see #isStarted()
 	 */
-	public final boolean isStopRequested() {
+	private boolean isStopRequested() {
 		return this.stopRequested || Thread.currentThread().isInterrupted();
 	}
 	
@@ -172,8 +160,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 */
 	protected void waitUntil(BooleanSupplier condition) throws InterruptedException {
 		RobotLog.d("WaitUntil started: " + condition.toString());
-		this.condition = new ExternalSignalingWaiter(condition);
-		this.condition.waitUntilTrue();
+		this.waiter.waitFor(condition);
 		RobotLog.d("WaitUntil ended " + condition.toString());
 	}
 	
@@ -196,7 +183,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 * @throws InterruptedException if this thread is interrupted while sleeping (op mode stopped).
 	 * @see Thread#sleep(long)
 	 */
-	public final void sleep(long milliseconds) throws InterruptedException {
+	protected final void sleep(long milliseconds) throws InterruptedException {
 		Thread.sleep(milliseconds);
 	}
 	
@@ -205,7 +192,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 *
 	 * @throws InterruptedException if this thread is interrupted while waiting (op mode stopped).
 	 */
-	public synchronized void waitForStart() throws InterruptedException {
+	protected synchronized void waitForStart() throws InterruptedException {
 		while (!isStarted()) {
 			this.wait();
 		}
@@ -217,17 +204,23 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 * @return whether this opMode has been started or not
 	 * @see #opModeIsActive()
 	 */
-	public final boolean isStarted() {
+	private boolean isStarted() {
 		return this.isStarted || Thread.currentThread().isInterrupted();
 	}
 	
+	/**
+	 * This will be run once during handleLoop().
+	 */
+	private void doInLoop() {
+		//signal any waiters
+		waiter.update();
+	}
+	
 	private class OpModeRunner implements Runnable {
-		RuntimeException exception = null;
+		private RuntimeException exception = null;
 		
-		boolean isShutdown = false;
+		private boolean isShutdown = false;
 		
-		OpModeRunner() {
-		}
 		
 		RuntimeException getRuntimeException() {
 			return this.exception;
@@ -255,7 +248,8 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 				} catch (RuntimeException e) {
 					this.exception = e;
 				} finally {
-					// since telemetry statements will very soon be replaced with the default op mode, it is not
+					// since telemetry statements will very soon be replaced with the default op mode, we do not
+					// need to try and
 					// worth it to try and update the telemetry.
 					try {
 						ModifiedLinearOpMode.this.cleanup();
@@ -266,6 +260,31 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 					}
 				}
 			});
+		}
+	}
+	
+	private static class SingleWaiter {
+		private final AtomicInteger waiters = new AtomicInteger();
+		private BooleanSupplier condition;
+		
+		protected SingleWaiter() {}
+		
+		protected synchronized void waitFor(BooleanSupplier condition) throws InterruptedException {
+			this.notifyAll(); //screw all other waiters, if any
+			this.condition = condition;
+			if (condition.getAsBoolean()) return;
+			waiters.incrementAndGet();
+			wait();
+			waiters.decrementAndGet();
+		}
+		
+		protected void update() {
+			if (waiters.get() == 0) return;
+			synchronized (this) {
+				if (condition.getAsBoolean()) {
+					this.notifyAll();
+				}
+			}
 		}
 	}
 }

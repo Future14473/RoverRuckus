@@ -1,25 +1,33 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive;
 
 import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.*;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
-public abstract class UniformMoveTask implements MoveTask {
+//TODO: cleanup
+abstract class UniformMoveRobotTask implements RobotTask {
+	public final static double TURN_MULT = 1205; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
+	public final static double MOVE_MULT = 4450; //change to tweak "move x meters" precisely. Degrees wheel turn per
+	// unit.
+	//TODO: Make above protected
 	private final double speed;
 	private final double[] progress = new double[4];
+	protected MotorSet motors;
 	private MotorSetPower targPower, actualPower;
 	private MotorSetPosition targPos, curPos;
+	protected IRobot robot;
 	
-	public UniformMoveTask(MotorSetPower targPower, double speed, double mult) {
+	protected UniformMoveRobotTask(MotorSetPower targPower, double speed, double mult) {
 		this.targPower = targPower;
 		this.speed = speed;
 		this.targPos = new MotorSetPosition(targPower, mult);
 		actualPower = new MotorSetPower();
 	}
 	
-	protected void updateCurPos(MotorSet motors) {
-		curPos = motors.getCurrentPosition();
+	protected void updateCurPos() {
+		curPos = this.motors.getCurrentPosition();
 	}
 	
 	protected int getMaxOff() {
@@ -42,21 +50,23 @@ public abstract class UniformMoveTask implements MoveTask {
 	
 	//Reset position, set target position.
 	@Override
-	public void start(MotorSet motors) {
+	public void start(IRobot robot) {
+		this.robot = robot;
+		this.motors = this.robot.getWheelMotors();
 		motors.setMode(STOP_AND_RESET_ENCODER);
 		motors.setMode(RUN_TO_POSITION);
 		motors.setTargetPosition(getTargPos());
 	}
 	
-	protected void setPower(double avgProgress, MotorSet motors) {
+	protected void setPower(double avgProgress) {
 		for (int i = 0; i < 4; i++) {
 			actualPower.power[i] = (targPower.power[i] * (1 - 3 * (progress[i] - avgProgress))) * speed;
 		}
 		//RobotLog.v("SET POWER: %s", actualPower.toString());
-		motors.setPower(actualPower);
+		this.motors.setPower(actualPower);
 	}
 	
-	public MotorSetPosition getTargPos() {
+	protected MotorSetPosition getTargPos() {
 		return targPos;
 	}
 	

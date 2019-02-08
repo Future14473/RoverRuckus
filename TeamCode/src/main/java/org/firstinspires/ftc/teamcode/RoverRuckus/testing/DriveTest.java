@@ -2,21 +2,21 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive;
 
 @Autonomous
 @Disabled
 public class DriveTest extends OurLinearOpMode {
-	protected MecanumDrive drive;
+	private MecanumDrive drive;
 	
 	@Override
-	protected void initialize() throws InterruptedException {
+	protected void initialize() {
 	
 	}
 	
 	@Override
-	protected void run() throws InterruptedException {
+	protected void run() {
 		drive.move(0, 0.5, 1);
 		drive.move(-90, 0.5, 1);
 		drive.move(180, 0.5, 1);

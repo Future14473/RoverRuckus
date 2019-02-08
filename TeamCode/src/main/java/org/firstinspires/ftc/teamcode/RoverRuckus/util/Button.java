@@ -5,6 +5,7 @@ import java.util.function.BooleanSupplier;
 /**
  * Utility for monitoring button state.
  */
+@SuppressWarnings("unused")
 public class Button implements BooleanSupplier {
 	private final BooleanSupplier cur;
 	private boolean past = false;

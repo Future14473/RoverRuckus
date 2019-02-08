@@ -70,7 +70,7 @@ public class TheTeleop extends OurLinearOpMode {
 	private long sleepEndTime;
 	
 	@Override
-	protected void initialize() throws InterruptedException {
+	protected void initialize() {
 		robot.initIMU();
 		robot.wheels.setMode(RUN_USING_ENCODER);
 		robot.wheels.setZeroPowerBehavior(FLOAT);

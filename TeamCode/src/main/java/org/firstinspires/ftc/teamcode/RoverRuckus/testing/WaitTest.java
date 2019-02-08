@@ -2,17 +2,17 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.mecanumdrive.MecanumDrive;
 
 @TeleOp(group = "test")
 @Disabled
 public class WaitTest extends OurLinearOpMode {
 	
-	protected MecanumDrive drive;
+	private MecanumDrive drive;
 	
 	@Override
-	protected void initialize() throws InterruptedException {}
+	protected void initialize() {}
 	
 	@Override
 	protected void run() throws InterruptedException {

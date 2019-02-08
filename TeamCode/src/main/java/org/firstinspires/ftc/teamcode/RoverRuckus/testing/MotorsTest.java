@@ -7,17 +7,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 
+@SuppressWarnings("unused")
 @TeleOp(group = "test")
 public class MotorsTest extends OpMode {
 	private double pos;
 	private DcMotor motor;
 	private Servo servo;
 	private CRServo crServo;
-	private Robot robot;
 	
 	@Override
 	public void init() {
-		robot = new Robot(hardwareMap);
+		Robot robot = new Robot(hardwareMap);
 		//motor = robot.scoreArm;
 		//motor.setDirection(DcMotorSimple.Direction.REVERSE);
 		servo = hardwareMap.get(Servo.class, "Parker");

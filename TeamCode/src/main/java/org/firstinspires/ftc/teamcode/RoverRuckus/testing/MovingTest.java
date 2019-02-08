@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.Robot;
 public class MovingTest extends OpMode {
 	private Robot robot;
 	
-	public void sleep(int millis) {
+	private void sleep() {
 		try {
-			Thread.sleep(millis);
+			Thread.sleep(1000);
 		} catch (InterruptedException ignored) {
 		}
 	}
@@ -21,7 +21,7 @@ public class MovingTest extends OpMode {
 	public void start() {
 		robot.wheels.get(0).setPower(1);
 		robot.wheels.get(1).setPower(1);
-		sleep(1000);
+		sleep();
 		robot.wheels.stop();
 	}
 	
