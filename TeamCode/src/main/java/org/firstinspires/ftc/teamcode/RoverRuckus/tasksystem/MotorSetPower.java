@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.robottasks;
+package org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem;
 
 import java.util.Arrays;
 
@@ -24,7 +24,6 @@ public class MotorSetPower {
 	public MotorSetPower() {
 		this.power = new double[4];
 	}
-	
 	
 	/**
 	 * Returns an new {@code MotorSetPower} that has its power levels scaled down such that

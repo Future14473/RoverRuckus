@@ -1,15 +1,16 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.mecanumdrive;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.MotorSetPower;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.MotorSetPower;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.IRobot;
 
 /**
  * A {@link RobotTaskAdapter} that is simply turning all the wheels
  * at a constant power, uniformly, for a constant time.
  */
-class StraightMoveRobotTask extends UniformMoveRobotTask {
+class StraightMoveTask extends UniformMoveTask {
 	
-	StraightMoveRobotTask(MotorSetPower targPower, double mult, double speed) {
-		super(targPower, speed, mult);
+	StraightMoveTask(IRobot robot, MotorSetPower targPower, double mult, double speed) {
+		super(robot, targPower, speed, mult);
 	}
 	
 	//read motor positions and adjust them as necessary if they go off track relative to everyone else.

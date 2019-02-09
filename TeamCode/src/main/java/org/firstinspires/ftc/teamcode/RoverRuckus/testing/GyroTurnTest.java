@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
 
@@ -29,10 +29,5 @@ public class GyroTurnTest extends OurLinearOpMode {
 			telemetry.addData("IS DONE", drive.isDone());
 			telemetry.update();
 		}
-	}
-	
-	@Override
-	protected void cleanup() {
-		drive.stop();
 	}
 }

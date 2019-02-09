@@ -8,10 +8,10 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
 
 @SuppressWarnings("Duplicates")
-public class GoldLookDouble {
+public class GoldLookDoubleCallable implements Callable<Integer> {
 	private static final double MIN_CONFIDENCE = 0.75;
 	private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
 	private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -22,12 +22,10 @@ public class GoldLookDouble {
 			"+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz/LaIEh4phJs35awBUu+g" +
 			"+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG/jRUsWLH1cs35" +
 			"/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT+485YdwnaxuS8K9";
-	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private VuforiaLocalizer vuforia;
 	private TFObjectDetector tfod;
-	private Future<Integer> theFuture;
 	
-	public void init(HardwareMap hardwareMap) {
+	public GoldLookDoubleCallable(HardwareMap hardwareMap) {
 		initVuforia();
 		if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
 			initTfod(hardwareMap);
@@ -36,56 +34,10 @@ public class GoldLookDouble {
 		}
 	}
 	
-	public boolean hasDetected() {
-		return theFuture != null && theFuture.isDone();
-	}
-	
-	public void start() {
-		if (theFuture != null) theFuture.cancel(true);
-		theFuture = executorService.submit(this::doDetect);
-	}
-	
-	public void stop() {
-		executorService.shutdownNow();
-		tfod.shutdown();
-	}
-	
-	/**
-	 * Backwards compatibility
-	 */
-	public int getLook() {
-		if (theFuture.isDone()) {
-			try {
-				return theFuture.get();
-			} catch (ExecutionException | InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return -1;
-	}
-	
-	/**
-	 * Gets the look value, waiting up to the specified timeout.
-	 *
-	 * @return the look value, if found, or -1, if not found
-	 * @throws InterruptedException if the thread is interrupted while waiting.
-	 */
-	public int getLook(long timeout, TimeUnit unit) throws InterruptedException {
-		if (theFuture == null) start();
-		try {
-			return theFuture.get(timeout, unit);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-			return -1;
-		} catch (TimeoutException e) {
-			return -1;
-		}
-	}
-	
 	/**
 	 * returns 2 if both is white, 1 if right is gold, 0 if left is gold, -1 if none detected.
 	 */
-	public int detect() {
+	private int tryDetect() {
 		List<Recognition> listRecognitions = tfod.getUpdatedRecognitions();
 		if (listRecognitions == null || listRecognitions.size() < 2) return -1;
 		int ax = -1, bx = -1;
@@ -93,11 +45,6 @@ public class GoldLookDouble {
 		
 		Recognition[] recognitions = listRecognitions.toArray(new Recognition[0]);
 		
-		for (int i = 0; i < Math.min(recognitions.length, 6); i++) {
-			if (recognitions[i].getConfidence() < MIN_CONFIDENCE) {
-				recognitions[i] = null;
-			}
-		}
 		for (int i = 0; i < Math.min(recognitions.length, 6); i++) {
 			if (recognitions[i] == null) continue;
 			//if it overlaps closely with other recognitions and is silver, override it with silver.
@@ -146,20 +93,23 @@ public class GoldLookDouble {
 		int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id",
 				hardwareMap.appContext.getPackageName());
 		TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+		tfodParameters.minimumConfidence = MIN_CONFIDENCE;
 		tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 		tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
 	}
 	
-	public void activate() {
+	@Override
+	public Integer call() throws Exception {
 		tfod.activate();
-	}
-	
-	private Integer doDetect() {
-		tfod.activate();
-		int look;
-		do look = detect(); while (look == -1 && !Thread.interrupted());
-		tfod.shutdown();
-		executorService.shutdown();
+		int look = -1;
+		try {
+			do {
+				Thread.sleep(100);
+				look = tryDetect();
+			} while (look == -1);
+		} catch (InterruptedException e) {
+			tfod.deactivate();
+		}
 		return look;
 	}
 }

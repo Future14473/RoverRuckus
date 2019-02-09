@@ -1,26 +1,25 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.mecanumdrive;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.IRobot;
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.MotorSetPosition;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.MotorSetPosition;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.IRobot;
 
-import static org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.MotorSetPower.calcPower;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.MotorSetPower.calcPower;
 
 /**
  * A {@link RobotTaskAdapter} that turns the robot that utilizes a orientation sensor
  * for accurate rotations.
  */
-class TurnMoveRobotTask extends UniformMoveRobotTask {
+class TurnMoveTask extends UniformMoveTask {
 	private double targAngle;
 	private double degreesToTurn;
 	
-	TurnMoveRobotTask(double degreesToTurn, double speed) {
-		super(calcPower(0, 0, Math.signum(degreesToTurn)), speed, MOVE_MULT);
+	TurnMoveTask(IRobot robot, double degreesToTurn, double speed) {
+		super(robot, calcPower(0, 0, Math.signum(degreesToTurn)), speed, MOVE_MULT);
 		this.degreesToTurn = degreesToTurn;
 	}
 	
 	@Override
-	public void start(IRobot robot) {
-		super.start(robot);
+	public void start() {
 		targAngle = getDirection() + degreesToTurn;
 		//RobotLog.v("STARTING TURNMOVETASK...");
 		//RobotLog.v("TARG ANGLE: %f", targAngle);

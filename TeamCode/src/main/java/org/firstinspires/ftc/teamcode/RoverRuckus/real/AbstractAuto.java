@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * For autonomous
@@ -18,7 +19,7 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	private static final double PARKER_POSITION_OUT = 0;
 	protected MecanumDrive drive;
 	private ElapsedTime timer = new ElapsedTime();
-	private GoldLookDouble goldLooker = new GoldLookDouble();
+	private final GoldLookDouble goldLooker = new GoldLookDouble();
 	
 	protected abstract void positionForDepot() throws InterruptedException;
 	
@@ -28,6 +29,7 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	protected void initialize() {
 		goldLooker.init(hardwareMap);
 		drive = new MecanumDrive(robot, new MecanumDrive.Parameters());
+		//Reset encoders.
 		robot.collectArm.setMode(STOP_AND_RESET_ENCODER);
 		robot.collectArm.setMode(RUN_WITHOUT_ENCODER);
 		robot.scoreArm.setMode(STOP_AND_RESET_ENCODER);
@@ -46,6 +48,7 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		
 		robot.hook.setPower(0);
 		putMarkerInDepot();
+		
 		robot.parker.setPosition(PARKER_POSITION_OUT);
 		parkInCrater();
 		finishHook();
@@ -60,7 +63,6 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	
 	@Override
 	protected void cleanup() {
-		drive.stop(); //IMPORTANT
 		goldLooker.stop();
 	}
 	
@@ -82,8 +84,7 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		drive.waitUntilDone();
 		robot.hook.setPower(-0.6); //HOOK INTERLUDE
 		timer.reset();
-		waitUntil(() -> goldLooker.hasDetected() || timer.seconds() > 3);
-		int look = goldLooker.getLook();
+		int look = goldLooker.getLook(3, SECONDS);
 		if (look == -1) {
 			look = 2;
 			telemetry.addLine("FAIL-SAFE HAPPENED");

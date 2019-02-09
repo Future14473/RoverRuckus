@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
 
 @Autonomous
@@ -22,7 +22,4 @@ public class DriveTest extends OurLinearOpMode {
 		drive.move(180, 0.5, 1);
 		drive.move(90, 0.5, 1);
 	}
-	
-	@Override
-	protected void cleanup() {}
 }

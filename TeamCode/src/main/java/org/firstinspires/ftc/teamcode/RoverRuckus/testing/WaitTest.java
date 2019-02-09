@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
 
 @TeleOp(group = "test")
@@ -12,7 +12,9 @@ public class WaitTest extends OurLinearOpMode {
 	private MecanumDrive drive;
 	
 	@Override
-	protected void initialize() {}
+	protected void initialize() {
+		drive = new MecanumDrive(robot, new MecanumDrive.Parameters());
+	}
 	
 	@Override
 	protected void run() throws InterruptedException {
@@ -24,8 +26,4 @@ public class WaitTest extends OurLinearOpMode {
 		}
 	}
 	
-	@Override
-	protected void cleanup() {
-	
-	}
 }

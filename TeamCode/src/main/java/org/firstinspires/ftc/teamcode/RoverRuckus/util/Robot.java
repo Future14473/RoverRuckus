@@ -3,10 +3,9 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.IRobot;
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.MotorSet;
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.MotorSetPower;
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.MotorSet;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.MotorSetPower;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.mecanumdrive.MecanumDrive;
 
 import static com.qualcomm.hardware.bosch.BNO055IMU.AngleUnit.DEGREES;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
@@ -16,7 +15,7 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.MotorSetPower.calcPower;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.MotorSetPower.calcPower;
 
 public class Robot implements IRobot {
 	//maximum acceleration in powerLevel/second

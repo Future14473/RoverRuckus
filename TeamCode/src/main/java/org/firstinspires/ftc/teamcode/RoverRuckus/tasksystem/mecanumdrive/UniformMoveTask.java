@@ -1,13 +1,17 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.mecanumdrive;
 
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.teamcode.RoverRuckus.robottasks.*;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.MotorSet;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.MotorSetPosition;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.MotorSetPower;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.TaskAdapter;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.IRobot;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
 //TODO: cleanup
-abstract class UniformMoveRobotTask implements RobotTask {
+abstract class UniformMoveTask extends TaskAdapter {
 	public final static double TURN_MULT = 1205; //change to tweak "rotate x deg" precisely.   Degrees wheel turn per
 	public final static double MOVE_MULT = 4450; //change to tweak "move x meters" precisely. Degrees wheel turn per
 	// unit.
@@ -17,11 +21,12 @@ abstract class UniformMoveRobotTask implements RobotTask {
 	protected MotorSet motors;
 	private MotorSetPower targPower, actualPower;
 	private MotorSetPosition targPos, curPos;
-	protected IRobot robot;
+	protected final IRobot robot;
 	
-	protected UniformMoveRobotTask(MotorSetPower targPower, double speed, double mult) {
+	protected UniformMoveTask(IRobot robot, MotorSetPower targPower, double speed, double mult) {
 		this.targPower = targPower;
 		this.speed = speed;
+		this.robot = robot;
 		this.targPos = new MotorSetPosition(targPower, mult);
 		actualPower = new MotorSetPower();
 	}
@@ -50,8 +55,7 @@ abstract class UniformMoveRobotTask implements RobotTask {
 	
 	//Reset position, set target position.
 	@Override
-	public void start(IRobot robot) {
-		this.robot = robot;
+	public void start() {
 		this.motors = this.robot.getWheelMotors();
 		motors.setMode(STOP_AND_RESET_ENCODER);
 		motors.setMode(RUN_TO_POSITION);

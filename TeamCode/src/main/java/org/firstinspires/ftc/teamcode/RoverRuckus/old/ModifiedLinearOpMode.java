@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util;
+package org.firstinspires.ftc.teamcode.RoverRuckus.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -220,7 +220,6 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 		private RuntimeException exception = null;
 		
 		private boolean isShutdown = false;
-		
 		
 		RuntimeException getRuntimeException() {
 			return this.exception;
