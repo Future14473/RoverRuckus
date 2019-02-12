@@ -12,7 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
 
 /**
- * Base class for our custom modified operation modes (similar to Linear op mode).
+ * Base class for our custom modified operation modes (similar to Linear op
+ * mode).
  * Redundant code and weird things removed.
  */
 public abstract class ModifiedLinearOpMode extends OpMode {
@@ -25,7 +26,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	/**
 	 * Override this method and place your code here.
 	 *
-	 * @throws InterruptedException to stop OpMode early.
+	 * @throws InterruptedException to close OpMode early.
 	 */
 	protected abstract void runOpMode() throws InterruptedException;
 	
@@ -42,7 +43,8 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 */
 	@Override
 	final public void init() {
-		this.executorService = ThreadPool.newSingleThreadExecutor("ModifiedLinearOpMode");
+		this.executorService = ThreadPool.newSingleThreadExecutor(
+				"ModifiedLinearOpMode");
 		this.runner = new OpModeRunner();
 		this.executorService.execute(this.runner);
 	}
@@ -85,12 +87,16 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 		if (this.executorService != null) {
 			
 			// interrupt the Linear opMode and shutdown it's service thread
-			// interrupted status should also be a indicator of needing to stop.
+			// interrupted status should also be a indicator of needing to
+			// close.
 			this.executorService.shutdownNow();
-			/* Wait, forever, for the OpMode to stop. If this takes too long, then
-			  {@link OpModeManagerImpl#callActiveOpModeStop()} will catch that and take action */
+			/* Wait, forever, for the OpMode to close. If this takes too long,
+			 then
+			  {@link OpModeManagerImpl#callActiveOpModeStop()} will catch that
+			   and take action */
 			try {
-				ThreadPool.awaitTermination(this.executorService, 100, TimeUnit.DAYS, "User Linear op mode");
+				ThreadPool.awaitTermination(this.executorService, 100,
+						TimeUnit.DAYS, "User Linear op mode");
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
@@ -99,7 +105,8 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	
 	/**
 	 * Does nothing -- not updating telemetry automatically.
-	 * we already handle telemetry updates by ourselves -- sometimes we wish to "accumulate" data before we
+	 * we already handle telemetry updates by ourselves -- sometimes we wish
+	 * to "accumulate" data before we
 	 * update, so we don't want automatic updates.
 	 */
 	@Override
@@ -112,7 +119,8 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	public void internalPostLoop() {}
 	
 	private void handleLoop() {
-		// if there is a runtime exception in user code; throw it so the normal error
+		// if there is a runtime exception in user code; throw it so the
+		// normal error
 		// reporting process can handle it
 		if (runner.hasRuntimeException()) {
 			throw runner.getRuntimeException();
@@ -129,11 +137,15 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	}
 	
 	/**
-	 * Answer as to whether this opMode is active and the robot should continue onwards. If the
-	 * opMode is not active, the OpMode should terminate at its earliest convenience.
+	 * Answer as to whether this opMode is active and the robot should
+	 * continue onwards. If the
+	 * opMode is not active, the OpMode should terminate at its earliest
+	 * convenience.
 	 *
-	 * @return whether the OpMode is currently active. If this returns false, you should
-	 * break out of the loop in your {@link #runOpMode()} method and return to its caller.
+	 * @return whether the OpMode is currently active. If this returns false,
+	 * you should
+	 * break out of the loop in your {@link #runOpMode()} method and return to
+	 * its caller.
 	 * @apiNote No longer calls {@code idle()};
 	 * @see #runOpMode()
 	 * @see #isStarted()
@@ -154,9 +166,11 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	}
 	
 	/**
-	 * Pauses the current thread indefinitely until a given condition (checked with loop) occurs
+	 * Pauses the current thread indefinitely until a given condition (checked
+	 * with loop) occurs
 	 *
-	 * @throws InterruptedException if this thread is interrupted while waiting (op mode stopped).
+	 * @throws InterruptedException if this thread is interrupted while
+	 * waiting (op mode stopped).
 	 */
 	protected void waitUntil(BooleanSupplier condition) throws InterruptedException {
 		RobotLog.d("WaitUntil started: " + condition.toString());
@@ -165,22 +179,28 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	}
 	
 	/**
-	 * Pauses the current thread until a given condition occurs, or after timeout.
+	 * Pauses the current thread until a given condition occurs, or after
+	 * timeout.
 	 *
-	 * @throws InterruptedException if this thread is interrupted while waiting (op mode stopped).
+	 * @throws InterruptedException if this thread is interrupted while
+	 * waiting (op mode stopped).
 	 */
-	protected void waitUntil(BooleanSupplier waitCondition, long timeout, TimeUnit unit) throws InterruptedException {
+	protected void waitUntil(BooleanSupplier waitCondition, long timeout,
+	                         TimeUnit unit) throws InterruptedException {
 		long nanos = unit.toNanos(timeout);
 		final long stopTime = System.nanoTime() + nanos;
 		waitUntil(() -> waitCondition.getAsBoolean() || System.nanoTime() >= stopTime);
 	}
 	
 	/**
-	 * Sleeps for the given amount of milliseconds, or until the thread is interrupted. This is
-	 * simple shorthand for the operating-system-provided {@link Thread#sleep(long) sleep()} method.
+	 * Sleeps for the given amount of milliseconds, or until the thread is
+	 * interrupted. This is
+	 * simple shorthand for the operating-system-provided
+	 * {@link Thread#sleep(long) sleep()} method.
 	 *
 	 * @param milliseconds amount of time to sleep, in milliseconds
-	 * @throws InterruptedException if this thread is interrupted while sleeping (op mode stopped).
+	 * @throws InterruptedException if this thread is interrupted while
+	 * sleeping (op mode stopped).
 	 * @see Thread#sleep(long)
 	 */
 	protected final void sleep(long milliseconds) throws InterruptedException {
@@ -190,7 +210,8 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	/**
 	 * Pauses the Linear Op Mode until start.
 	 *
-	 * @throws InterruptedException if this thread is interrupted while waiting (op mode stopped).
+	 * @throws InterruptedException if this thread is interrupted while
+	 * waiting (op mode stopped).
 	 */
 	protected synchronized void waitForStart() throws InterruptedException {
 		while (!isStarted()) {
@@ -241,19 +262,24 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 					ModifiedLinearOpMode.this.runOpMode();
 					requestOpModeStop();
 				} catch (InterruptedException ie) {
-					RobotLog.d("ModifiedLinearOpMode received an InterruptedException; shutting down this Linear op " + "mode");
+					RobotLog.d("ModifiedLinearOpMode received an " +
+							"InterruptedException; shutting down this Linear " + "op " + "mode");
 				} catch (CancellationException ie) {
-					RobotLog.d("ModifiedLinearOpMode received a CancellationException; shutting down this Linear op " + "mode");
+					RobotLog.d("ModifiedLinearOpMode received a " +
+							"CancellationException; shutting down this Linear "
+							+ "op " + "mode");
 				} catch (RuntimeException e) {
 					this.exception = e;
 				} finally {
-					// since telemetry statements will very soon be replaced with the default op mode, we do not
+					// since telemetry statements will very soon be replaced
+					// with the default op mode, we do not
 					// need to try and
 					// worth it to try and update the telemetry.
 					try {
 						ModifiedLinearOpMode.this.cleanup();
 					} catch (RuntimeException e) {
-						RobotLog.d("ModifiedLinearOpMode received a RuntimeException during cleanup; ignoring.");
+						RobotLog.d("ModifiedLinearOpMode received a " +
+								"RuntimeException during cleanup; ignoring.");
 					} finally {
 						this.isShutdown = true;
 					}

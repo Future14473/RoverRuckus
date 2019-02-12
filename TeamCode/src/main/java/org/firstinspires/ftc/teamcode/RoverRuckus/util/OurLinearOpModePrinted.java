@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 import android.support.annotation.CallSuper;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.PrintedRobot;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -11,9 +12,9 @@ import java.util.function.BooleanSupplier;
 /**
  * A class with a bunch of helper functions for our OpModes.
  */
-@SuppressWarnings("Duplicates")
-public abstract class OurLinearOpMode extends LinearOpMode {
+public abstract class OurLinearOpModePrinted extends LinearOpMode {
 	private final SingleCondition condition = new SingleCondition();
+	protected PrintedRobot robot;
 	
 	/**
 	 * This method is loop once upon initialization.
@@ -35,6 +36,7 @@ public abstract class OurLinearOpMode extends LinearOpMode {
 			telemetry.addLine("Initializing...");
 			telemetry.addLine("Please wait before pressing start");
 			telemetry.update();
+			robot = new PrintedRobot(hardwareMap);
 			initialize();
 			if (Thread.interrupted()) throw new InterruptedException();
 			telemetry.addLine("Initialization done");

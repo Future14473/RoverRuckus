@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.robot;
 
 import java.util.Arrays;
 
@@ -10,24 +10,26 @@ import java.util.Arrays;
  */
 public class MotorSetPosition {
 	private final static MotorSetPosition ZERO = new MotorSetPosition();
-	public final int[] position;
 	
-	/**
-	 * Construct via 4 power levels
-	 */
-	public MotorSetPosition(int fl, int fr, int bl, int br) {
-		this.position = new int[]{fl, fr, bl, br};
-	}
+	private final int[] position;
 	
-	public MotorSetPosition() {
+	private MotorSetPosition() {
 		this.position = new int[4];
 	}
 	
 	public MotorSetPosition(MotorSetPower power, double mult) {
 		this.position = new int[4];
 		for (int i = 0; i < 4; i++) {
-			position[i] = (int) Math.round(power.power[i] * mult);
+			position[i] = (int) Math.round(power.getPower(i) * mult);
 		}
+	}
+	
+	private MotorSetPosition(int[] o) {
+		this.position = o.clone();
+	}
+	
+	public int getPosition(int i) {
+		return position[i];
 	}
 	
 	public int get(int i) {
@@ -37,5 +39,10 @@ public class MotorSetPosition {
 	@Override
 	public String toString() {
 		return Arrays.toString(position);
+	}
+	
+	public static MotorSetPosition fromArray(int[] o) {
+		if (Arrays.equals(o, ZERO.position)) return ZERO;
+		return new MotorSetPosition(o);
 	}
 }

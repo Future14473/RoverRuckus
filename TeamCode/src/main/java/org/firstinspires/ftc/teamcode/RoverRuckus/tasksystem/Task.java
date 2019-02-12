@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem;
 
 /**
- * Adaptation of runnable that throws InterruptedException, to be passed on to
- * higher thread.
+ * Marker interface for our task system.<br>
+ * If interrupted while running, exit return as soon as possible
  */
-public interface Task {
-	void run() throws InterruptedException;
-}
+public interface Task extends Runnable {}

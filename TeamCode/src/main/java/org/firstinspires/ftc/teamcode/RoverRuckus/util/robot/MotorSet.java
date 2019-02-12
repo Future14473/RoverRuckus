@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.MotorSetPower.ZERO;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower.ZERO;
 
 /**
  * Represents a set of motors in the following order: <br>
@@ -18,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.MotorSetPowe
  */
 //immutable
 public final class MotorSet implements Iterable<DcMotorEx> {
+	private static final double MAX_POWER = 0.9;
 	private final List<DcMotorEx> motors;
 	
 	public MotorSet(DcMotorEx fl, DcMotorEx fr, DcMotorEx bl, DcMotorEx br) {
@@ -37,33 +38,37 @@ public final class MotorSet implements Iterable<DcMotorEx> {
 	 * @param power the power to set the motors
 	 */
 	public void setPower(MotorSetPower power) {
-		power = power.scaled();
+		power = power.scaleDownTo(MAX_POWER);
 		for (int i = 0; i < 4; i++) {
-			motors.get(i).setPower(power.power[i]);
+			motors.get(i).setPower(power.getPower(i));
 		}
 	}
 	
 	/**
-	 * returns a MotorSetPosition representing all the motors's current position.
+	 * returns a MotorSetPosition representing all the motors's current
+	 * position.
 	 *
-	 * @return a MotorSetPosition representing all the motors's current position.
+	 * @return a MotorSetPosition representing all the motors's current
+	 * position.
 	 */
+	
 	public MotorSetPosition getCurrentPosition() {
-		MotorSetPosition o = new MotorSetPosition();
+		int[] o = new int[4];
 		for (int i = 0; i < 4; i++) {
-			o.position[i] = motors.get(i).getCurrentPosition();
+			o[i] = motors.get(i).getCurrentPosition();
 		}
-		return o;
+		return MotorSetPosition.fromArray(o);
 	}
 	
 	/**
-	 * Sets all the motors' target position to the given {@link MotorSetPosition}
+	 * Sets all the motors' target position to the given
+	 * {@link MotorSetPosition}
 	 *
 	 * @param position the target position
 	 */
 	public void setTargetPosition(MotorSetPosition position) {
 		for (int i = 0; i < 4; i++) {
-			motors.get(i).setTargetPosition(position.position[i]);
+			motors.get(i).setTargetPosition(position.getPosition(i));
 		}
 	}
 	
@@ -109,10 +114,12 @@ public final class MotorSet implements Iterable<DcMotorEx> {
 	}
 	
 	/**
-	 * Returns the target position tolerance of the first motor, in encoder ticks, usually indicating what all the
+	 * Returns the target position tolerance of the first motor, in encoder
+	 * ticks, usually indicating what all the
 	 * motors's target position is.
 	 *
-	 * @return the target position tolerance of the first motor, in encoder ticks.
+	 * @return the target position tolerance of the first motor, in encoder
+	 * ticks.
 	 */
 	public int getTargetPositionTolerance() {
 		return motors.get(0).getTargetPositionTolerance();
@@ -127,5 +134,15 @@ public final class MotorSet implements Iterable<DcMotorEx> {
 		for (DcMotorEx m : this) {
 			m.setTargetPositionTolerance(tolerance);
 		}
+	}
+	
+	/**
+	 * Sets all the motors' power to the given power represented
+	 * through the array
+	 *
+	 * @param power the power to set the motors
+	 */
+	public void setPower(double[] power) {
+		setPower(MotorSetPower.fromArray(power));
 	}
 }

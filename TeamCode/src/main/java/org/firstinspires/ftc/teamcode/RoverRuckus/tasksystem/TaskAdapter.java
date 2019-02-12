@@ -1,30 +1,29 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.IRobot;
-
 /**
- * Adapts a task to use start, loop, and stop methods.
+ * Adapts a task to use start, loop, and close methods.
  * These are executed by  in the following manner:
- * {@link #start(IRobot)} is called once when the task is executed, given a {@link IRobot} interface
- * and {@link #loop()} is called continuously until it returns true or the task is stopped early.
- * {@link #stop()} is called at the end of the task, through normal execution or interruption.
+ * {@link #start} is called once when the task is executed
+ * and {@link #loop()} is called continuously until it returns true or the
+ * task is stopped early.
+ * {@link #stop()} is called at the end of the task, through normal execution
+ * or interruption.
  *
- * @see Task
+ * @see Runnable
  * @see TaskExecutor
  */
 public abstract class TaskAdapter implements Task {
 	/**
 	 * Run once on the Task's start.
 	 */
-	public abstract void start() throws InterruptedException;
+	public abstract void start();
 	
 	@Override
-	public final void run() throws InterruptedException {
+	public final void run() {
 		start();
 		try {
-			while (!loop()) {
-				if (Thread.interrupted()) throw new InterruptedException();
-			}
+			//noinspection StatementWithEmptyBody
+			while (!Thread.interrupted() && !loop()) ;
 		} finally {
 			stop();
 		}
@@ -32,6 +31,7 @@ public abstract class TaskAdapter implements Task {
 	
 	/**
 	 * Runs at the end of execution.
+	 * Keep short for graceful exits.
 	 *
 	 * @apiNote inside a finally block.
 	 */
@@ -42,7 +42,7 @@ public abstract class TaskAdapter implements Task {
 	 *
 	 * @return if the task is completed or not
 	 */
-	public boolean loop() throws InterruptedException {
+	public boolean loop() {
 		return true;
 	}
 }

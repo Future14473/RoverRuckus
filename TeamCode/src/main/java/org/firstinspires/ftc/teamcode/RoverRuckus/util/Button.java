@@ -13,7 +13,8 @@ public class Button implements BooleanSupplier {
 	public Button(BooleanSupplier button) {this.cur = button;}
 	
 	public State getState() {
-		State o = cur.getAsBoolean() ? (past ? State.DOWN : State.PRESSED) : (past ? State.RELEASED : State.UP);
+		State o = cur.getAsBoolean() ? (past ? State.HELD : State.PRESSED) :
+				(past ? State.RELEASED : State.UP);
 		past = cur.getAsBoolean();
 		return o;
 	}
@@ -26,8 +27,8 @@ public class Button implements BooleanSupplier {
 		return getState() == State.PRESSED;
 	}
 	
-	public boolean down() {
-		return getState() == State.DOWN;
+	public boolean held() {
+		return getState() == State.HELD;
 	}
 	
 	public boolean released() {
@@ -42,7 +43,7 @@ public class Button implements BooleanSupplier {
 	public enum State {
 		UP,
 		PRESSED,
-		DOWN,
+		HELD,
 		RELEASED
 	}
 	

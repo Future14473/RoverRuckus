@@ -18,7 +18,7 @@
 import java.util.regex.Pattern
 
 apply plugin: 'com.android.application'
-
+apply plugin: 'idea'
 android {
 
     compileSdkVersion 28
@@ -50,8 +50,8 @@ android {
          * We accomplish this with the help of a funky little Groovy script that maintains that
          * correspondence automatically.
          *
-         * @see <a href="http://developer.android.com/tools/building/configuring-gradle.html">Configure Your Build</a>
-         * @see <a href="http://developer.android.com/tools/publishing/versioning.html">Versioning Your App</a>
+         * @see <ahref="http://developer.android.com/tools/building/configuring-gradle.html"  >  Configure Your Build</a>
+         * @see <ahref="http://developer.android.com/tools/publishing/versioning.html"  >  Versioning Your App</a>
          */
         def manifestFile = project(':FtcRobotController').file('src/main/AndroidManifest.xml');
         def manifestText = manifestFile.getText()
@@ -100,7 +100,12 @@ android {
         jniLibs.srcDir rootProject.file('libs')
     }
 }
-
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
 repositories {
     flatDir {
         dirs rootProject.file('libs')
