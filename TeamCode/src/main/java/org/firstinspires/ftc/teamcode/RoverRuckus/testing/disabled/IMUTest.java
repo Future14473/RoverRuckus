@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpModePrinted;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 
 @TeleOp(group = "test")
 @Disabled
-public class IMUTest extends OurLinearOpModePrinted {
+public class IMUTest extends OurLinearOpMode {
 	private BNO055IMU imu;
 	
 	@Override
@@ -28,7 +28,7 @@ public class IMUTest extends OurLinearOpModePrinted {
 	}
 	
 	@Override
-	protected void run() throws InterruptedException {
+	protected void run() {
 		while (opModeIsActive()) {
 			telemetry.addData("ANGULAR ORIENTATION:",
 			                  imu.getAngularOrientation().toAngleUnit(DEGREES));

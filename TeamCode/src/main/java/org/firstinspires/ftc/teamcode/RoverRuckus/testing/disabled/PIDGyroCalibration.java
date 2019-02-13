@@ -5,32 +5,28 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GlobalVars;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpModePrinted;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.PrintedRobot;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @TeleOp(group = "test")
 @Disabled
-public class PIDGyroCalibration extends OurLinearOpModePrinted {
+public class PIDGyroCalibration extends OurLinearOpMode {
 	double p = 0.35, d = 0.13, i = 0;
+	private PrintedRobot robot;
 	private MecanumDrive drive;
 	
-	private Button a = new Button(() -> gamepad1.a);
-	
-	private Button b = new Button(() -> gamepad1.b);
-	
-	private Button up = new Button(() -> gamepad1.dpad_up);
-	
-	private Button down = new Button(() -> gamepad1.dpad_down);
-	
-	private Button left = new Button(() -> gamepad1.dpad_left);
-	
-	private Button                      right =
-			new Button(() -> gamepad1.dpad_right);
-	private MecanumDrive.GyroRotateTask turnTask;
+	private Button a     = new Button(() -> gamepad1.a);
+	private Button b     = new Button(() -> gamepad1.b);
+	private Button up    = new Button(() -> gamepad1.dpad_up);
+	private Button down  = new Button(() -> gamepad1.dpad_down);
+	private Button left  = new Button(() -> gamepad1.dpad_left);
+	private Button right = new Button(() -> gamepad1.dpad_right);
 	
 	@Override
 	protected void initialize() throws InterruptedException {
+		robot = new PrintedRobot(hardwareMap);
 		robot.initIMU();
 		MecanumDrive.Parameters parameters = new MecanumDrive.Parameters();
 		parameters.useGyro = true;
@@ -39,7 +35,7 @@ public class PIDGyroCalibration extends OurLinearOpModePrinted {
 	}
 	
 	@Override
-	protected void run() throws InterruptedException {
+	protected void run() {
 		while (opModeIsActive()) {
 			if (a.pressed()) {
 				drive.rotate(34, 1);
@@ -60,10 +56,6 @@ public class PIDGyroCalibration extends OurLinearOpModePrinted {
 //			GyroRotateTask.pid.setD(d);
 //			GyroRotateTask.pid.setI(0);
 //			GyroRotateTask.pid.setF(0);
-			if (turnTask != null) {
-				telemetry.addData("CUR POS", robot.getAngle());
-//				telemetry.addData("TARG POS", turnTask.targetAngle);
-			}
 			telemetry.addData("PARAMS:", "P: %.4f, D: %.4f", p, d);
 			telemetry.addData("DO COMPLETE:", GlobalVars.shouldComplete);
 			telemetry.update();

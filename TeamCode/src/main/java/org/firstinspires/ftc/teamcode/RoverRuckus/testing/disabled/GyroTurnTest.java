@@ -4,17 +4,20 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Button;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpModePrinted;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.PrintedRobot;
 
 @TeleOp(group = "test")
 @Disabled
-public class GyroTurnTest extends OurLinearOpModePrinted {
+public class GyroTurnTest extends OurLinearOpMode {
+	private PrintedRobot robot;
 	private MecanumDrive drive;
 	
 	private Button gp1a = new Button(() -> gamepad1.a);
 	
 	@Override
 	protected void initialize() {
+		robot = new PrintedRobot(hardwareMap);
 		robot.initIMU();
 		drive = new MecanumDrive(robot, new MecanumDrive.Parameters());
 	}

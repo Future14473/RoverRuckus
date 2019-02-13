@@ -11,7 +11,6 @@ import java.util.function.BooleanSupplier;
 /**
  * A class with a bunch of helper functions for our OpModes.
  */
-@SuppressWarnings("Duplicates")
 public abstract class OurLinearOpMode extends LinearOpMode {
 	private final SingleCondition condition = new SingleCondition();
 	

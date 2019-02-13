@@ -6,7 +6,9 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.Task;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GlobalVars;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSet;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPosition;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.Robot;
 
 import java.util.Objects;
 
@@ -33,14 +35,27 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPowe
  */
 public class MecanumDrive extends TaskProgram {
 	private final Parameters parameters;
-	private final IRobot robot;
-	private final MiniPID turnPID = new MiniPID(0.035, 0, 0.13);
-	private double targetAngle = 0;
+	private final Robot      robot;
+	private final MotorSet   wheels;
 	
-	public MecanumDrive(IRobot robot, Parameters parameters) {
+	private final MiniPID turnPID        = new MiniPID(0.035, 0, 0.13);
+	private       double  targetAngle    = 0;
+	private       XYR     targetPosition = new XYR();
+	private       XYR     curPosition    = new XYR();
+	
+	public MecanumDrive(Robot robot, Parameters parameters) {
 		super(true);
 		this.robot = Objects.requireNonNull(robot);
 		this.parameters = Objects.requireNonNull(parameters);
+		this.wheels = robot.getWheels();
+		init();
+	}
+	
+	private void init() {
+		turnPID.setSetpoint(0);
+		turnPID.setOutputLimits(1);
+		turnPID.setOutputRampRate(0.06);
+		turnPID.setOutputFilter(0.05);
 	}
 	
 	@Override
@@ -52,9 +67,18 @@ public class MecanumDrive extends TaskProgram {
 	@Override
 	public void start() {
 		targetAngle = robot.getAngle();
-		robot.getWheels()
-		     .setTargetPositionTolerance(parameters.wheelTolerance);
+		wheels.setTargetPositionTolerance(parameters.wheelTolerance);
 		super.start();
+	}
+	
+	private void moveExact(
+			double directionRadians, double distance, double speed) {
+		
+	}
+	
+	private void moveCoarse(
+			double directionRadians, double distance, double speed) {
+		
 	}
 	
 	/**
@@ -64,7 +88,8 @@ public class MecanumDrive extends TaskProgram {
 	public void move(double direction, double distance, double speed) {
 		direction = Math.toRadians(direction);
 		add(new OldStraightMoveTask(robot, calcPower(direction, 1, 0),
-				distance * OldStraightMoveTask.MOVE_MULT, speed));
+		                            distance * OldStraightMoveTask.MOVE_MULT,
+		                            speed));
 	}
 	
 	/**
@@ -89,9 +114,9 @@ public class MecanumDrive extends TaskProgram {
 	public MecanumDrive rotate(double degreesToTurn, double speed) {
 		if (!parameters.useGyro) {
 			degreesToTurn = Math.toRadians(degreesToTurn);
-			add(new OldStraightMoveTask(robot, calcPower(0, 0,
-					Math.signum(degreesToTurn)),
-					Math.abs(degreesToTurn) * OldStraightMoveTask.TURN_MULT, speed));
+			add(new OldStraightMoveTask(robot, calcPower(0, 0, Math.signum(
+					degreesToTurn)), Math.abs(degreesToTurn) *
+			                         OldStraightMoveTask.TURN_MULT, speed));
 		} else {
 			add(new GyroRotateTask(degreesToTurn, speed));
 		}
@@ -102,45 +127,69 @@ public class MecanumDrive extends TaskProgram {
 		return robot.getAngle();
 	}
 	
-	public class GyroRotateTask extends TaskAdapter {
-		private static final double ANGLE_TOLERANCE = 1.5;
-		private static final int CONSECUTIVE_HITS = 5;
+	private abstract class GyroAwareMoveTask extends TaskAdapter {
+		private MotorSetPosition prevPosition;
+		
+		protected abstract boolean doneCondition();
+		
+		@Override
+		public abstract void start();
+		
+		@Override
+		public boolean loop() {
+			double curAngle = getCurAngle();
+			MotorSetPosition currentPosition = wheels.getCurrentPosition();
+			MotorSetPosition positionDelta =
+					currentPosition.delta(prevPosition);
+			
+			prevPosition = currentPosition;
+			return false;
+		}
+		
+		@SuppressWarnings("Duplicates")
+		private XYR motorDeltaToXYR(MotorSetPosition delta) {
+			//best approximation of inverse calcMotorSetPosition.
+			double speed = 0, dir = 0, turnRate = 0;
+			double robAngle = dir + Math.PI / 4;
+			double v1 = speed * Math.sin(robAngle) + turnRate;
+			double v2 = speed * Math.cos(robAngle) - turnRate;
+			double v3 = speed * Math.cos(robAngle) + turnRate;
+			double v4 = speed * Math.sin(robAngle) - turnRate;
+			
+		}
+	}
+	
+	private class GyroRotateTask extends TaskAdapter {
+		private static final double ANGLE_TOLERANCE  = 1.5;
+		private static final int    CONSECUTIVE_HITS = 5;
 		
 		private final double speed;
 		private final double degreesToTurn;
-		private int consecutive = 0;
+		private       int    consecutive = 0;
 		
 		public GyroRotateTask(double degreesToTurn, double speed) {
 			if (speed <= 0 || speed > 1)
 				throw new IllegalArgumentException("MaxSpeed not 0-1");
 			this.degreesToTurn = degreesToTurn;
 			this.speed = speed;
-			turnPID.setSetpoint(0);
-			turnPID.setOutputLimits(1);
-			turnPID.setOutputRampRate(0.06);
-			turnPID.setOutputFilter(0.05);
 		}
 		
 		@Override
 		public void start() {
 			targetAngle += degreesToTurn;
-			robot.getWheels()
-			     .setMode(RUN_USING_ENCODER);
+			wheels.setMode(RUN_USING_ENCODER);
 		}
 		
 		@Override
 		public void stop() {
-			robot.getWheels()
-			     .stop();
+			wheels.stop();
 		}
 		
 		@Override
 		public boolean loop() {
 			double curAngle = getCurAngle();
 			double output = turnPID.getOutput(curAngle - targetAngle);
-			robot.getWheels()
-			     .setPower(TURN.scaleTo(output)
-			                   .scaleDownTo(speed));
+			wheels.setPower(TURN.scaleTo(output).scaleDownTo(speed));
 			boolean hit = Math.abs(curAngle - targetAngle) < ANGLE_TOLERANCE;
 			if (hit) {
 				consecutive++;
@@ -152,9 +201,17 @@ public class MecanumDrive extends TaskProgram {
 		
 	}
 	
+	/**
+	 * XY position and rotation.
+	 */
+	private static class XYR {
+		public double x, y, d;
+		public final DistanceUnit unit = DistanceUnit.CM;
+	}
+	
 	public static class Parameters {
-		public boolean useGyro = false;
-		public int wheelTolerance = 25;
+		public boolean useGyro        = false;
+		public int     wheelTolerance = 25;
 	}
 	
 }

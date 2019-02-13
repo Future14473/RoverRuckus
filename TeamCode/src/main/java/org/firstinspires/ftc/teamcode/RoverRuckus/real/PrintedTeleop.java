@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.old;
+package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,7 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpModePrinted;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.PrintedRobot;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
@@ -19,50 +20,52 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State
 @SuppressWarnings("Duplicates")
 @TeleOp(group = "1real", name = "Old Teleop")
 @Disabled
-public class PrintedTeleop extends OurLinearOpModePrinted {
+public class PrintedTeleop extends OurLinearOpMode {
 	//Encoder limits
-	private static final int          MOTOR_MIN                     = 100;
+	private static final int     MOTOR_MIN                     = 100;
 	//"at home" position for all
 	// encoders
-	private static final int          ARM_MAX                       = 4450;
+	private static final int     ARM_MAX                       = 4450;
 	//maximum arm extension (both
 	// arms)
-	private static final int          HOOK_MAX                      = 26000;
+	private static final int     HOOK_MAX                      = 26000;
 	//maximum hook extension
-	private static final int          COLLECT_ARM_INITIAL_EXTENSION = 2000;
+	private static final int     COLLECT_ARM_INITIAL_EXTENSION = 2000;
 	//initial
 	// extensions during auto extend
-	private static final int          SCORE_ARM_INITIAL_EXTENSION   = ARM_MAX;
-	private static final int          HOOK_NULLIFY                  = 1500;
+	private static final int     SCORE_ARM_INITIAL_EXTENSION   = ARM_MAX;
+	private static final int     HOOK_NULLIFY                  = 1500;
 	//Servo positions
-	private static final double       COLLECT_DOOR_CLOSED           = 0.71;
+	private static final double  COLLECT_DOOR_CLOSED           = 0.71;
 	//Collect door
 	// positions
-	private static final double       COLLECT_DOOR_OPEN             = 0.39;
-	private static final double       SCORE_DOOR_CLOSED             = 0.9;
+	private static final double  COLLECT_DOOR_OPEN             = 0.39;
+	private static final double  SCORE_DOOR_CLOSED             = 0.9;
 	//score door
 	// positions;
-	private static final double       SCORE_DOOR_READY              = 0.85;
-	private static final double       SCORE_DOOR_GOLD               = 0.79;
-	private static final double       SCORE_DOOR_OPEN               = 0.65;
-	private static final double       PARKER_POSITION_HOME          = 0.6;
+	private static final double  SCORE_DOOR_READY              = 0.85;
+	private static final double  SCORE_DOOR_GOLD               = 0.79;
+	private static final double  SCORE_DOOR_OPEN               = 0.65;
+	private static final double  PARKER_POSITION_HOME          = 0.6;
 	//Mults
-	private static final double       SPEED_FAST_MULT               = 100;
-	private static final double       SPEED_NORMAL_MULT             = 1;
-	private static final double       SPEED_SLOW_MULT               = 0.4;
+	private static final double  SPEED_FAST_MULT               = 100;
+	private static final double  SPEED_NORMAL_MULT             = 1;
+	private static final double  SPEED_SLOW_MULT               = 0.4;
 	//Powers
-	private static final double       IDLE_IN_POWER                 = -0.6;
-	private static final double       IDLE_COLLECT_ARM_POWER        = 0.05;
-	private static final double       IDLE_SCORE_ARM_POWER          = 0.1;
-	private static final double       IDLE_SCOOPER_POWER            = 0.6;
+	private static final double  IDLE_IN_POWER                 = -0.6;
+	private static final double  IDLE_COLLECT_ARM_POWER        = 0.05;
+	private static final double  IDLE_SCORE_ARM_POWER          = 0.1;
+	private static final double  IDLE_SCOOPER_POWER            = 0.6;
 	//other constants
-	private static final int          TRANSFER_SLEEP_TIME           = 200;
+	private static final int     TRANSFER_SLEEP_TIME           = 200;
 	//Variables for driving
-	private              boolean      gyroDrive                     = false;
-	private              boolean      reverseDrive                  = false;
-	private              double       rotationOffSet                = 0;
+	private              boolean gyroDrive                     = false;
+	private              boolean reverseDrive                  = false;
+	private              double  rotationOffSet                = 0;
+	
 	//Motors and servos, for readability and functionality
-	private              LimitedMotor collectArm, scoreArm, hook;
+	private PrintedRobot robot;
+	private LimitedMotor collectArm, scoreArm, hook;
 	private DcMotor scooper;
 	private Servo   collectDoor;
 	private Servo   scoreDoor;
@@ -101,6 +104,7 @@ public class PrintedTeleop extends OurLinearOpModePrinted {
 	
 	@Override
 	protected void initialize() {
+		robot = new PrintedRobot(hardwareMap);
 		robot.initIMU();
 		robot.wheels.setMode(RUN_USING_ENCODER);
 		robot.wheels.setZeroPowerBehavior(FLOAT);
