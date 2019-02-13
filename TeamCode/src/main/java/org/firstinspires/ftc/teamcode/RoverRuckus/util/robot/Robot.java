@@ -8,14 +8,15 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
  * Implement on the actual robot, and passed as parameter to TaskExecutor
  * implementation
  */
-public interface IRobot {
+public interface Robot {
 	MotorSet getWheels();
 	
 	/**
 	 * Gets the orientation of the robot, on a plane parallel to the floor.
-	 * In DEGREES, 0 is forward, positive is clockwise.
-	 *
-	 * @see org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive
+	 * Normal orientation: radians, to the left is 0, Counterclockwise is
+	 * positive.
+	 * As long as relative positions are consistent, this angle doesn't have
+	 * to mean anything.
 	 */
 	double getAngle();
 }

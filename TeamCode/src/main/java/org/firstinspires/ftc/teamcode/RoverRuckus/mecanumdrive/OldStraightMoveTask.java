@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSet;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPosition;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.Robot;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
@@ -25,7 +25,7 @@ class OldStraightMoveTask extends TaskAdapter {
 	public final static double           MOVE_MULT = 4450;
 	//change to tweak "move x
 	// meters" precisely. Degrees wheel turn per yard robot move
-	protected final     IRobot           robot;
+	protected final     Robot            robot;
 	// per
 	// unit.
 	//TODO: Make above protected
@@ -37,7 +37,7 @@ class OldStraightMoveTask extends TaskAdapter {
 	private             MotorSetPosition curPos;
 	
 	OldStraightMoveTask(
-			IRobot robot, MotorSetPower targPower, double mult, double speed) {
+			Robot robot, MotorSetPower targPower, double mult, double speed) {
 		this.targPower = targPower;
 		this.speed = speed;
 		this.robot = robot;
@@ -47,7 +47,8 @@ class OldStraightMoveTask extends TaskAdapter {
 	private int getMaxOff() {
 		int maxOff = 0;
 		for (int i = 0; i < 4; i++) {
-			maxOff = Math.max(maxOff, Math.abs(curPos.get(i) - targPos.get(i)));
+			maxOff = Math.max(maxOff,
+			                  Math.abs(curPos.get(i) - targPos.get(i)));
 		}
 		return maxOff;
 	}
