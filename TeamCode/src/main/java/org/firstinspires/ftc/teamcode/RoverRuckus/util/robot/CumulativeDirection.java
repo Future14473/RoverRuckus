@@ -10,19 +10,22 @@ import java.util.function.DoubleSupplier;
  */
 class CumulativeDirection implements DoubleSupplier {
 	private final DoubleSupplier directionInDegrees;
-	private double curDirection = 0;
+	private       double         curDirection = 0;
 	
 	public CumulativeDirection(DoubleSupplier directionInRadians) {
 		//paranoia!!!
 		this.directionInDegrees =
 				directionInRadians instanceof CumulativeDirection ?
-						((CumulativeDirection) directionInRadians).directionInDegrees : directionInRadians;
+				((CumulativeDirection) directionInRadians).directionInDegrees :
+				directionInRadians;
 	}
 	
 	@Override
 	public double getAsDouble() {
 		double newDirection = directionInDegrees.getAsDouble();
-		curDirection += ((newDirection - curDirection) + Math.PI) % (2 * Math.PI) - Math.PI;
+		curDirection +=
+				((newDirection - curDirection) + Math.PI) % (2 * Math.PI) -
+				Math.PI;
 		return curDirection;
 	}
 	

@@ -12,7 +12,7 @@ import java.util.Arrays;
 public final class MotorSetPower {
 	public static final MotorSetPower ZERO = new MotorSetPower();
 	public static final MotorSetPower TURN = new MotorSetPower(1, -1, 1, -1);
-	private final double[] power;
+	private final       double[]      power;
 	
 	private MotorSetPower(double fl, double fr, double bl, double br) {
 		this.power = new double[]{fl, fr, bl, br};
@@ -64,10 +64,9 @@ public final class MotorSetPower {
 		for (int i = 0; i < 4; i++) {
 			if (Math.abs(this.power[i] - pastPower.power[i]) <= rampRate)
 				o[i] = this.power[i];
-			else
-				o[i] = this.power[i] < pastPower.power[i] ?
-						pastPower.power[i] - rampRate :
-						pastPower.power[i] + rampRate;
+			else o[i] = this.power[i] < pastPower.power[i] ?
+			            pastPower.power[i] - rampRate :
+			            pastPower.power[i] + rampRate;
 		}
 		return fromArray(o);
 	}
@@ -84,7 +83,7 @@ public final class MotorSetPower {
 	public MotorSetPower scaleTo(double mult) {
 		if (this == ZERO) return ZERO;
 		return new MotorSetPower(power[0] * mult, power[1] * mult,
-				power[2] * mult, power[3] * mult);
+		                         power[2] * mult, power[3] * mult);
 	}
 	
 	@Override
@@ -103,8 +102,8 @@ public final class MotorSetPower {
 	 */
 	@SuppressWarnings("Duplicates")
 	
-	public static MotorSetPower calcPower(double direction, double moveSpeed,
-	                                      double turnRate) {
+	public static MotorSetPower calcPower(
+			double direction, double moveSpeed, double turnRate) {
 		if (moveSpeed == 0 && turnRate == 0) return ZERO;
 		if (moveSpeed == 0 && turnRate == 1) return TURN;
 		double robotAngle = direction + Math.PI / 4;

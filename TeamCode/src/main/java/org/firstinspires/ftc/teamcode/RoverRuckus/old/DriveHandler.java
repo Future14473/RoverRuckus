@@ -10,30 +10,35 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Separate utility class to handle omnidirectional motion on mecanum wheels.
  */
 public class DriveHandler {
-	private static final MotorPowerSet ZERO = new MotorPowerSet(0, 0, 0, 0);
-	static double MOVE_MULT = 4450; //change to tweak "move x meters"
+	private static final MotorPowerSet   ZERO      =
+			new MotorPowerSet(0, 0, 0, 0);
+	static               double          MOVE_MULT = 4450;
+	//change to tweak "move x meters"
 	// precisely. Degrees wheel turn per unit.
-	static double TURN_MULT = 1205; //change to tweak "rotate x deg" precisely
+	static               double          TURN_MULT = 1205;
+	//change to tweak "rotate x deg" precisely
 	// .   Degrees wheel turn per
-	private final Object moveLock = new Object();
-	private final Object doneLock = new Object();
+	private final        Object          moveLock  = new Object();
+	private final        Object          doneLock  = new Object();
 	//we have a separate thread handling moveTasks. This is so the robot can
 	// still do other stuff
 	//while this is happening at the same time.
-	private MoveThread moveThread;
-	private Queue<MoveTask> moveTasks; //the currentPos moveTasks to do;
+	private              MoveThread      moveThread;
+	private              Queue<MoveTask> moveTasks;
+	//the currentPos moveTasks to do;
 	//NOW THE FUN STUFF, FOR AUTONOMOUS MOTION.
 	//the motors
 	//[ FL, FR, BL, BR ]
-	private DcMotor[] motors;
-	private LinearOpMode mode;
-	private boolean running = true;
+	private              DcMotor[]       motors;
+	private              LinearOpMode    mode;
+	private              boolean         running   = true;
 	
 	/**
 	 * construct by motors
 	 */
-	DriveHandler(DcMotor leftFront, DcMotor rightFront, DcMotor backLeft,
-	             DcMotor backRight) {
+	DriveHandler(
+			DcMotor leftFront, DcMotor rightFront, DcMotor backLeft,
+			DcMotor backRight) {
 		motors = new DcMotor[]{leftFront, rightFront, backLeft, backRight};
 		moveThread = null;
 		moveTasks = new ConcurrentLinkedQueue<>();
@@ -78,7 +83,7 @@ public class DriveHandler {
 	
 	private boolean isRunning() {
 		return mode != null ? !mode.isStarted() || !mode.isStopRequested() :
-				running;
+		       running;
 	}
 	
 	/**
@@ -92,18 +97,20 @@ public class DriveHandler {
 	 * adds a MoveTask to move in a straight line a specified direction and
 	 * distance.
 	 */
-	public void move(double direction, double distance, double speed) throws InterruptedException { // maybe has some
+	public void move(double direction, double distance, double speed)
+			throws InterruptedException { // maybe has some
 		// problems here
 		direction = Math.toRadians(direction);
 		addTask(new MoveTask(MotorPowerSet.calcPowerSet(direction, 0, speed),
-				distance * MOVE_MULT / speed));
+		                     distance * MOVE_MULT / speed));
 	}
 	
 	/**
 	 * adds a MoveTasks that moves the robot in a straight line to a
 	 * displacement specified by x and y.
 	 */
-	public void moveXY(double x, double y, double speed) throws InterruptedException {
+	public void moveXY(double x, double y, double speed)
+			throws InterruptedException {
 		double direction = Math.toDegrees(Math.atan2(x, y));
 		double distance = Math.hypot(x, y);
 		move(direction, distance, speed);
@@ -115,8 +122,8 @@ public class DriveHandler {
 	 */
 	public void turn(double degrees, double speed) throws InterruptedException {
 		degrees = Math.toRadians(degrees);
-		addTask(new MoveTask(MotorPowerSet.calcPowerSet(0,
-				speed * Math.signum(degrees), 0),
+		addTask(new MoveTask(
+				MotorPowerSet.calcPowerSet(0, speed * Math.signum(degrees), 0),
 				Math.abs(degrees) * TURN_MULT / speed));
 	}
 	
@@ -196,7 +203,7 @@ public class DriveHandler {
 	
 	private class MoveTask { //NOT STATIC, to access DC motors
 		private MotorPowerSet targetPower, actualPower;
-		private double multiplier;
+		private double   multiplier;
 		private double[] progress = new double[4];
 		
 		MoveTask(MotorPowerSet targetPower, double multiplier) {
@@ -208,7 +215,8 @@ public class DriveHandler {
 			for (int i = 0; i < 4; i++) {
 				motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 				motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
-				motors[i].setTargetPosition((int) (multiplier * targetPower.power[i]));
+				motors[i].setTargetPosition(
+						(int) (multiplier * targetPower.power[i]));
 			}
 			actualPower = new MotorPowerSet();
 			setPower(targetPower);
@@ -224,18 +232,19 @@ public class DriveHandler {
 			double avgProgress = 0;
 			int maxOff = 0;
 			for (int i = 0; i < 4; i++) {
-				progress[i] =
-						(double) motors[i].getCurrentPosition() / motors[i].getTargetPosition();
-				maxOff = Math.max(maxOff,
-						Math.abs(motors[i].getCurrentPosition() - motors[i].getTargetPosition()));
+				progress[i] = (double) motors[i].getCurrentPosition() /
+				              motors[i].getTargetPosition();
+				maxOff = Math.max(maxOff, Math.abs(
+						motors[i].getCurrentPosition() -
+						motors[i].getTargetPosition()));
 				if (Double.isNaN(progress[i])) progress[i] = 1;
 				avgProgress += progress[i];
 			}
 			avgProgress /= 4;
 			//adjust power as necessary..
 			for (int i = 0; i < 4; i++) {
-				actualPower.power[i] =
-						targetPower.power[i] * (1 - 3 * (progress[i] - avgProgress));
+				actualPower.power[i] = targetPower.power[i] *
+				                       (1 - 3 * (progress[i] - avgProgress));
 			}
 			setPower(actualPower);
 			return maxOff < 100;
@@ -292,10 +301,12 @@ public class DriveHandler {
 	public static class MotorPowerSet {
 		double[] power;
 		
-		MotorPowerSet(double leftFront, double rightFront, double backLeft,
-		              double backRight) {
-			this.power = new double[]{leftFront, rightFront, backLeft,
-					backRight};
+		MotorPowerSet(
+				double leftFront, double rightFront, double backLeft,
+				double backRight) {
+			this.power = new double[]{
+					leftFront, rightFront, backLeft, backRight
+			};
 		}
 		
 		MotorPowerSet() {
@@ -318,9 +329,8 @@ public class DriveHandler {
 		 * Generates a MotorSetPower that corresponds to turning the robot in
 		 * the specified direction
 		 */
-		private static MotorPowerSet calcPowerSet(double direction,
-		                                          double turnRate,
-		                                          double speed) {
+		private static MotorPowerSet calcPowerSet(
+				double direction, double turnRate, double speed) {
 			double robotAngle = direction + Math.PI / 4;
 			double v1 = speed * Math.sin(robotAngle) + turnRate;
 			double v2 = speed * Math.cos(robotAngle) - turnRate;

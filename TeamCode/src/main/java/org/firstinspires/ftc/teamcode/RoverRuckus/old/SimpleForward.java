@@ -11,6 +11,11 @@ public class SimpleForward extends OpMode {
 	private OldRobot robot = new OldRobot();
 	
 	@Override
+	public void init() {
+	
+	}
+	
+	@Override
 	public void start() {
 		robot.init(hardwareMap);
 		robot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -29,11 +34,6 @@ public class SimpleForward extends OpMode {
 		robot.leftFront.setPower(0.7);
 		robot.rightBack.setPower(0.7);
 		robot.leftBack.setPower(0.7);
-	}
-	
-	@Override
-	public void init() {
-	
 	}
 	
 	@Override

@@ -18,8 +18,8 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPowe
  */
 //immutable
 public final class MotorSet implements Iterable<DcMotorEx> {
-	private static final double MAX_POWER = 0.9;
-	private final List<DcMotorEx> motors;
+	private static final double          MAX_POWER = 0.9;
+	private final        List<DcMotorEx> motors;
 	
 	public MotorSet(DcMotorEx fl, DcMotorEx fr, DcMotorEx bl, DcMotorEx br) {
 		motors = Arrays.asList(fl, fr, bl, br);

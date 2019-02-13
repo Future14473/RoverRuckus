@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.SheetMetalRobot;
 @SuppressWarnings("unused")
 @TeleOp(group = "test")
 public class MotorsAndServosTest extends OpMode {
-	private double pos;
+	private double  pos;
 	private DcMotor motor;
-	private Servo servo;
+	private Servo   servo;
 	private CRServo crServo;
 	
 	@Override

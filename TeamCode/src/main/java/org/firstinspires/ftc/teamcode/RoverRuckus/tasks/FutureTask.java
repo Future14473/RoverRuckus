@@ -8,7 +8,8 @@ import java.util.concurrent.Callable;
  * A FutureTask that fits
  * our Task system.
  */
-public class FutureTask<V> extends java.util.concurrent.FutureTask<V> implements Task {
+public class FutureTask<V> extends java.util.concurrent.FutureTask<V>
+		implements Task {
 	
 	public FutureTask(@NonNull Callable<V> callable) {
 		super(callable);

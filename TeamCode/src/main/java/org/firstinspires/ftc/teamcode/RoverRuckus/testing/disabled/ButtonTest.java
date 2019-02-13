@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 @Disabled
 public class ButtonTest extends OpMode {
 	private TouchSensor button;
-	private DcMotor motor;
+	private DcMotor     motor;
 	
 	@Override
 	public void init() {

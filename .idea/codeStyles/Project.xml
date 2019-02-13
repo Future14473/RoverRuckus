@@ -2,6 +2,7 @@
   <code_scheme name="Project" version="173">
     <option name="RIGHT_MARGIN" value="80" />
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="true" />
+    <option name="SOFT_MARGINS" value="40" />
     <Objective-C-extensions>
       <file>
         <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Import" />
@@ -68,7 +69,7 @@
       <option name="WRAP_LONG_LINES" value="true" />
       <option name="ENUM_CONSTANTS_WRAP" value="2" />
       <option name="WRAP_ON_TYPING" value="1" />
-      <option name="SOFT_MARGINS" value="4" />
+      <option name="SOFT_MARGINS" value="80" />
       <indentOptions>
         <option name="USE_TAB_CHARACTER" value="true" />
         <option name="SMART_TABS" value="true" />

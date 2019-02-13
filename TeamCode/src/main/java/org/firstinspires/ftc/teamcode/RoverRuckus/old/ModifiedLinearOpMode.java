@@ -17,11 +17,11 @@ import java.util.function.BooleanSupplier;
  * Redundant code and weird things removed.
  */
 public abstract class ModifiedLinearOpMode extends OpMode {
-	private final SingleWaiter waiter = new SingleWaiter();
-	private OpModeRunner runner = null;
-	private ExecutorService executorService = null;
-	private volatile boolean isStarted = false;
-	private volatile boolean stopRequested = false;
+	private final    SingleWaiter    waiter          = new SingleWaiter();
+	private          OpModeRunner    runner          = null;
+	private          ExecutorService executorService = null;
+	private volatile boolean         isStarted       = false;
+	private volatile boolean         stopRequested   = false;
 	
 	/**
 	 * Override this method and place your code here.
@@ -43,8 +43,8 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 */
 	@Override
 	final public void init() {
-		this.executorService = ThreadPool.newSingleThreadExecutor(
-				"ModifiedLinearOpMode");
+		this.executorService =
+				ThreadPool.newSingleThreadExecutor("ModifiedLinearOpMode");
 		this.runner = new OpModeRunner();
 		this.executorService.execute(this.runner);
 	}
@@ -96,7 +96,8 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 			   and take action */
 			try {
 				ThreadPool.awaitTermination(this.executorService, 100,
-						TimeUnit.DAYS, "User Linear op mode");
+				                            TimeUnit.DAYS,
+				                            "User Linear op mode");
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
@@ -170,9 +171,10 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 * with loop) occurs
 	 *
 	 * @throws InterruptedException if this thread is interrupted while
-	 * waiting (op mode stopped).
+	 *                              waiting (op mode stopped).
 	 */
-	protected void waitUntil(BooleanSupplier condition) throws InterruptedException {
+	protected void waitUntil(BooleanSupplier condition)
+			throws InterruptedException {
 		RobotLog.d("WaitUntil started: " + condition.toString());
 		this.waiter.waitFor(condition);
 		RobotLog.d("WaitUntil ended " + condition.toString());
@@ -183,13 +185,15 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 * timeout.
 	 *
 	 * @throws InterruptedException if this thread is interrupted while
-	 * waiting (op mode stopped).
+	 *                              waiting (op mode stopped).
 	 */
-	protected void waitUntil(BooleanSupplier waitCondition, long timeout,
-	                         TimeUnit unit) throws InterruptedException {
+	protected void waitUntil(
+			BooleanSupplier waitCondition, long timeout, TimeUnit unit)
+			throws InterruptedException {
 		long nanos = unit.toNanos(timeout);
 		final long stopTime = System.nanoTime() + nanos;
-		waitUntil(() -> waitCondition.getAsBoolean() || System.nanoTime() >= stopTime);
+		waitUntil(() -> waitCondition.getAsBoolean() ||
+		                System.nanoTime() >= stopTime);
 	}
 	
 	/**
@@ -200,7 +204,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 *
 	 * @param milliseconds amount of time to sleep, in milliseconds
 	 * @throws InterruptedException if this thread is interrupted while
-	 * sleeping (op mode stopped).
+	 *                              sleeping (op mode stopped).
 	 * @see Thread#sleep(long)
 	 */
 	protected final void sleep(long milliseconds) throws InterruptedException {
@@ -211,7 +215,7 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	 * Pauses the Linear Op Mode until start.
 	 *
 	 * @throws InterruptedException if this thread is interrupted while
-	 * waiting (op mode stopped).
+	 *                              waiting (op mode stopped).
 	 */
 	protected synchronized void waitForStart() throws InterruptedException {
 		while (!isStarted()) {
@@ -263,11 +267,12 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 					requestOpModeStop();
 				} catch (InterruptedException ie) {
 					RobotLog.d("ModifiedLinearOpMode received an " +
-							"InterruptedException; shutting down this Linear " + "op " + "mode");
+					           "InterruptedException; shutting down this " +
+					           "Linear " + "op " + "mode");
 				} catch (CancellationException ie) {
 					RobotLog.d("ModifiedLinearOpMode received a " +
-							"CancellationException; shutting down this Linear "
-							+ "op " + "mode");
+					           "CancellationException; shutting down this " +
+					           "Linear " + "op " + "mode");
 				} catch (RuntimeException e) {
 					this.exception = e;
 				} finally {
@@ -279,7 +284,8 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 						ModifiedLinearOpMode.this.cleanup();
 					} catch (RuntimeException e) {
 						RobotLog.d("ModifiedLinearOpMode received a " +
-								"RuntimeException during cleanup; ignoring.");
+						           "RuntimeException during cleanup; " +
+						           "ignoring" + ".");
 					} finally {
 						this.isShutdown = true;
 					}
@@ -289,12 +295,13 @@ public abstract class ModifiedLinearOpMode extends OpMode {
 	}
 	
 	private static class SingleWaiter {
-		private final AtomicInteger waiters = new AtomicInteger();
-		private BooleanSupplier condition;
+		private final AtomicInteger   waiters = new AtomicInteger();
+		private       BooleanSupplier condition;
 		
 		protected SingleWaiter() {}
 		
-		protected synchronized void waitFor(BooleanSupplier condition) throws InterruptedException {
+		protected synchronized void waitFor(BooleanSupplier condition)
+				throws InterruptedException {
 			this.notifyAll(); //screw all other waiters, if any
 			this.condition = condition;
 			if (condition.getAsBoolean()) return;

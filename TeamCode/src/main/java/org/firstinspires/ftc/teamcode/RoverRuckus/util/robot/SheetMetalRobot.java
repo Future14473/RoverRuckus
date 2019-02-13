@@ -17,18 +17,18 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPowe
 @SuppressWarnings("Duplicates")
 public class SheetMetalRobot implements IRobot {
 	//maximum acceleration in powerLevel/second
-	private static final double MAX_ACCELERATION = 2.0;
-	private static final int TARGET_POSITION_TOLERANCE = 25;
+	private static final double MAX_ACCELERATION          = 2.0;
+	private static final int    TARGET_POSITION_TOLERANCE = 25;
 	
 	public final MotorSet wheels;
-	public final DcMotor hook, scooper, collectArm, scoreArm;
+	public final DcMotor  hook, scooper, collectArm, scoreArm;
 	public final Servo flicker, markerDoor, collectDoor, scoreDump, parker;
-	public final CRServo angler;
+	public final CRServo   angler;
 	public final BNO055IMU imu;
 	
 	private final CumulativeDirection direction;
-	private long pastTime;
-	private MotorSetPower pastPower = MotorSetPower.ZERO;
+	private       long                pastTime;
+	private       MotorSetPower       pastPower = MotorSetPower.ZERO;
 	
 	public SheetMetalRobot(HardwareMap hardwareMap) {
 		
@@ -89,7 +89,9 @@ public class SheetMetalRobot implements IRobot {
 		long curTime = System.nanoTime();
 		MotorSetPower actualPower =
 				calcPower(direction, speed, turnRate).rampFrom(pastPower,
-						MAX_ACCELERATION / 1e9 * (curTime - pastTime));
+				                                               MAX_ACCELERATION /
+				                                               1e9 * (curTime -
+				                                                      pastTime));
 		pastTime = curTime;
 		pastPower = actualPower;
 		wheels.setPower(actualPower);

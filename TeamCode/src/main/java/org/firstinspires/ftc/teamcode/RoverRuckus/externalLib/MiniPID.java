@@ -24,8 +24,8 @@ public class MiniPID {
 	private double F = 0;
 	
 	private double maxIOutput = 0;
-	private double maxError = 0;
-	private double errorSum = 0;
+	private double maxError   = 0;
+	private double errorSum   = 0;
 	
 	private double maxOutput = 0;
 	private double minOutput = 0;
@@ -38,12 +38,12 @@ public class MiniPID {
 	private boolean reversed = false;
 	
 	private double outputRampRate = 0;
-	private double lastOutput = 0;
+	private double lastOutput     = 0;
 	
 	private double outputFilter = 0;
 	
 	private double setpointRange = 0;
-	private long prevTime;
+	private long   prevTime;
 	//**********************************
 	// Constructor functions
 	//**********************************
@@ -329,7 +329,7 @@ public class MiniPID {
 		// Ramp the setpoint used for calculations if user has opted to do so
 		if (setpointRange != 0) {
 			setpoint = constrain(setpoint, actual - setpointRange,
-					actual + setpointRange);
+			                     actual + setpointRange);
 		}
 		
 		// Do the simple parts of the calculations
@@ -386,8 +386,9 @@ public class MiniPID {
 			// decreases enough for the I term to start acting upon the
 			// controller
 			// From that point the I term will build up as would be expected
-		} else if (allowedRampRate != 0 && !bounded(output,
-				lastOutput - allowedRampRate, lastOutput + allowedRampRate)) {
+		} else if (allowedRampRate != 0 &&
+		           !bounded(output, lastOutput - allowedRampRate,
+		                    lastOutput + allowedRampRate)) {
 			errorSum = error;
 		} else if (maxIOutput != 0) {
 			errorSum = constrain(errorSum + error, -maxError, maxError);
@@ -401,7 +402,7 @@ public class MiniPID {
 		// Restrict output to our specified output and ramp limits
 		if (allowedRampRate != 0) {
 			output = constrain(output, lastOutput - allowedRampRate,
-					lastOutput + allowedRampRate);
+			                   lastOutput + allowedRampRate);
 		}
 		if (minOutput != maxOutput) {
 			output = constrain(output, minOutput, maxOutput);

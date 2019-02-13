@@ -41,8 +41,16 @@ public class MotorSetPosition {
 		return Arrays.toString(position);
 	}
 	
-	public static MotorSetPosition fromArray(int[] o) {
-		if (Arrays.equals(o, ZERO.position)) return ZERO;
-		return new MotorSetPosition(o);
+	public MotorSetPosition delta(MotorSetPosition prevPosition) {
+		int[] position = new int[4];
+		for (int i = 0; i < 4; i++) {
+			position[i] = this.position[i] - prevPosition.position[i];
+		}
+		return fromArray(position);
+	}
+	
+	public static MotorSetPosition fromArray(int[] array) {
+		if (Arrays.equals(array, ZERO.position)) return ZERO;
+		return new MotorSetPosition(array);
 	}
 }

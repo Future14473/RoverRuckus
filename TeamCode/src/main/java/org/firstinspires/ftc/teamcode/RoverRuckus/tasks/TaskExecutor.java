@@ -23,10 +23,10 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	//executors are too complicated for us to need em. Simple is faster and
 	// simpler.
 	
-	private final Thread theThread;
-	private final AtomicBoolean running = new AtomicBoolean(false);
-	private final Object doneLock = new Object();
-	private boolean done = true;
+	private final Thread        theThread;
+	private final AtomicBoolean running  = new AtomicBoolean(false);
+	private final Object        doneLock = new Object();
+	private       boolean       done     = true;
 	
 	public TaskExecutor() {
 		theThread = new Thread(this::run);

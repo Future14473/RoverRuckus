@@ -7,12 +7,15 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 
 @Deprecated
 public abstract class AbstractAuto extends LinearOpMode {
-	private static final int HOOK_TURN = -25700;
-	// --Commented out by Inspection (1/22/2019 6:58 PM):private static final int ARM_TURN = -1500;
-	protected OldRobot robot = new OldRobot();
-	private ElapsedTime timer = new ElapsedTime();
-	private GoldLookDouble goldLooker = new GoldLookDouble();
-	private int look = -1;
+	private static final int            HOOK_TURN  = -25700;
+	// --Commented out by Inspection (1/22/2019 6:58 PM):private static final
+	// int ARM_TURN = -1500;
+	protected            OldRobot       robot      = new OldRobot();
+	private              ElapsedTime    timer      = new ElapsedTime();
+	private              GoldLookDouble goldLooker = new GoldLookDouble();
+	private              int            look       = -1;
+	
+	protected abstract void positionForDepot() throws InterruptedException;
 	
 	@Override
 	public final void runOpMode() throws InterruptedException {
@@ -30,7 +33,6 @@ public abstract class AbstractAuto extends LinearOpMode {
 		parkInCrater();
 		finish();
 	}
-	
 	
 	private void initialize() {
 		telemetry.addLine("Init started...");
@@ -50,7 +52,8 @@ public abstract class AbstractAuto extends LinearOpMode {
 		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		robot.hooke.setPower(1);
 		//decreasing
-		while (Math.abs(HOOK_TURN - robot.hooke.getCurrentPosition()) > 50 && opModeIsActive()) {
+		while (Math.abs(HOOK_TURN - robot.hooke.getCurrentPosition()) > 50 &&
+		       opModeIsActive()) {
 			idle();
 		}
 		robot.hooke.setPower(0);
@@ -62,13 +65,15 @@ public abstract class AbstractAuto extends LinearOpMode {
 	protected void knockOffGold() throws InterruptedException {
 		goldLooker.start();
 		timer.reset();
-		while (look == -1 && timer.milliseconds() < 5000 && opModeIsActive()) look = goldLooker.getLook();
+		while (look == -1 && timer.milliseconds() < 5000 && opModeIsActive())
+			look = goldLooker.getLook();
 		if (look == -1) {
 			look = 2;
 			telemetry.addLine("FAIL-SAFE HAPPENED");
 		} else look = (look + 2) % 3;
 		goldLooker.stop();
-		telemetry.addData("Gold is at:", (look == 0) ? "left" : ((look == 1) ? "middle" : "right"));
+		telemetry.addData("Gold is at:", (look == 0) ? "left" :
+		                                 ((look == 1) ? "middle" : "right"));
 		telemetry.update();
 		robot.drive.waitForDone();
 		robot.hooke.setPower(-1); //INTERLUDE
@@ -78,8 +83,6 @@ public abstract class AbstractAuto extends LinearOpMode {
 		robot.drive.moveXY(-0.5 * look - 0.5, 0, 10);
 		robot.drive.waitForDone();
 	}
-	
-	protected abstract void positionForDepot() throws InterruptedException;
 	
 	private void putMarkerInDepot() throws InterruptedException {
 		robot.drive.waitForDone();
@@ -107,7 +110,8 @@ public abstract class AbstractAuto extends LinearOpMode {
 	
 	private void finish() {
 		goldLooker.stop();
-		while (Math.abs(robot.hooke.getCurrentPosition()/* - 0 */) > 20 & opModeIsActive()) idle();
+		while (Math.abs(robot.hooke.getCurrentPosition()/* - 0 */) > 20 &
+		       opModeIsActive()) idle();
 		robot.hooke.setPower(0);
 	}
 }

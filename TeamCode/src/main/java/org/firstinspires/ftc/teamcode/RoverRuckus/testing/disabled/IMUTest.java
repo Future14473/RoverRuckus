@@ -31,7 +31,7 @@ public class IMUTest extends OurLinearOpModePrinted {
 	protected void run() throws InterruptedException {
 		while (opModeIsActive()) {
 			telemetry.addData("ANGULAR ORIENTATION:",
-					imu.getAngularOrientation().toAngleUnit(DEGREES));
+			                  imu.getAngularOrientation().toAngleUnit(DEGREES));
 			telemetry.update();
 		}
 	}

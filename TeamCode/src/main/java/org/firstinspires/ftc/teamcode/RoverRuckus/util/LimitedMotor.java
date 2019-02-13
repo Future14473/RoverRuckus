@@ -15,7 +15,7 @@ public class LimitedMotor {
 	private final Integer lowerLimit;
 	private final Integer upperLimit;
 	
-	private State lastState = State.NONE;
+	private State   lastState = State.NONE;
 	private boolean encoderReverse;
 	
 	/**
@@ -27,21 +27,20 @@ public class LimitedMotor {
 	 * @param encoderReverse if the encoder values are negated (workaround
 	 *                       hardware issues).
 	 */
-	public LimitedMotor(DcMotor motor, Integer lowerLimit, Integer upperLimit,
-	                    boolean encoderReverse) {
+	public LimitedMotor(
+			DcMotor motor, Integer lowerLimit, Integer upperLimit,
+			boolean encoderReverse) {
 		if (upperLimit < lowerLimit) throw new IllegalArgumentException();
 		this.motor = motor;
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 		this.encoderReverse = encoderReverse;
-		motor.setMode(encoderReverse ? RUN_WITHOUT_ENCODER :
-				RUN_USING_ENCODER);
+		motor.setMode(encoderReverse ? RUN_WITHOUT_ENCODER : RUN_USING_ENCODER);
 	}
 	
 	public void resetEncoder() {
 		motor.setMode(STOP_AND_RESET_ENCODER);
-		motor.setMode(encoderReverse ? RUN_WITHOUT_ENCODER :
-				RUN_USING_ENCODER);
+		motor.setMode(encoderReverse ? RUN_WITHOUT_ENCODER : RUN_USING_ENCODER);
 	}
 	
 	public void setPowerLimited(double power) {
@@ -52,14 +51,14 @@ public class LimitedMotor {
 		setPowerLimited(power, null, null, override);
 	}
 	
-	public void setPowerLimited(double power, Integer lowerLimit,
-	                            Integer upperLimit) {
+	public void setPowerLimited(
+			double power, Integer lowerLimit, Integer upperLimit) {
 		setPowerLimited(power, lowerLimit, upperLimit, false);
 	}
 	
-	private void setPowerLimited(double power, @Nullable Integer lowerLimit,
-	                             @Nullable Integer upperLimit,
-	                             boolean override) {
+	private void setPowerLimited(
+			double power, @Nullable Integer lowerLimit,
+			@Nullable Integer upperLimit, boolean override) {
 		if (lowerLimit == null) lowerLimit = this.lowerLimit;
 		if (upperLimit == null) upperLimit = this.upperLimit;
 		State state = State.NONE;

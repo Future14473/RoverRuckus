@@ -19,14 +19,14 @@ public class PrintedRobot implements IRobot {
 	private static final double MAX_ACCELERATION = 1.5;
 	
 	public final MotorSet wheels;
-	public final DcMotor hook, scooper, collectArm, scoreArm;
+	public final DcMotor  hook, scooper, collectArm, scoreArm;
 	public final Servo flicker, markerDoor, collectDoor, scoreDoor, parker;
-	public final CRServo angler;
+	public final CRServo   angler;
 	public final BNO055IMU imu;
 	
 	private final CumulativeDirection direction;
-	private long pastTime;
-	private MotorSetPower pastPower = MotorSetPower.ZERO;
+	private       long                pastTime;
+	private       MotorSetPower       pastPower = MotorSetPower.ZERO;
 	
 	public PrintedRobot(HardwareMap hardwareMap) {
 		
@@ -86,7 +86,9 @@ public class PrintedRobot implements IRobot {
 		long curTime = System.nanoTime();
 		MotorSetPower actualPower =
 				calcPower(direction, speed, turnRate).rampFrom(pastPower,
-						MAX_ACCELERATION / 1e9 * (curTime - pastTime));
+				                                               MAX_ACCELERATION /
+				                                               1e9 * (curTime -
+				                                                      pastTime));
 		pastTime = curTime;
 		pastPower = actualPower;
 		wheels.setPower(actualPower);

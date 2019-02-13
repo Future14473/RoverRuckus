@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Disabled
 public class Measure extends OpMode {
 	private OldRobot robot = new OldRobot();
-	private DcMotor motor;
-	private Servo servo;
+	private DcMotor  motor;
+	private Servo    servo;
 	
 	@Override
 	public void init() {

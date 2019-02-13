@@ -133,8 +133,7 @@ public abstract class AbstractAuto2 extends OurLinearOpMode {
 		telemetry.update();
 		drive.moveXY(-0.35 + 0.5 * look, 0.45, 10)
 		     .moveXY(0, 0.25, 10)//knock off
-		     .moveXY(0, -0.35, 10)
-		     .moveXY(-0.6 - 0.5 * look, 0.05, 10); //go to repos
+		     .moveXY(0, -0.35, 10).moveXY(-0.6 - 0.5 * look, 0.05, 10);
 	}
 	
 	private void putMarkerInDepot() throws InterruptedException {

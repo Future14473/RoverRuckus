@@ -15,13 +15,16 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 @SuppressWarnings("Duplicates")
 public abstract class AbstractAuto extends OurLinearOpMode {
-	private static final int HOOK_TURN_START_LOOK = -22000;
-	private static final int HOOK_TURN_END = -26000;
-	private static final double PARKER_POSITION_OUT = 0;
-	private final GoldLookDouble goldLooker = new GoldLookDouble();
-	protected MecanumDrive drive;
-	private SheetMetalRobot robot = new SheetMetalRobot(hardwareMap);
-	private ElapsedTime timer = new ElapsedTime();
+	private static final int             HOOK_TURN_START_LOOK = -22000;
+	private static final int             HOOK_TURN_END        = -26000;
+	private static final double          PARKER_POSITION_OUT  = 0;
+	private final        GoldLookDouble  goldLooker           =
+			new GoldLookDouble();
+	protected            MecanumDrive    drive;
+	private              SheetMetalRobot robot                =
+			new SheetMetalRobot(hardwareMap);
+	private              ElapsedTime     timer                =
+			new ElapsedTime();
 	
 	protected abstract void positionForDepot() throws InterruptedException;
 	
@@ -65,14 +68,16 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	
 	private void finishHook() throws InterruptedException {
 		robot.hook.setPower(-0.7);
-		waitUntil(() -> Math.abs(robot.hook.getCurrentPosition()/* - 0 */) < 100);
+		waitUntil(
+				() -> Math.abs(robot.hook.getCurrentPosition()/* - 0 */) < 100);
 		robot.hook.setPower(0);
 	}
 	
 	private void unHook() throws InterruptedException {
 		robot.hook.setPower(1);
 		//decreasing
-		waitUntil(() -> robot.hook.getCurrentPosition() <= HOOK_TURN_START_LOOK);
+		waitUntil(
+				() -> robot.hook.getCurrentPosition() <= HOOK_TURN_START_LOOK);
 		goldLooker.start();
 		telemetry.addLine("GOLD LOOK STARTED");
 		telemetry.update();
@@ -93,8 +98,8 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 			telemetry.addLine("FAIL-SAFE HAPPENED");
 		} else look = (look + 2) % 3;
 		goldLooker.stop();
-		telemetry.addData("Gold is at:", (look == 0) ? "left" : ((look == 1) ?
-				"middle" : "right"));
+		telemetry.addData("Gold is at:", (look == 0) ? "left" :
+		                                 ((look == 1) ? "middle" : "right"));
 		telemetry.update();
 		drive.waitUntilDone();
 		drive.moveXY(-0.35 + 0.5 * look, 0.45, 10); //go to

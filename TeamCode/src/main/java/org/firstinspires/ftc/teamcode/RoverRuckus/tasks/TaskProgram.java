@@ -11,8 +11,8 @@ import java.util.concurrent.Future;
  */
 public class TaskProgram implements OpModeLifetimeRegistrar.Stoppable {
 	private final TaskExecutor taskExecutor;
-	private final boolean autoStart;
-	private boolean started = false;
+	private final boolean      autoStart;
+	private       boolean      started = false;
 	
 	public TaskProgram(boolean autoStart) {
 		this.autoStart = autoStart;

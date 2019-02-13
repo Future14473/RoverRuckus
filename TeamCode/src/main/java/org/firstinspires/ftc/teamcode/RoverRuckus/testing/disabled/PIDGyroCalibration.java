@@ -25,7 +25,8 @@ public class PIDGyroCalibration extends OurLinearOpModePrinted {
 	
 	private Button left = new Button(() -> gamepad1.dpad_left);
 	
-	private Button right = new Button(() -> gamepad1.dpad_right);
+	private Button                      right =
+			new Button(() -> gamepad1.dpad_right);
 	private MecanumDrive.GyroRotateTask turnTask;
 	
 	@Override

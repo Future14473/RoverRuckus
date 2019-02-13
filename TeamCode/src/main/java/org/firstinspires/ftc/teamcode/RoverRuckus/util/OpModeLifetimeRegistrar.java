@@ -21,27 +21,28 @@ public class OpModeLifetimeRegistrar {
 		OpModeManagerImpl opModeManager =
 				OpModeManagerImpl.getOpModeManagerOfActivity(activity);
 		if (opModeManager != null) {
-			opModeManager.registerListener(new OpModeManagerNotifier.Notifications() {
-				@Override
-				public void onOpModePreInit(OpMode opMode) {
-					//shouldn't happen, but eh.
-					stop();
-				}
-				
-				@Override
-				public void onOpModePreStart(OpMode opMode) {
-				}
-				
-				@Override
-				public void onOpModePostStop(OpMode opMode) {
-					stop();
-				}
-				
-				private void stop() {
-					stoppable.stop();
-					opModeManager.unregisterListener(this);
-				}
-			});
+			opModeManager.registerListener(
+					new OpModeManagerNotifier.Notifications() {
+						@Override
+						public void onOpModePreInit(OpMode opMode) {
+							//shouldn't happen, but eh.
+							stop();
+						}
+						
+						@Override
+						public void onOpModePreStart(OpMode opMode) {
+						}
+						
+						@Override
+						public void onOpModePostStop(OpMode opMode) {
+							stop();
+						}
+						
+						private void stop() {
+							stoppable.stop();
+							opModeManager.unregisterListener(this);
+						}
+					});
 		} else {
 			throw new RuntimeException("No OpMode manager");
 		}

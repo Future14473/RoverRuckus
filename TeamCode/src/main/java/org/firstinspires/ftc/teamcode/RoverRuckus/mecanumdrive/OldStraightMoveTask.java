@@ -18,25 +18,26 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENC
  * @deprecated the new implementation(s) use gyroscope to align the robot
  * better.
  */
-@Deprecated
 class OldStraightMoveTask extends TaskAdapter {
-	public final static double TURN_MULT = 1205; //change to tweak "rotate x
+	public final static double           TURN_MULT = 1205;
+	//change to tweak "rotate x
 	// deg" precisely.   Degrees wheel turn per radian robot turn
-	public final static double MOVE_MULT = 4450; //change to tweak "move x
+	public final static double           MOVE_MULT = 4450;
+	//change to tweak "move x
 	// meters" precisely. Degrees wheel turn per yard robot move
-	protected final IRobot robot;
+	protected final     IRobot           robot;
 	// per
 	// unit.
 	//TODO: Make above protected
-	private final double speed;
-	private final double[] progress = new double[4];
-	private MotorSet motors;
-	private MotorSetPower targPower;
-	private MotorSetPosition targPos;
-	private MotorSetPosition curPos;
+	private final       double           speed;
+	private final       double[]         progress  = new double[4];
+	private             MotorSet         motors;
+	private             MotorSetPower    targPower;
+	private             MotorSetPosition targPos;
+	private             MotorSetPosition curPos;
 	
-	OldStraightMoveTask(IRobot robot, MotorSetPower targPower, double mult,
-	                    double speed) {
+	OldStraightMoveTask(
+			IRobot robot, MotorSetPower targPower, double mult, double speed) {
 		this.targPower = targPower;
 		this.speed = speed;
 		this.robot = robot;
@@ -46,8 +47,7 @@ class OldStraightMoveTask extends TaskAdapter {
 	private int getMaxOff() {
 		int maxOff = 0;
 		for (int i = 0; i < 4; i++) {
-			maxOff = Math.max(maxOff,
-					Math.abs(curPos.get(i) - targPos.get(i)));
+			maxOff = Math.max(maxOff, Math.abs(curPos.get(i) - targPos.get(i)));
 		}
 		return maxOff;
 	}
@@ -83,8 +83,8 @@ class OldStraightMoveTask extends TaskAdapter {
 	protected void setPower(double avgProgress) {
 		double[] power = new double[4];
 		for (int i = 0; i < 4; i++) {
-			power[i] =
-					(targPower.getPower(i) * (1 - 3 * (progress[i] - avgProgress))) * speed;
+			power[i] = (targPower.getPower(i) *
+			            (1 - 3 * (progress[i] - avgProgress))) * speed;
 		}
 		//RobotLog.v("SET POWER: %s", actualPower.toString());
 		this.motors.setPower(power);

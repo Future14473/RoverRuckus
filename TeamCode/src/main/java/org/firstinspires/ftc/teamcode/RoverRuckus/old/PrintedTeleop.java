@@ -21,45 +21,51 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State
 @Disabled
 public class PrintedTeleop extends OurLinearOpModePrinted {
 	//Encoder limits
-	private static final int MOTOR_MIN = 100; //"at home" position for all
+	private static final int          MOTOR_MIN                     = 100;
+	//"at home" position for all
 	// encoders
-	private static final int ARM_MAX = 4450; //maximum arm extension (both
+	private static final int          ARM_MAX                       = 4450;
+	//maximum arm extension (both
 	// arms)
-	private static final int HOOK_MAX = 26000; //maximum hook extension
-	private static final int COLLECT_ARM_INITIAL_EXTENSION = 2000; //initial
+	private static final int          HOOK_MAX                      = 26000;
+	//maximum hook extension
+	private static final int          COLLECT_ARM_INITIAL_EXTENSION = 2000;
+	//initial
 	// extensions during auto extend
-	private static final int SCORE_ARM_INITIAL_EXTENSION = ARM_MAX;
-	private static final int HOOK_NULLIFY = 1500;
+	private static final int          SCORE_ARM_INITIAL_EXTENSION   = ARM_MAX;
+	private static final int          HOOK_NULLIFY                  = 1500;
 	//Servo positions
-	private static final double COLLECT_DOOR_CLOSED = 0.71; //Collect door
+	private static final double       COLLECT_DOOR_CLOSED           = 0.71;
+	//Collect door
 	// positions
-	private static final double COLLECT_DOOR_OPEN = 0.39;
-	private static final double SCORE_DOOR_CLOSED = 0.9; //score door
+	private static final double       COLLECT_DOOR_OPEN             = 0.39;
+	private static final double       SCORE_DOOR_CLOSED             = 0.9;
+	//score door
 	// positions;
-	private static final double SCORE_DOOR_READY = 0.85;
-	private static final double SCORE_DOOR_GOLD = 0.79;
-	private static final double SCORE_DOOR_OPEN = 0.65;
-	private static final double PARKER_POSITION_HOME = 0.6;
+	private static final double       SCORE_DOOR_READY              = 0.85;
+	private static final double       SCORE_DOOR_GOLD               = 0.79;
+	private static final double       SCORE_DOOR_OPEN               = 0.65;
+	private static final double       PARKER_POSITION_HOME          = 0.6;
 	//Mults
-	private static final double SPEED_FAST_MULT = 100;
-	private static final double SPEED_NORMAL_MULT = 1;
-	private static final double SPEED_SLOW_MULT = 0.4;
+	private static final double       SPEED_FAST_MULT               = 100;
+	private static final double       SPEED_NORMAL_MULT             = 1;
+	private static final double       SPEED_SLOW_MULT               = 0.4;
 	//Powers
-	private static final double IDLE_IN_POWER = -0.6;
-	private static final double IDLE_COLLECT_ARM_POWER = 0.05;
-	private static final double IDLE_SCORE_ARM_POWER = 0.1;
-	private static final double IDLE_SCOOPER_POWER = 0.6;
+	private static final double       IDLE_IN_POWER                 = -0.6;
+	private static final double       IDLE_COLLECT_ARM_POWER        = 0.05;
+	private static final double       IDLE_SCORE_ARM_POWER          = 0.1;
+	private static final double       IDLE_SCOOPER_POWER            = 0.6;
 	//other constants
-	private static final int TRANSFER_SLEEP_TIME = 200;
+	private static final int          TRANSFER_SLEEP_TIME           = 200;
 	//Variables for driving
-	private boolean gyroDrive = false;
-	private boolean reverseDrive = false;
-	private double rotationOffSet = 0;
+	private              boolean      gyroDrive                     = false;
+	private              boolean      reverseDrive                  = false;
+	private              double       rotationOffSet                = 0;
 	//Motors and servos, for readability and functionality
-	private LimitedMotor collectArm, scoreArm, hook;
+	private              LimitedMotor collectArm, scoreArm, hook;
 	private DcMotor scooper;
-	private Servo collectDoor;
-	private Servo scoreDoor;
+	private Servo   collectDoor;
+	private Servo   scoreDoor;
 	private CRServo angler;
 	//Buttons.
 	
@@ -84,13 +90,14 @@ public class PrintedTeleop extends OurLinearOpModePrinted {
 	private Button gp2lsb = new Button(() -> gamepad2.left_stick_button);
 	//reset COLLECT encoder
 	
-	private Button gp2rsb = new Button(() -> gamepad2.right_stick_button);
+	private Button   gp2rsb         =
+			new Button(() -> gamepad2.right_stick_button);
 	//reset SCORE encoder
 	//State
-	private int scoreDoorState = 0;
-	private ArmState armState = ArmState.COLLECT;
+	private int      scoreDoorState = 0;
+	private ArmState armState       = ArmState.COLLECT;
 	//pseudo sleep
-	private long sleepEndTime;
+	private long     sleepEndTime;
 	
 	@Override
 	protected void initialize() {
@@ -98,8 +105,8 @@ public class PrintedTeleop extends OurLinearOpModePrinted {
 		robot.wheels.setMode(RUN_USING_ENCODER);
 		robot.wheels.setZeroPowerBehavior(FLOAT);
 		scoreArm = new LimitedMotor(robot.scoreArm, MOTOR_MIN, ARM_MAX, true);
-		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, ARM_MAX,
-				true);
+		collectArm =
+				new LimitedMotor(robot.collectArm, MOTOR_MIN, ARM_MAX, true);
 		hook = new LimitedMotor(robot.hook, MOTOR_MIN, HOOK_MAX, true);
 		scooper = robot.scooper;
 		collectDoor = robot.collectDoor;
@@ -114,8 +121,8 @@ public class PrintedTeleop extends OurLinearOpModePrinted {
 		while (opModeIsActive()) {
 			//FOR GAMEPAD1, CHANGED BY GAMEPAD2 2 is fast, 1 is normal, 0 is
 			// slow.
-			int speedMode = gamepad1.right_bumper ? 2 : (gamepad1.left_bumper
-					? 0 : 1);
+			int speedMode =
+					gamepad1.right_bumper ? 2 : (gamepad1.left_bumper ? 0 : 1);
 			/*----------------*\
 		    |    GAMEPAD 2     |
 			\*----------------*/
@@ -136,7 +143,8 @@ public class PrintedTeleop extends OurLinearOpModePrinted {
 			case TO_COLLECT:
 				scooper.setPower(0); //idle
 				collectArm.setPowerLimited(1, null,
-						COLLECT_ARM_INITIAL_EXTENSION); //extend to initial
+				                           COLLECT_ARM_INITIAL_EXTENSION);
+				//extend to initial
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED); //close door
 				scoreArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				scoreDoor.setPosition(SCORE_DOOR_CLOSED); //close door.
@@ -144,7 +152,9 @@ public class PrintedTeleop extends OurLinearOpModePrinted {
 				break;
 			case COLLECT:
 				scooper.setPower(triggerSum);
-				collectArm.setPowerLimited(-gamepad2.right_stick_y + IDLE_COLLECT_ARM_POWER, gamepad2.x);
+				collectArm.setPowerLimited(
+						-gamepad2.right_stick_y + IDLE_COLLECT_ARM_POWER,
+						gamepad2.x);
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 				scoreArm.setPowerLimited(IDLE_IN_POWER);
 				scoreDoor.setPosition(SCORE_DOOR_CLOSED);
@@ -156,13 +166,13 @@ public class PrintedTeleop extends OurLinearOpModePrinted {
 				// closed; no fa;; pit
 				scoreArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				scoreDoor.setPosition(SCORE_DOOR_READY);
-				autoAdvance =
-						collectArm.getLastState() == LOWER && scoreArm.getLastState() == LOWER;
+				autoAdvance = collectArm.getLastState() == LOWER &&
+				              scoreArm.getLastState() == LOWER;
 				if (autoAdvance) {
 					collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
 					// NOW...
-					sleepEndTime =
-							System.nanoTime() + MILLISECONDS.toNanos(TRANSFER_SLEEP_TIME); //pseudo sleep.
+					sleepEndTime = System.nanoTime() + MILLISECONDS.toNanos(
+							TRANSFER_SLEEP_TIME); //pseudo sleep.
 				}
 				userAdvance = false;
 				break;
@@ -186,12 +196,14 @@ public class PrintedTeleop extends OurLinearOpModePrinted {
 				break;
 			case SCORE:
 				double scoreDoorPos = scoreDoorState == 0 ? SCORE_DOOR_READY :
-						scoreDoorState == 1 ? SCORE_DOOR_GOLD :
-								SCORE_DOOR_OPEN;
+				                      scoreDoorState == 1 ? SCORE_DOOR_GOLD :
+				                      SCORE_DOOR_OPEN;
 				scooper.setPower(0); //idle
 				collectArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
-				scoreArm.setPowerLimited(-gamepad2.right_stick_y + IDLE_SCORE_ARM_POWER, gamepad1.x);
+				scoreArm.setPowerLimited(
+						-gamepad2.right_stick_y + IDLE_SCORE_ARM_POWER,
+						gamepad1.x);
 				scoreDoor.setPosition(scoreDoorPos);
 				speedMode = 0; // GO SLOW
 				if (gp2rbp.pressed()) {
@@ -224,9 +236,10 @@ public class PrintedTeleop extends OurLinearOpModePrinted {
 		    |     GAMEPAD 1     |
 			\* ----------------*/
 			double speedMult = (speedMode == 2) ? SPEED_FAST_MULT :
-					(speedMode == 1 ? SPEED_NORMAL_MULT : SPEED_SLOW_MULT);
-			double direction = Math.atan2(gamepad1.left_stick_x,
-					-gamepad1.left_stick_y);
+			                   (speedMode == 1 ? SPEED_NORMAL_MULT :
+			                    SPEED_SLOW_MULT);
+			double direction =
+					Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y);
 			
 			if (gp1b.pressed()) gyroDrive = !gyroDrive;
 			Button.State gp1yState = gp1y.getState();
@@ -241,17 +254,18 @@ public class PrintedTeleop extends OurLinearOpModePrinted {
 			} else {
 				if (gp1yState == PRESSED) reverseDrive = !reverseDrive;
 				if (reverseDrive) direction += Math.PI;
-				telemetry.addData("DIRECTION", reverseDrive ? "HOOK FRONT" :
-						"ARM FRONT");
+				telemetry.addData("DIRECTION",
+				                  reverseDrive ? "HOOK FRONT" : "ARM FRONT");
 			}
 			
 			double turnRate = gamepad1.right_stick_x * speedMult;
-			double speed = Math.pow(Math.hypot(gamepad1.left_stick_x,
-					gamepad1.left_stick_y), 1.7) * speedMult;
+			double speed = Math.pow(
+					Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
+					1.7) * speedMult;
 			robot.smoothMoveAt(direction, speed, turnRate);
 			//hook
 			hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0,
-					gamepad1.dpad_down);
+			                     gamepad1.dpad_down);
 			if (gp1dpadlr.pressed()) {
 				hook.resetEncoder();
 			}
@@ -280,8 +294,8 @@ public class PrintedTeleop extends OurLinearOpModePrinted {
 		}
 		
 		ArmState prev() {
-			int ord =
-					(this.ordinal() / 2 * 2 - 2 + values.length) % values.length;
+			int ord = (this.ordinal() / 2 * 2 - 2 + values.length) %
+			          values.length;
 			return values[ord];
 		}
 	}

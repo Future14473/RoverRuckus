@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class GoldKnockOffSingle extends LinearOpMode {
 	
 	private GoldLookSingle goldLookSingle = new GoldLookSingle();
-	private OldRobot robot = new OldRobot();
-	private boolean found = false;
+	private OldRobot       robot          = new OldRobot();
+	private boolean        found          = false;
 	//private int pos = -1;
 	
 	@Override
@@ -33,7 +33,9 @@ public class GoldKnockOffSingle extends LinearOpMode {
 		robot.drive.move(55, .57, 1);
 		robot.drive.waitForDone();
 		int i, look; // -1 means nothing, 0 means white, 1 means gold
-		for (i = 1; i >= -1; i--) {// -1 is left, 0 is center, 1 is right position
+		for (i = 1;
+		     i >= -1;
+		     i--) {// -1 is left, 0 is center, 1 is right position
 			telemetry.addData("i is:", i);
 			telemetry.addLine("looking...");
 			telemetry.update();

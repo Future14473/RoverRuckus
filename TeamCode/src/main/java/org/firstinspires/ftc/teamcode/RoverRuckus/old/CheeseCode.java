@@ -4,13 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-
 @Autonomous(name = "Cheese", group = "Test")
 @Disabled
 public class CheeseCode extends LinearOpMode {
 	
 	private OldRobot robot = new OldRobot();
-	
 	
 	@Override
 	public void runOpMode() throws InterruptedException {

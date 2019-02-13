@@ -14,7 +14,7 @@ import java.util.function.BooleanSupplier;
  */
 public abstract class OurLinearOpModePrinted extends LinearOpMode {
 	private final SingleCondition condition = new SingleCondition();
-	protected PrintedRobot robot;
+	protected     PrintedRobot    robot;
 	
 	/**
 	 * This method is loop once upon initialization.
@@ -73,7 +73,8 @@ public abstract class OurLinearOpModePrinted extends LinearOpMode {
 	 * @throws InterruptedException if this thread is interrupted while
 	 *                              waiting (op mode stopped).
 	 */
-	protected void waitUntil(BooleanSupplier condition) throws InterruptedException {
+	protected void waitUntil(BooleanSupplier condition)
+			throws InterruptedException {
 		RobotLog.d("WaitUntil started: " + condition.toString());
 		this.condition.waitFor(condition);
 		RobotLog.d("WaitUntil ended " + condition.toString());
@@ -86,14 +87,16 @@ public abstract class OurLinearOpModePrinted extends LinearOpMode {
 	 * @throws InterruptedException if this thread is interrupted while
 	 *                              waiting (op mode stopped).
 	 */
-	protected void waitUntil(final BooleanSupplier waitCondition, long timeout
-			, TimeUnit unit) throws InterruptedException {
+	protected void waitUntil(
+			final BooleanSupplier waitCondition, long timeout, TimeUnit unit)
+			throws InterruptedException {
 		long nanos = unit.toNanos(timeout);
 		final long stopTime = System.nanoTime() + nanos;
 		waitUntil(new BooleanSupplier() {
 			@Override
 			public boolean getAsBoolean() {
-				return waitCondition.getAsBoolean() || System.nanoTime() >= stopTime;
+				return waitCondition.getAsBoolean() ||
+				       System.nanoTime() >= stopTime;
 			}
 			
 			@Override
@@ -104,12 +107,13 @@ public abstract class OurLinearOpModePrinted extends LinearOpMode {
 	}
 	
 	private static class SingleCondition {
-		private final AtomicInteger waiters = new AtomicInteger();
-		private BooleanSupplier condition;
+		private final AtomicInteger   waiters = new AtomicInteger();
+		private       BooleanSupplier condition;
 		
 		protected SingleCondition() {}
 		
-		synchronized void waitFor(BooleanSupplier condition) throws InterruptedException {
+		synchronized void waitFor(BooleanSupplier condition)
+				throws InterruptedException {
 			this.notifyAll(); //screw all other waiters, if any
 			this.condition = condition;
 			if (condition.getAsBoolean()) return;

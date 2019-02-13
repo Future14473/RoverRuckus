@@ -18,10 +18,15 @@ public class GoldLookDoubleCallable implements Callable<Integer> {
 	private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 	@SuppressWarnings("SpellCheckingInspection")
 	private static final String VUFORIA_KEY          =
-			"Aavay7//////AAABmS26wV70nE" + "/XoqC91tMM" + "/rlwbqInv/YUads4QRll085q/yT" +
-					"+qW0qdyrUwXPXbvwDkGhnffFMGIizzvfrXviNCbfAAgJzSwDJuL0MJl3LRE2FU4JMKKU2v7V" +
-					"+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz/LaIEh4phJs35awBUu+g" +
-					"+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG/jRUsWLH1cs35" + "/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I" + "2fT+485YdwnaxuS8K9";
+			"Aavay7//////AAABmS26wV70nE" + "/XoqC91tMM" +
+			"/rlwbqInv/YUads4QRll085q/yT" +
+			"+qW0qdyrUwXPXbvwDkGhnffFMGIizzvfrXviNCbfAAgJzSwDJuL0MJl3LRE2FU4JMKKU2v7V" +
+			"+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz" +
+			"/LaIEh4phJs35awBUu+g" +
+			"+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG" +
+			"/jRUsWLH1cs35" +
+			"/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I" +
+			"2fT+485YdwnaxuS8K9";
 	
 	private VuforiaLocalizer vuforia;
 	private TFObjectDetector tfod;
@@ -31,7 +36,8 @@ public class GoldLookDoubleCallable implements Callable<Integer> {
 		if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
 			initTfod(hardwareMap);
 		} else {
-			throw new UnsupportedOperationException("This device is not compatible with TFOD");
+			throw new UnsupportedOperationException(
+					"This device is not compatible with TFOD");
 		}
 	}
 	
@@ -45,7 +51,8 @@ public class GoldLookDoubleCallable implements Callable<Integer> {
 		int ax = -1, bx = -1;
 		boolean ag = false, bg = false;
 		
-		Recognition[] recognitions = listRecognitions.toArray(new Recognition[0]);
+		Recognition[] recognitions =
+				listRecognitions.toArray(new Recognition[0]);
 		int numRec = Math.min(recognitions.length, 6);
 		int numValidRec = numRec;
 		for (int i = 0; i < numRec; i++) {
@@ -53,10 +60,12 @@ public class GoldLookDoubleCallable implements Callable<Integer> {
 			// override it with silver.
 			for (int j = i + 1; j < numRec; j++) {
 				if (recognitions[j] == null) continue;
-				if (Math.hypot(recognitions[j].getTop() - recognitions[i].getTop(),
-						recognitions[j].getBottom() - recognitions[i]
-						.getBottom()) < Math.max(recognitions[i].getHeight(),
-						recognitions[j].getHeight())) {
+				if (Math.hypot(
+						recognitions[j].getTop() - recognitions[i].getTop(),
+						recognitions[j].getBottom() -
+						recognitions[i].getBottom()) <
+				    Math.max(recognitions[i].getHeight(),
+				             recognitions[j].getHeight())) {
 					if (recognitions[j].getLabel().equals(LABEL_GOLD_MINERAL))
 						recognitions[j] = null;
 					else recognitions[i] = null;
@@ -84,7 +93,8 @@ public class GoldLookDoubleCallable implements Callable<Integer> {
 	 * Initialize the Vuforia localization engine.
 	 */
 	private void initVuforia() {
-		VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+		VuforiaLocalizer.Parameters parameters =
+				new VuforiaLocalizer.Parameters();
 		parameters.vuforiaLicenseKey = VUFORIA_KEY;
 		parameters.cameraDirection = CameraDirection.BACK;
 		parameters.useExtendedTracking = false;
@@ -99,14 +109,18 @@ public class GoldLookDoubleCallable implements Callable<Integer> {
 	 */
 	private void initTfod(HardwareMap hardwareMap) {
 		int tfodMonitorViewId = hardwareMap.appContext.getResources()
-		                                              .getIdentifier("tfodMonitorViewId", "id",
+		                                              .getIdentifier(
+				                                              "tfodMonitorViewId",
+				                                              "id",
 				                                              hardwareMap.appContext
-				                                              .getPackageName());
+						                                              .getPackageName());
 		TFObjectDetector.Parameters tfodParameters =
 				new TFObjectDetector.Parameters(tfodMonitorViewId);
 		tfodParameters.minimumConfidence = MIN_CONFIDENCE;
-		tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-		tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+		tfod = ClassFactory.getInstance()
+		                   .createTFObjectDetector(tfodParameters, vuforia);
+		tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL,
+		                        LABEL_SILVER_MINERAL);
 	}
 	
 	@Override
