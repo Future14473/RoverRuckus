@@ -4,6 +4,7 @@
       <w>dpadlr</w>
       <w>gamepad</w>
       <w>interactable</w>
+      <w>interruptable</w>
       <w>mecanum</w>
       <w>mult</w>
       <w>overriden</w>

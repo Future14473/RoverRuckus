@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.TaskAdapter;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSet;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPosition;
@@ -11,7 +11,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
 /**
- * A {@link org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.Task} that
+ * A {@link org.firstinspires.ftc.teamcode.RoverRuckus.tasks.Task} that
  * moves the robot's wheels uniformly.
  * For moving or turning.
  *

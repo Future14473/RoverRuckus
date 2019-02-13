@@ -2,8 +2,9 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoverRuckus.externalLib.MiniPID;
-import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.TaskAdapter;
-import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.TaskProgram;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.Task;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.GlobalVars;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 
@@ -43,9 +44,16 @@ public class MecanumDrive extends TaskProgram {
 	}
 	
 	@Override
+	public MecanumDrive then(Task task) {
+		add(task);
+		return this;
+	}
+	
+	@Override
 	public void start() {
 		targetAngle = robot.getAngle();
-		robot.getWheels().setTargetPositionTolerance(parameters.wheelTolerance);
+		robot.getWheels()
+		     .setTargetPositionTolerance(parameters.wheelTolerance);
 		super.start();
 	}
 	
@@ -63,10 +71,11 @@ public class MecanumDrive extends TaskProgram {
 	 * Moves the robot to the specified relative location on the coordinate
 	 * plane
 	 */
-	public void moveXY(double x, double y, double speed) {
+	public MecanumDrive moveXY(double x, double y, double speed) {
 		double direction = Math.toDegrees(Math.atan2(x, y));
 		double distance = Math.hypot(x, y);
 		move(direction, distance, speed);
+		return this;
 	}
 	
 	public void moveXY(double x, double y, DistanceUnit unit, double speed) {
@@ -77,16 +86,16 @@ public class MecanumDrive extends TaskProgram {
 	/**
 	 * Rotates the robot a specific number of degrees.
 	 */
-	public void rotate(double degreesToTurn, double maxSpeed) {
+	public MecanumDrive rotate(double degreesToTurn, double speed) {
 		if (!parameters.useGyro) {
 			degreesToTurn = Math.toRadians(degreesToTurn);
 			add(new OldStraightMoveTask(robot, calcPower(0, 0,
 					Math.signum(degreesToTurn)),
-					Math.abs(degreesToTurn) * OldStraightMoveTask.TURN_MULT,
-					maxSpeed));
+					Math.abs(degreesToTurn) * OldStraightMoveTask.TURN_MULT, speed));
 		} else {
-			add(new GyroRotateTask(degreesToTurn, maxSpeed));
+			add(new GyroRotateTask(degreesToTurn, speed));
 		}
+		return this;
 	}
 	
 	private double getCurAngle() {
@@ -97,15 +106,15 @@ public class MecanumDrive extends TaskProgram {
 		private static final double ANGLE_TOLERANCE = 1.5;
 		private static final int CONSECUTIVE_HITS = 5;
 		
-		private final double maxSpeed;
+		private final double speed;
 		private final double degreesToTurn;
 		private int consecutive = 0;
 		
-		public GyroRotateTask(double degreesToTurn, double maxSpeed) {
-			if (maxSpeed <= 0 || maxSpeed > 1)
+		public GyroRotateTask(double degreesToTurn, double speed) {
+			if (speed <= 0 || speed > 1)
 				throw new IllegalArgumentException("MaxSpeed not 0-1");
 			this.degreesToTurn = degreesToTurn;
-			this.maxSpeed = maxSpeed;
+			this.speed = speed;
 			turnPID.setSetpoint(0);
 			turnPID.setOutputLimits(1);
 			turnPID.setOutputRampRate(0.06);
@@ -115,19 +124,23 @@ public class MecanumDrive extends TaskProgram {
 		@Override
 		public void start() {
 			targetAngle += degreesToTurn;
-			robot.getWheels().setMode(RUN_USING_ENCODER);
+			robot.getWheels()
+			     .setMode(RUN_USING_ENCODER);
 		}
 		
 		@Override
 		public void stop() {
-			robot.getWheels().stop();
+			robot.getWheels()
+			     .stop();
 		}
 		
 		@Override
 		public boolean loop() {
 			double curAngle = getCurAngle();
 			double output = turnPID.getOutput(curAngle - targetAngle);
-			robot.getWheels().setPower(TURN.scaleTo(output).scaleDownTo(maxSpeed));
+			robot.getWheels()
+			     .setPower(TURN.scaleTo(output)
+			                   .scaleDownTo(speed));
 			boolean hit = Math.abs(curAngle - targetAngle) < ANGLE_TOLERANCE;
 			if (hit) {
 				consecutive++;

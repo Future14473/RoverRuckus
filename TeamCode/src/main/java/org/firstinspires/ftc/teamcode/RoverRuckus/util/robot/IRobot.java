@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.robot;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem.TaskAdapter;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
 
 /**
  * The interface by which {@link TaskAdapter}s

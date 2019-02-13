@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem;
+package org.firstinspires.ftc.teamcode.RoverRuckus.tasks;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OpModeLifetimeRegistrar;
 
@@ -18,7 +18,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
  *
  * @see Task
  */
-public class TaskExecutor implements OpModeLifetimeRegistrar.Closeable {
+public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	private final BlockingQueue<Task> queue = new LinkedBlockingQueue<>();
 	//executors are too complicated for us to need em. Simple is faster and
 	// simpler.
@@ -28,9 +28,6 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Closeable {
 	private final Object doneLock = new Object();
 	private boolean done = true;
 	
-	/**
-	 * Construct via IRobot
-	 */
 	public TaskExecutor() {
 		theThread = new Thread(this::run);
 		theThread.setName("Move Task Executor");
@@ -83,7 +80,7 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Closeable {
 	}
 	
 	@Override
-	public void close() {
+	public void stop() {
 		if (running.compareAndSet(false, false)) return;
 		theThread.interrupt();
 		synchronized (doneLock) {
@@ -94,9 +91,12 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Closeable {
 	
 	@Override
 	protected void finalize() {
-		close();
+		stop();
 	}
 	
+	/**
+	 * Thread runs this.
+	 */
 	private void run() {
 		while (running.get()) try {
 			Task curTask;
@@ -107,7 +107,7 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Closeable {
 				}
 				curTask = queue.poll(2, MINUTES);
 				if (curTask == null) {
-					close();
+					stop();
 					break;
 				}
 				done = false;

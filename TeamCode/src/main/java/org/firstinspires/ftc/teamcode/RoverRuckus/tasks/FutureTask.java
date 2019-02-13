@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem;
+package org.firstinspires.ftc.teamcode.RoverRuckus.tasks;
 
 import android.support.annotation.NonNull;
 
 import java.util.concurrent.Callable;
 
 /**
- * A java.util.concurrent.FutureTask\<V\>that fits
+ * A FutureTask that fits
  * our Task system.
  */
 public class FutureTask<V> extends java.util.concurrent.FutureTask<V> implements Task {

@@ -72,7 +72,7 @@ public class PIDGyroCalibration extends OurLinearOpModePrinted {
 	
 	@Override
 	protected void cleanup() {
-		drive.close();
+		drive.stop();
 		super.cleanup();
 	}
 }

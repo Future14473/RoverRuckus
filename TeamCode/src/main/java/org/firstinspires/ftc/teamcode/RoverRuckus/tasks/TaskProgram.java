@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.tasksystem;
+package org.firstinspires.ftc.teamcode.RoverRuckus.tasks;
 
 import android.support.annotation.CallSuper;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OpModeLifetimeRegistrar;
@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 /**
  * A framework around the base TaskExecutor that provides extra functionality.
  */
-public class TaskProgram implements OpModeLifetimeRegistrar.Closeable {
+public class TaskProgram implements OpModeLifetimeRegistrar.Stoppable {
 	private final TaskExecutor taskExecutor;
 	private final boolean autoStart;
 	private boolean started = false;
@@ -22,6 +22,11 @@ public class TaskProgram implements OpModeLifetimeRegistrar.Closeable {
 	
 	public TaskProgram() {
 		this(true);
+	}
+	
+	public TaskProgram then(Task task) {
+		add(task);
+		return this;
 	}
 	
 	public void add(Task task) {
@@ -52,8 +57,8 @@ public class TaskProgram implements OpModeLifetimeRegistrar.Closeable {
 	
 	@CallSuper
 	@Override
-	public void close() {
-		taskExecutor.close();
+	public void stop() {
+		taskExecutor.stop();
 	}
 	
 	@CallSuper
@@ -62,14 +67,17 @@ public class TaskProgram implements OpModeLifetimeRegistrar.Closeable {
 	}
 	
 	/**
-	 * Waits until all tasks are finished, then sleeps a specified number of
-	 * milliseconds
+	 * Sleeps some number of millis when it gets here.
 	 */
-	public final void sleep(int millis) {
-		add(new SleepTask(millis));
+	public final void sleep(long millis) {
+		add((Task.WithInterrupt) () -> Thread.sleep(millis));
 	}
 	
+	/**
+	 * adds a task that terminates this TaskProgram when it gets here.
+	 */
 	public void thenStop() {
-		add(this::close);
+		add(this::stop);
 	}
+	
 }

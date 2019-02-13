@@ -12,11 +12,11 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
  */
 public class OpModeLifetimeRegistrar {
 	/**
-	 * Registers a closeable to the OpModeManager, to close at the end of the
+	 * Registers a stoppable to the OpModeManager, to close at the end of the
 	 * currently
 	 * active OpMode
 	 */
-	public static void register(Closeable closeable) {
+	public static void register(Stoppable stoppable) {
 		Activity activity = AppUtil.getInstance().getActivity();
 		OpModeManagerImpl opModeManager =
 				OpModeManagerImpl.getOpModeManagerOfActivity(activity);
@@ -38,23 +38,24 @@ public class OpModeLifetimeRegistrar {
 				}
 				
 				private void stop() {
-					closeable.close();
+					stoppable.stop();
 					opModeManager.unregisterListener(this);
 				}
 			});
 		} else {
-			throw new IllegalStateException("No OpMode manager");
+			throw new RuntimeException("No OpMode manager");
 		}
 	}
 	
 	/**
-	 * Indicates something that's closeable
-	 * Used to automatically close a resource on OpMode termination.
+	 * Indicates something that's stoppable
+	 * Used to automatically stop something on OpMode termination. Usually a
+	 * thread.
 	 */
-	public interface Closeable {
+	public interface Stoppable {
 		/**
-		 * Stops/cleanups the current resource
+		 * Stops/cleanups something
 		 */
-		void close();
+		void stop();
 	}
 }
