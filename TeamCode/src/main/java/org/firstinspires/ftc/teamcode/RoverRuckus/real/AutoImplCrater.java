@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name = "Auto Next To Crater", group = "Autonomous")
-public class AutoImplCrater extends AbstractAuto {
+public class AutoImplCrater extends AbstractAuto2 {
 	@Override
 	protected void positionForDepot() throws InterruptedException {
 		drive.rotate(50, 10)

@@ -11,18 +11,14 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower.calcPower;
 
-public abstract class BaseRobot implements Robot {
-	private static final int    TARGET_POSITION_TOLERANCE = 25;
+public abstract class BaseRobot implements IRobot {
 	//maximum acceleration in powerLevel/second
-	private static final double MAX_ACCELERATION          = 1.5;
-	
-	public final    MotorSet            wheels;
-	protected final CumulativeDirection direction;
-	private final   BNO055IMU           imu;
-	private         long                pastTime;
-	private         MotorSetPower       pastPower = MotorSetPower.ZERO;
+	public static final  double              RAMP_RATE                 = 2.5;
+	private static final int                 TARGET_POSITION_TOLERANCE = 25;
+	public final         MotorSet            wheels;
+	protected final      CumulativeDirection direction;
+	private final        BNO055IMU           imu;
 	
 	public BaseRobot(HardwareMap hardwareMap) {
 		imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -35,31 +31,7 @@ public abstract class BaseRobot implements Robot {
 		wheels = new MotorSet(fl, fr, bl, br);
 		wheels.setZeroPowerBehavior(BRAKE);
 		wheels.setTargetPositionTolerance(TARGET_POSITION_TOLERANCE);
-		direction =
-				new CumulativeDirection(() -> this.getOrientation().firstAngle);
-		pastTime = System.nanoTime();
-	}
-	
-	/**
-	 * Utility: set the motors right now to move in the specified direction,
-	 * turnRate, and speed.
-	 */
-	@SuppressWarnings("unused")
-	public void moveAt(double direction, double moveSpeed, double turnRate) {
-		pastPower = calcPower(direction, moveSpeed, turnRate);
-		wheels.setPower(pastPower);
-	}
-	
-	public void smoothMoveAt(double direction, double speed, double turnRate) {
-		long curTime = System.nanoTime();
-		MotorSetPower actualPower =
-				calcPower(direction, speed, turnRate).rampFrom(pastPower,
-				                                               MAX_ACCELERATION /
-				                                               1e9 * (curTime -
-				                                                      pastTime));
-		pastTime = curTime;
-		pastPower = actualPower;
-		wheels.setPower(actualPower);
+		direction = new CumulativeDirection(() -> this.getOrientation().firstAngle);
 	}
 	
 	/**

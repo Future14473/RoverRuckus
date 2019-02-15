@@ -6,6 +6,10 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.tasks;
  */
 @FunctionalInterface
 public interface Task extends Runnable {
+	/**
+	 * A task that can throw interruptedException
+	 * When interrupted, returns
+	 */
 	@FunctionalInterface
 	interface WithInterrupt extends Task {
 		void runWithInterrupt() throws InterruptedException;

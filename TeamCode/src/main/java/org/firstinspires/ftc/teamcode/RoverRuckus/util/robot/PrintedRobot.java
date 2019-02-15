@@ -11,15 +11,19 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODE
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
-public class PrintedRobot extends SheetMetalRobot {
+public class PrintedRobot extends SheetMetalRobot { //extend to keep functionality and not
+	// destroy the world with errors.
 	
 	public final DcMotor hook, scooper, collectArm, scoreArm;
 	public final Servo flicker, markerDoor, collectDoor, scoreDoor, parker;
-	public final CRServo   angler;
-	public final BNO055IMU imu;
+	public final CRServo       angler;
+	public final BNO055IMU     imu;
+	private      long          pastTime;
+	private      MotorSetPower pastPower = MotorSetPower.ZERO;
 	
 	public PrintedRobot(HardwareMap hardwareMap) {
-		super(hardwareMap);
+		super(hardwareMap, 0);
+		pastTime = System.nanoTime();
 		
 		hook = hardwareMap.get(DcMotor.class, "Hook");
 		hook.setMode(RUN_USING_ENCODER);
@@ -48,5 +52,24 @@ public class PrintedRobot extends SheetMetalRobot {
 		angler = hardwareMap.get(CRServo.class, "Angler");
 		
 		imu = hardwareMap.get(BNO055IMU.class, "imu");
+	}
+
+//	/**
+//	 * Utility: set the motors right now to move in the specified direction,
+//	 * turnRate, and speed.
+//	 */
+//	public void moveAt(double direction, double moveSpeed, double turnRate) {
+//		pastPower = MotorSetPower.calcPolarNonstandard(direction, moveSpeed, turnRate);
+//		wheels.setPower(pastPower);
+//	}
+	
+	public void smoothMoveAt(double direction, double speed, double turnRate) {
+		long curTime = System.nanoTime();
+		MotorSetPower actualPower = MotorSetPower.calcPolarNonstandard(direction, speed, turnRate)
+		                                         .rampFrom(pastPower,
+		                                                   RAMP_RATE / 1e9 * (curTime-pastTime));
+		pastTime = curTime;
+		pastPower = actualPower;
+		wheels.setPower(actualPower);
 	}
 }

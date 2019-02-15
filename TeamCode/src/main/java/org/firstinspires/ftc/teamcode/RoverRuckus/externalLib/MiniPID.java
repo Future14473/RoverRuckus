@@ -313,6 +313,25 @@ public class MiniPID {
 	 * @return calculated output value for driving the system
 	 */
 	public double getOutput(double actual, double setpoint) {
+		
+		//MODIFICATIONS
+		long curTime = System.nanoTime();
+		double elapsedTime = (curTime - prevTime) / 1e9; //100ths of a second
+		prevTime = curTime;
+		if (elapsedTime > 100) reset();
+		
+		return getOutput(actual, setpoint, elapsedTime);
+	}
+	
+	/**
+	 * Calculate the output value for the current PID cycle.<br>
+	 *
+	 * @param actual   The monitored value, typically as a sensor input.
+	 * @param setpoint The target value for the system
+	 * @return calculated output value for driving the system
+	 */
+	public double getOutput(
+			double actual, double setpoint, double elapsedTime) {
 		double output;
 		double Poutput;
 		double Ioutput;
@@ -320,17 +339,13 @@ public class MiniPID {
 		double Foutput;
 		
 		this.setpoint = setpoint;
-		//MODIFICATIONS
-		long curTime = System.nanoTime();
-		double elapsedTime = (curTime - prevTime) / 1e7; //100ths of a second
-		prevTime = curTime;
-		if (elapsedTime > 300) reset();
-		
 		// Ramp the setpoint used for calculations if user has opted to do so
 		if (setpointRange != 0) {
-			setpoint = constrain(setpoint, actual - setpointRange,
+			setpoint = constrain(setpoint,
+			                     actual - setpointRange,
 			                     actual + setpointRange);
 		}
+		elapsedTime *= 100;
 		
 		// Do the simple parts of the calculations
 		double error = setpoint - actual;
@@ -377,7 +392,7 @@ public class MiniPID {
 		output = Foutput + Poutput + Ioutput + Doutput;
 		
 		// Figure out what we're doing with the error.
-		double allowedRampRate = outputRampRate * elapsedTime;
+		double allowedRampRate = outputRampRate * elapsedTime / 100;
 		if (minOutput != maxOutput && !bounded(output, minOutput, maxOutput)) {
 			errorSum = error;
 			// reset the error sum to a sane level
@@ -386,9 +401,11 @@ public class MiniPID {
 			// decreases enough for the I term to start acting upon the
 			// controller
 			// From that point the I term will build up as would be expected
-		} else if (allowedRampRate != 0 &&
-		           !bounded(output, lastOutput - allowedRampRate,
-		                    lastOutput + allowedRampRate)) {
+		} else if (allowedRampRate != 0 && !bounded(output,
+		                                            lastOutput -
+		                                            allowedRampRate,
+		                                            lastOutput +
+		                                            allowedRampRate)) {
 			errorSum = error;
 		} else if (maxIOutput != 0) {
 			errorSum = constrain(errorSum + error, -maxError, maxError);
@@ -401,7 +418,8 @@ public class MiniPID {
 		
 		// Restrict output to our specified output and ramp limits
 		if (allowedRampRate != 0) {
-			output = constrain(output, lastOutput - allowedRampRate,
+			output = constrain(output,
+			                   lastOutput - allowedRampRate,
 			                   lastOutput + allowedRampRate);
 		}
 		if (minOutput != maxOutput) {
@@ -464,7 +482,7 @@ public class MiniPID {
 	}
 	
 	/**
-	 * Set the maximum rate the output can increase per cycle.<br>
+	 * Set the maximum rate the output can increase per second.<br>
 	 * This can prevent sharp jumps in output when changing setpoints or
 	 * enabling a PID system, which might cause stress on physical or
 	 * electrical
