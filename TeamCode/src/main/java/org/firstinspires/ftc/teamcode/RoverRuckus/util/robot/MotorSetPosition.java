@@ -8,7 +8,7 @@ import java.util.Arrays;
  *
  * @see MotorSet
  */
-public class MotorSetPosition {
+public final class MotorSetPosition {
 	private final static MotorSetPosition ZERO = new MotorSetPosition();
 	
 	private final int[] position;

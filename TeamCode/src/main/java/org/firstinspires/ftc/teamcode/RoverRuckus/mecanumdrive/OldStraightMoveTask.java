@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSet;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPosition;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.Robot;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
@@ -14,18 +14,15 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENC
  * A {@link org.firstinspires.ftc.teamcode.RoverRuckus.tasks.Task} that
  * moves the robot's wheels uniformly.
  * For moving or turning.
- *
- * @deprecated the new implementation(s) use gyroscope to align the robot
- * better.
  */
-class OldStraightMoveTask extends TaskAdapter {
+public class OldStraightMoveTask extends TaskAdapter {
 	public final static double           TURN_MULT = 1205;
 	//change to tweak "rotate x
 	// deg" precisely.   Degrees wheel turn per radian robot turn
 	public final static double           MOVE_MULT = 4450;
 	//change to tweak "move x
 	// meters" precisely. Degrees wheel turn per yard robot move
-	protected final     Robot            robot;
+	protected final     IRobot           robot;
 	// per
 	// unit.
 	//TODO: Make above protected
@@ -37,7 +34,7 @@ class OldStraightMoveTask extends TaskAdapter {
 	private             MotorSetPosition curPos;
 	
 	OldStraightMoveTask(
-			Robot robot, MotorSetPower targPower, double mult, double speed) {
+			IRobot robot, MotorSetPower targPower, double mult, double speed) {
 		this.targPower = targPower;
 		this.speed = speed;
 		this.robot = robot;

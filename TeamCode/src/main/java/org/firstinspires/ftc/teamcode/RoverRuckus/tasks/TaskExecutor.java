@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.tasks;
 
+import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OpModeLifetimeRegistrar;
 
 import java.util.concurrent.BlockingQueue;
@@ -11,7 +12,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 /**
  * An interface to represent a class that does the actual running of {@code
  * Task}s
- * Tasks are put into a queue and loop one at a time. This class
+ * Tasks are put into a queue and run one at a time. This class
  * contains several other methods to interact with the
  * queue and the running of the MoveTasks. Running of {@code Task}s
  * are done in a separate thread. <br>
@@ -19,18 +20,28 @@ import static java.util.concurrent.TimeUnit.MINUTES;
  * @see Task
  */
 public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
-	private final BlockingQueue<Task> queue = new LinkedBlockingQueue<>();
 	//executors are too complicated for us to need em. Simple is faster and
 	// simpler.
+	private static final String TAG = TaskExecutor.class.getSimpleName();
 	
-	private final Thread        theThread;
-	private final AtomicBoolean running  = new AtomicBoolean(false);
-	private final Object        doneLock = new Object();
-	private       boolean       done     = true;
+	private final BlockingQueue<Task> queue    = new LinkedBlockingQueue<>();
+	private final Thread              theThread;
+	private final AtomicBoolean       running  = new AtomicBoolean(false);
+	private final Object              doneLock = new Object();
+	private final String              name;
+	private       boolean             done     = true;
+	
+	public TaskExecutor(String name) {
+		this.name = name;
+		theThread = new Thread(this::run);
+		theThread.setName(String.format("%s: %s", TAG, name));
+		theThread.setDaemon(true);
+	}
 	
 	public TaskExecutor() {
+		this.name = TAG;
 		theThread = new Thread(this::run);
-		theThread.setName("Move Task Executor");
+		theThread.setName(TAG);
 		theThread.setDaemon(true);
 	}
 	
@@ -81,7 +92,8 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	
 	@Override
 	public void stop() {
-		if (running.compareAndSet(false, false)) return;
+		RobotLog.vv(TAG, "%s: stopping", name);
+		if (!running.getAndSet(false)) return;
 		theThread.interrupt();
 		synchronized (doneLock) {
 			done = true;
@@ -98,10 +110,22 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	 * Thread runs this.
 	 */
 	private void run() {
+		try {
+			doTasks();
+		} finally {
+			synchronized (doneLock) {
+				done = true;
+				doneLock.notifyAll();
+			}
+		}
+	}
+	
+	private void doTasks() {
 		while (running.get()) try {
 			Task curTask;
 			synchronized (doneLock) { //we can't say done while polling queue.
 				if (queue.isEmpty()) { //if we're done, set and notify
+					RobotLog.vv(TAG, "%s: notifying done", name);
 					done = true;
 					doneLock.notifyAll();
 				}
@@ -113,13 +137,10 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 				done = false;
 			}
 			if (!Thread.interrupted()) {
+				RobotLog.vv(TAG, "%s: running %s", name, curTask);
 				curTask.run();
 			}
 		} catch (InterruptedException ignored) {}
-		synchronized (doneLock) {
-			done = true;
-			doneLock.notifyAll();
-		}
 	}
 }
 	

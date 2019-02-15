@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
  * Implement on the actual robot, and passed as parameter to TaskExecutor
  * implementation
  */
-public interface Robot {
+public interface IRobot {
 	MotorSet getWheels();
 	
 	/**

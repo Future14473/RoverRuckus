@@ -43,6 +43,8 @@ public abstract class OurLinearOpMode extends LinearOpMode {
 			if (Thread.interrupted()) throw new InterruptedException();
 			run();
 		} finally {
+			RobotLog.dd("OurOpMode", //
+			            "OpMode is about to end, running cleanup");
 			cleanup();
 		}
 	}
@@ -57,11 +59,13 @@ public abstract class OurLinearOpMode extends LinearOpMode {
 	
 	/**
 	 * Override this method and place cleanup code here. This method will
-	 * always loop after the OpMode stops: through normal exit, exception
-	 * thrown, or OpMode stopped early. If a RuntimeException is thrown during
-	 * cleanup, it is ignored. Inside a finally block.
+	 * always run after the OpMode stops: through normal exit, exception
+	 * thrown, or OpMode stopped early.
+	 *
+	 * @apiNote Inside a finally block.
 	 */
-	protected void cleanup() {}
+	protected void cleanup() {
+	}
 	
 	/**
 	 * Pauses the current thread indefinitely until a given condition (checked
@@ -107,7 +111,8 @@ public abstract class OurLinearOpMode extends LinearOpMode {
 		private final AtomicInteger   waiters = new AtomicInteger();
 		private       BooleanSupplier condition;
 		
-		protected SingleCondition() {}
+		protected SingleCondition() {
+		}
 		
 		synchronized void waitFor(BooleanSupplier condition)
 				throws InterruptedException {

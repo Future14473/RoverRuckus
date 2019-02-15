@@ -1,20 +1,17 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.RoverRuckus.externalLib.MiniPID;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.Task;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GlobalVars;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSet;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPosition;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.Robot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 
 import java.util.Objects;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower.TURN;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower.calcPower;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower.calcPolarNonstandard;
 
 /**
  * A task program that controls the autonomous motion of wheels.
@@ -34,16 +31,19 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPowe
  * </pre>
  */
 public class MecanumDrive extends TaskProgram {
-	private final Parameters parameters;
-	private final Robot      robot;
-	private final MotorSet   wheels;
+	public static final int        RAMP_RATE = 4;
+	private final       Parameters parameters;
+	private final       IRobot     robot;
+	private final       MotorSet   wheels;
 	
-	private final MiniPID turnPID        = new MiniPID(0.035, 0, 0.13);
-	private       double  targetAngle    = 0;
-	private       XYR     targetPosition = new XYR();
-	private       XYR     curPosition    = new XYR();
+	private final LocationMoveController moveController =
+			new LocationMoveController(RAMP_RATE);
 	
-	public MecanumDrive(Robot robot, Parameters parameters) {
+	private XY     targetLocation  = new XY();
+	private XY     currentLocation = new XY();
+	private double targetAngle     = 0;
+	
+	public MecanumDrive(IRobot robot, Parameters parameters) {
 		super(true);
 		this.robot = Objects.requireNonNull(robot);
 		this.parameters = Objects.requireNonNull(parameters);
@@ -52,10 +52,6 @@ public class MecanumDrive extends TaskProgram {
 	}
 	
 	private void init() {
-		turnPID.setSetpoint(0);
-		turnPID.setOutputLimits(1);
-		turnPID.setOutputRampRate(0.06);
-		turnPID.setOutputFilter(0.05);
 	}
 	
 	@Override
@@ -71,7 +67,7 @@ public class MecanumDrive extends TaskProgram {
 		super.start();
 	}
 	
-	private void moveExact(
+	/*private void moveExact(
 			double directionRadians, double distance, double speed) {
 		
 	}
@@ -79,7 +75,7 @@ public class MecanumDrive extends TaskProgram {
 	private void moveCoarse(
 			double directionRadians, double distance, double speed) {
 		
-	}
+	}*/
 	
 	/**
 	 * Adds a Task that represents moving the robot in a straight line the
@@ -87,7 +83,8 @@ public class MecanumDrive extends TaskProgram {
 	 */
 	public void move(double direction, double distance, double speed) {
 		direction = Math.toRadians(direction);
-		add(new OldStraightMoveTask(robot, calcPower(direction, 1, 0),
+		add(new OldStraightMoveTask(robot,
+		                            calcPolarNonstandard(direction, 1, 0),
 		                            distance * OldStraightMoveTask.MOVE_MULT,
 		                            speed));
 	}
@@ -103,10 +100,10 @@ public class MecanumDrive extends TaskProgram {
 		return this;
 	}
 	
-	public void moveXY(double x, double y, DistanceUnit unit, double speed) {
+/*	public void moveXY(double x, double y, DistanceUnit unit, double speed) {
 		//TODO!!!
 		//NOTE: DETERMINE UNITS
-	}
+	}*/
 	
 	/**
 	 * Rotates the robot a specific number of degrees.
@@ -114,9 +111,14 @@ public class MecanumDrive extends TaskProgram {
 	public MecanumDrive rotate(double degreesToTurn, double speed) {
 		if (!parameters.useGyro) {
 			degreesToTurn = Math.toRadians(degreesToTurn);
-			add(new OldStraightMoveTask(robot, calcPower(0, 0, Math.signum(
-					degreesToTurn)), Math.abs(degreesToTurn) *
-			                         OldStraightMoveTask.TURN_MULT, speed));
+			add(new OldStraightMoveTask(robot,
+			                            calcPolarNonstandard(0,
+			                                                 0,
+			                                                 Math.signum(
+					                                                 degreesToTurn)),
+			                            Math.abs(degreesToTurn) *
+			                            OldStraightMoveTask.TURN_MULT,
+			                            speed));
 		} else {
 			add(new GyroRotateTask(degreesToTurn, speed));
 		}
@@ -126,42 +128,43 @@ public class MecanumDrive extends TaskProgram {
 	private double getCurAngle() {
 		return robot.getAngle();
 	}
-	
-	private abstract class GyroAwareMoveTask extends TaskAdapter {
-		private MotorSetPosition prevPosition;
-		
-		protected abstract boolean doneCondition();
-		
-		@Override
-		public abstract void start();
-		
-		@Override
-		public boolean loop() {
-			double curAngle = getCurAngle();
-			MotorSetPosition currentPosition = wheels.getCurrentPosition();
-			MotorSetPosition positionDelta =
-					currentPosition.delta(prevPosition);
-			
-			prevPosition = currentPosition;
-			return false;
-		}
-		
-		@SuppressWarnings("Duplicates")
-		private XYR motorDeltaToXYR(MotorSetPosition delta) {
-			//best approximation of inverse calcMotorSetPosition.
-			double speed = 0, dir = 0, turnRate = 0;
-			double robAngle = dir + Math.PI / 4;
-			double v1 = speed * Math.sin(robAngle) + turnRate;
-			double v2 = speed * Math.cos(robAngle) - turnRate;
-			double v3 = speed * Math.cos(robAngle) + turnRate;
-			double v4 = speed * Math.sin(robAngle) - turnRate;
-			
-		}
-	}
+
+//	private abstract class GyroAwareMoveTask extends TaskAdapter {
+//		private MotorSetPosition prevPosition;
+//
+//		protected abstract boolean doneCondition();
+//
+//		@Override
+//		public abstract void start();
+//
+//		@Override
+//		public boolean loop() {
+//			double curAngle = getCurAngle();
+//			MotorSetPosition currentPosition = wheels.getCurrentPosition();
+//			MotorSetPosition positionDelta =
+//					currentPosition.delta(prevPosition);
+//
+//			prevPosition = currentPosition;
+//			return false;
+//		}
+//
+//		@SuppressWarnings("Duplicates")
+//		private XY motorDeltaToXYR(MotorSetPosition delta) {
+//			//best approximation of inverse calcMotorSetPosition.
+//			double speed = 0, dir = 0, turnRate = 0;
+//			double robAngle = dir + Math.PI / 4;
+//			double v1 = speed * Math.sin(robAngle) + turnRate;
+//			double v2 = speed * Math.cos(robAngle) - turnRate;
+//			double v3 = speed * Math.cos(robAngle) + turnRate;
+//			double v4 = speed * Math.sin(robAngle) - turnRate;
+//
+//			throw new UnsupportedOperationException(); //TODO: MATH
+//		}
+//	}
 	
 	private class GyroRotateTask extends TaskAdapter {
 		private static final double ANGLE_TOLERANCE  = 1.5;
-		private static final int    CONSECUTIVE_HITS = 5;
+		private static final int    CONSECUTIVE_HITS = 4;
 		
 		private final double speed;
 		private final double degreesToTurn;
@@ -188,25 +191,21 @@ public class MecanumDrive extends TaskProgram {
 		@Override
 		public boolean loop() {
 			double curAngle = getCurAngle();
-			double output = turnPID.getOutput(curAngle - targetAngle);
-			wheels.setPower(TURN.scaleTo(output).scaleDownTo(speed));
+			MotorSetPower output = moveController.getPower(targetLocation,
+			                                               currentLocation,
+			                                               targetAngle,
+			                                               curAngle,
+			                                               speed);
+			wheels.setPower(output);
 			boolean hit = Math.abs(curAngle - targetAngle) < ANGLE_TOLERANCE;
 			if (hit) {
 				consecutive++;
 			} else {
 				consecutive = 0;
 			}
-			return GlobalVars.shouldComplete && consecutive >= CONSECUTIVE_HITS;
+			return consecutive >= CONSECUTIVE_HITS;
 		}
 		
-	}
-	
-	/**
-	 * XY position and rotation.
-	 */
-	private static class XYR {
-		public double x, y, d;
-		public final DistanceUnit unit = DistanceUnit.CM;
 	}
 	
 	public static class Parameters {

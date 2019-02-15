@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,7 +18,6 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State
 
 @SuppressWarnings("Duplicates")
 @TeleOp(group = "1real", name = "Old Teleop")
-@Disabled
 public class PrintedTeleop extends OurLinearOpMode {
 	//Encoder limits
 	private static final int     MOTOR_MIN                     = 100;
@@ -77,8 +75,7 @@ public class PrintedTeleop extends OurLinearOpMode {
 	
 	private Button gp1b = new Button(() -> gamepad1.b); //toggle gyro drive
 	
-	private Button gp1dpadlr =
-			new Button(() -> gamepad1.dpad_left || gamepad1.dpad_right);
+	private Button gp1dpadlr = new Button(() -> gamepad1.dpad_left || gamepad1.dpad_right);
 	//reset HOOK encoder
 	
 	private Button gp2a = new Button(() -> gamepad2.a); //to next stage
@@ -93,8 +90,7 @@ public class PrintedTeleop extends OurLinearOpMode {
 	private Button gp2lsb = new Button(() -> gamepad2.left_stick_button);
 	//reset COLLECT encoder
 	
-	private Button   gp2rsb         =
-			new Button(() -> gamepad2.right_stick_button);
+	private Button   gp2rsb         = new Button(() -> gamepad2.right_stick_button);
 	//reset SCORE encoder
 	//State
 	private int      scoreDoorState = 0;
@@ -109,8 +105,7 @@ public class PrintedTeleop extends OurLinearOpMode {
 		robot.wheels.setMode(RUN_USING_ENCODER);
 		robot.wheels.setZeroPowerBehavior(FLOAT);
 		scoreArm = new LimitedMotor(robot.scoreArm, MOTOR_MIN, ARM_MAX, true);
-		collectArm =
-				new LimitedMotor(robot.collectArm, MOTOR_MIN, ARM_MAX, true);
+		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, ARM_MAX, true);
 		hook = new LimitedMotor(robot.hook, MOTOR_MIN, HOOK_MAX, true);
 		scooper = robot.scooper;
 		collectDoor = robot.collectDoor;
@@ -125,14 +120,13 @@ public class PrintedTeleop extends OurLinearOpMode {
 		while (opModeIsActive()) {
 			//FOR GAMEPAD1, CHANGED BY GAMEPAD2 2 is fast, 1 is normal, 0 is
 			// slow.
-			int speedMode =
-					gamepad1.right_bumper ? 2 : (gamepad1.left_bumper ? 0 : 1);
+			int speedMode = gamepad1.right_bumper ? 2 : (gamepad1.left_bumper ? 0 : 1);
 			/*----------------*\
 		    |    GAMEPAD 2     |
 			\*----------------*/
 			boolean userAdvance = true;
 			boolean autoAdvance = false;
-			double triggerSum = gamepad2.right_trigger - gamepad2.left_trigger;
+			double triggerSum = gamepad2.right_trigger-gamepad2.left_trigger;
 			if (gamepad2.right_bumper) triggerSum = 1;
 			else if (gamepad2.left_bumper) triggerSum = -1;
 			if (Math.abs(robot.hook.getCurrentPosition()) > HOOK_NULLIFY) {
@@ -146,8 +140,7 @@ public class PrintedTeleop extends OurLinearOpMode {
 			} else switch (armState) {
 			case TO_COLLECT:
 				scooper.setPower(0); //idle
-				collectArm.setPowerLimited(1, null,
-				                           COLLECT_ARM_INITIAL_EXTENSION);
+				collectArm.setPowerLimited(1, null, COLLECT_ARM_INITIAL_EXTENSION);
 				//extend to initial
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED); //close door
 				scoreArm.setPowerLimited(IDLE_IN_POWER); //keep in
@@ -156,9 +149,8 @@ public class PrintedTeleop extends OurLinearOpMode {
 				break;
 			case COLLECT:
 				scooper.setPower(triggerSum);
-				collectArm.setPowerLimited(
-						-gamepad2.right_stick_y + IDLE_COLLECT_ARM_POWER,
-						gamepad2.x);
+				collectArm.setPowerLimited(-gamepad2.right_stick_y+IDLE_COLLECT_ARM_POWER,
+				                           gamepad2.x);
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 				scoreArm.setPowerLimited(IDLE_IN_POWER);
 				scoreDoor.setPosition(SCORE_DOOR_CLOSED);
@@ -170,19 +162,19 @@ public class PrintedTeleop extends OurLinearOpMode {
 				// closed; no fa;; pit
 				scoreArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				scoreDoor.setPosition(SCORE_DOOR_READY);
-				autoAdvance = collectArm.getLastState() == LOWER &&
-				              scoreArm.getLastState() == LOWER;
+				autoAdvance =
+					collectArm.getLastState() == LOWER && scoreArm.getLastState() == LOWER;
 				if (autoAdvance) {
 					collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
 					// NOW...
-					sleepEndTime = System.nanoTime() + MILLISECONDS.toNanos(
-							TRANSFER_SLEEP_TIME); //pseudo sleep.
+					sleepEndTime = System.nanoTime()+MILLISECONDS.toNanos(TRANSFER_SLEEP_TIME);
+					//pseudo sleep.
 				}
 				userAdvance = false;
 				break;
 			case TRANSFER:
-				if (System.nanoTime() - sleepEndTime < 0) break;
-				scooper.setPower(1 + triggerSum); //PUSH THINGS UP!
+				if (System.nanoTime()-sleepEndTime < 0) break;
+				scooper.setPower(1+triggerSum); //PUSH THINGS UP!
 				collectArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
 				scoreArm.setPowerLimited(IDLE_IN_POWER); //keep in
@@ -200,14 +192,11 @@ public class PrintedTeleop extends OurLinearOpMode {
 				break;
 			case SCORE:
 				double scoreDoorPos = scoreDoorState == 0 ? SCORE_DOOR_READY :
-				                      scoreDoorState == 1 ? SCORE_DOOR_GOLD :
-				                      SCORE_DOOR_OPEN;
+				                      scoreDoorState == 1 ? SCORE_DOOR_GOLD : SCORE_DOOR_OPEN;
 				scooper.setPower(0); //idle
 				collectArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
-				scoreArm.setPowerLimited(
-						-gamepad2.right_stick_y + IDLE_SCORE_ARM_POWER,
-						gamepad1.x);
+				scoreArm.setPowerLimited(-gamepad2.right_stick_y+IDLE_SCORE_ARM_POWER, gamepad1.x);
 				scoreDoor.setPosition(scoreDoorPos);
 				speedMode = 0; // GO SLOW
 				if (gp2rbp.pressed()) {
@@ -240,10 +229,8 @@ public class PrintedTeleop extends OurLinearOpMode {
 		    |     GAMEPAD 1     |
 			\* ----------------*/
 			double speedMult = (speedMode == 2) ? SPEED_FAST_MULT :
-			                   (speedMode == 1 ? SPEED_NORMAL_MULT :
-			                    SPEED_SLOW_MULT);
-			double direction =
-					Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+			                   (speedMode == 1 ? SPEED_NORMAL_MULT : SPEED_SLOW_MULT);
+			double direction = Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y);
 			
 			if (gp1b.pressed()) gyroDrive = !gyroDrive;
 			Button.State gp1yState = gp1y.getState();
@@ -251,25 +238,22 @@ public class PrintedTeleop extends OurLinearOpMode {
 				if (gp1yState == HELD) {
 					speedMult = 0;
 				} else if (gp1yState == RELEASED) {
-					rotationOffSet = robot.getAngle() + direction;
+					rotationOffSet = robot.getAngle()+direction;
 				}
-				direction += robot.getAngle() - rotationOffSet;
+				direction += robot.getAngle()-rotationOffSet;
 				telemetry.addData("DIRECTION", "GYRO");
 			} else {
 				if (gp1yState == PRESSED) reverseDrive = !reverseDrive;
 				if (reverseDrive) direction += Math.PI;
-				telemetry.addData("DIRECTION",
-				                  reverseDrive ? "HOOK FRONT" : "ARM FRONT");
+				telemetry.addData("DIRECTION", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
 			}
 			
 			double turnRate = gamepad1.right_stick_x * speedMult;
-			double speed = Math.pow(
-					Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
-					1.7) * speedMult;
+			double speed =
+				Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y), 1.7) * speedMult;
 			robot.smoothMoveAt(direction, speed, turnRate);
 			//hook
-			hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0,
-			                     gamepad1.dpad_down);
+			hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0, gamepad1.dpad_down);
 			if (gp1dpadlr.pressed()) {
 				hook.resetEncoder();
 			}
@@ -294,12 +278,11 @@ public class PrintedTeleop extends OurLinearOpMode {
 		private static final ArmState[] values = ArmState.values();
 		
 		ArmState next() {
-			return values[(this.ordinal() + 1) % values.length];
+			return values[(this.ordinal()+1) % values.length];
 		}
 		
 		ArmState prev() {
-			int ord = (this.ordinal() / 2 * 2 - 2 + values.length) %
-			          values.length;
+			int ord = (this.ordinal() / 2 * 2-2+values.length) % values.length;
 			return values[ord];
 		}
 	}

@@ -10,16 +10,18 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODE
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
-@SuppressWarnings("Duplicates")
 public class SheetMetalRobot extends BaseRobot {
 	
-	public final DcMotor hook, scooper, collectArm, scoreArm;
-	public final Servo flicker, markerDoor, collectDoor, scoreDump, parker;
-	public final CRServo angler;
+	public DcMotor hook, scooper, collectArm, scoreArm;
+	public Servo flicker, markerDoor, collectDoor, scoreDump, parker;
+	public CRServo angler;
+	
+	SheetMetalRobot(HardwareMap hardwareMap, int dummy) {
+		super(hardwareMap);
+	}
 	
 	public SheetMetalRobot(HardwareMap hardwareMap) {
 		super(hardwareMap);
-		
 		
 		hook = hardwareMap.get(DcMotor.class, "Hook");
 		hook.setMode(RUN_USING_ENCODER);
