@@ -63,9 +63,9 @@ public final class MotorSetPower {
 		if (rampRate <= 0) throw new IllegalArgumentException();
 		double[] o = new double[4];
 		for (int i = 0; i < 4; i++) {
-			if (Math.abs(this.power[i] - pastPower.power[i]) <= rampRate) o[i] = this.power[i];
-			else o[i] = this.power[i] < pastPower.power[i] ? pastPower.power[i] - rampRate :
-			            pastPower.power[i] + rampRate;
+			if (Math.abs(this.power[i]-pastPower.power[i]) <= rampRate) o[i] = this.power[i];
+			else o[i] = this.power[i] < pastPower.power[i] ? pastPower.power[i]-rampRate :
+			            pastPower.power[i]+rampRate;
 		}
 		return fromArray(o);
 	}

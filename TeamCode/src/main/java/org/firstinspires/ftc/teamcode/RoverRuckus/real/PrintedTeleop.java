@@ -91,7 +91,7 @@ public class PrintedTeleop extends OurLinearOpMode {
 			\*----------------*/
 			boolean userAdvance = true;
 			boolean autoAdvance = false;
-			double triggerSum = gamepad2.right_trigger - gamepad2.left_trigger;
+			double triggerSum = gamepad2.right_trigger-gamepad2.left_trigger;
 			if (gamepad2.right_bumper) triggerSum = 1;
 			else if (gamepad2.left_bumper) triggerSum = -1;
 			if (Math.abs(robot.hook.getCurrentPosition()) > HOOK_NULLIFY) {
@@ -114,7 +114,7 @@ public class PrintedTeleop extends OurLinearOpMode {
 				break;
 			case COLLECT:
 				scooper.setPower(triggerSum);
-				collectArm.setPowerLimited(-gamepad2.right_stick_y + IDLE_COLLECT_ARM_POWER,
+				collectArm.setPowerLimited(-gamepad2.right_stick_y+IDLE_COLLECT_ARM_POWER,
 				                           gamepad2.x);
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 				scoreArm.setPowerLimited(IDLE_IN_POWER);
@@ -132,14 +132,14 @@ public class PrintedTeleop extends OurLinearOpMode {
 				if (autoAdvance) {
 					collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
 					// NOW...
-					sleepEndTime = System.nanoTime() + MILLISECONDS.toNanos(TRANSFER_SLEEP_TIME);
+					sleepEndTime = System.nanoTime()+MILLISECONDS.toNanos(TRANSFER_SLEEP_TIME);
 					//pseudo sleep.
 				}
 				userAdvance = false;
 				break;
 			case TRANSFER:
-				if (System.nanoTime() - sleepEndTime < 0) break;
-				scooper.setPower(1 + triggerSum); //PUSH THINGS UP!
+				if (System.nanoTime()-sleepEndTime < 0) break;
+				scooper.setPower(1+triggerSum); //PUSH THINGS UP!
 				collectArm.setPowerLimited(IDLE_IN_POWER); //keep in
 				collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
 				scoreArm.setPowerLimited(IDLE_IN_POWER); //keep in
@@ -204,9 +204,9 @@ public class PrintedTeleop extends OurLinearOpMode {
 				if (gp1yState == HELD) {
 					speedMult = 0;
 				} else if (gp1yState == RELEASED) {
-					rotationOffSet = robot.getAngle() + direction;
+					rotationOffSet = robot.getAngle()+direction;
 				}
-				direction += robot.getAngle() - rotationOffSet;
+				direction += robot.getAngle()-rotationOffSet;
 				telemetry.addData("DIRECTION", "GYRO");
 			} else {
 				if (gp1yState == PRESSED) reverseDrive = !reverseDrive;
@@ -244,11 +244,11 @@ public class PrintedTeleop extends OurLinearOpMode {
 		private static final ArmState[] values = ArmState.values();
 		
 		ArmState next() {
-			return values[(this.ordinal() + 1) % values.length];
+			return values[(this.ordinal()+1) % values.length];
 		}
 		
 		ArmState prev() {
-			int ord = (this.ordinal() / 2 * 2 - 2 + values.length) % values.length;
+			int ord = (this.ordinal() / 2 * 2-2+values.length) % values.length;
 			return values[ord];
 		}
 	}
