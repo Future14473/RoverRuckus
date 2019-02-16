@@ -6,12 +6,12 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSet;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPosition;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 
 import java.util.Objects;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower.TURN;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower.calcPolarNonstandard;
 
 /**
@@ -31,31 +31,28 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPowe
  *          +/-180deg
  * </pre>
  */
-public class MecanumDrive extends TaskProgram {
-	public static final int        RAMP_RATE = 4;
-	private final       Parameters parameters;
-	private final       IRobot     robot;
-	private final       MotorSet   wheels;
+public class MecanumDriveBetter extends TaskProgram {
+	private final Parameters parameters;
+	private final IRobot     robot;
+	private final MotorSet   wheels;
 	
-	private final LocationMoveController moveController = new LocationMoveController(RAMP_RATE);
+	private final LocationMoveController moveController;
 	
-	private XY     targetLocation  = new XY();
-	private XY     currentLocation = new XY();
-	private double targetAngle     = 0;
+	private XY     targetLocation = new XY();
+	private XY     curLocation    = new XY();
+	private double targetAngle    = 0;
 	
-	public MecanumDrive(IRobot robot, Parameters parameters) {
+	//current angle is method.
+	public MecanumDriveBetter(IRobot robot, Parameters parameters) {
 		super(true);
 		this.robot = Objects.requireNonNull(robot);
-		this.parameters = Objects.requireNonNull(parameters);
+		this.parameters = parameters.clone();
 		this.wheels = robot.getWheels();
-		init();
-	}
-	
-	private void init() {
+		moveController = new LocationMoveController(parameters.rampRate);
 	}
 	
 	@Override
-	public MecanumDrive then(Task task) {
+	public MecanumDriveBetter then(Task task) {
 		add(task);
 		return this;
 	}
@@ -93,7 +90,7 @@ public class MecanumDrive extends TaskProgram {
 	 * Moves the robot to the specified relative location on the coordinate
 	 * plane
 	 */
-	public MecanumDrive moveXY(double x, double y, double speed) {
+	public MecanumDriveBetter moveXY(double x, double y, double speed) {
 		double direction = Math.toDegrees(Math.atan2(x, y));
 		double distance = Math.hypot(x, y);
 		move(direction, distance, speed);
@@ -108,11 +105,11 @@ public class MecanumDrive extends TaskProgram {
 	/**
 	 * Rotates the robot a specific number of degrees.
 	 */
-	public MecanumDrive rotate(double degreesToTurn, double speed) {
+	public MecanumDriveBetter rotate(double degreesToTurn, double speed) {
 		if (!parameters.useGyro) {
 			degreesToTurn = Math.toRadians(degreesToTurn);
 			add(new OldStraightMoveTask(robot,
-			                            TURN.scaleTo(Math.signum(degreesToTurn)),
+			                            calcPolarNonstandard(0, 0, Math.signum(degreesToTurn)),
 			                            Math.abs(degreesToTurn) * OldStraightMoveTask.TURN_MULT,
 			                            speed));
 		} else {
@@ -124,39 +121,36 @@ public class MecanumDrive extends TaskProgram {
 	private double getCurAngle() {
 		return robot.getAngle();
 	}
-
-//	private abstract class GyroAwareMoveTask extends TaskAdapter {
-//		private MotorSetPosition prevPosition;
-//
-//		protected abstract boolean doneCondition();
-//
-//		@Override
-//		public abstract void start();
-//
-//		@Override
-//		public boolean loop() {
-//			double curAngle = getCurAngle();
-//			MotorSetPosition currentPosition = wheels.getCurrentPosition();
-//			MotorSetPosition positionDelta =
-//					currentPosition.subtract(prevPosition);
-//
-//			prevPosition = currentPosition;
-//			return false;
-//		}
-//
-//		@SuppressWarnings("Duplicates")
-//		private XY motorDeltaToXYR(MotorSetPosition subtract) {
-//			//best approximation of inverse calcMotorSetPosition.
-//			double speed = 0, dir = 0, turnRate = 0;
-//			double robAngle = dir + Math.PI / 4;
-//			double v1 = speed * Math.sin(robAngle) + turnRate;
-//			double v2 = speed * Math.cos(robAngle) - turnRate;
-//			double v3 = speed * Math.cos(robAngle) + turnRate;
-//			double v4 = speed * Math.sin(robAngle) - turnRate;
-//
-//			throw new UnsupportedOperationException(); //TODO: MATH
-//		}
-//	}
+	
+	private abstract class GyroAwareMoveTask extends TaskAdapter {
+		protected double           curAngle;
+		private   MotorSetPosition lastMotorPos;
+		
+		protected abstract boolean inLoop();
+		
+		@Override
+		public boolean loop() {
+			updateLocation();
+			return inLoop();
+		}
+		
+		private void updateLocation() {
+			curAngle = getCurAngle();
+			MotorSetPosition curMotorPos = wheels.getCurrentPosition();
+			MotorSetPosition deltaMotorPos = curMotorPos.subtract(lastMotorPos);
+			lastMotorPos = curMotorPos;
+			XY deltaLocation = deltaMotorToDeltaLoc(deltaMotorPos).rotate(curAngle);
+			curLocation = curLocation.add(deltaLocation);
+		}
+		
+		private XY deltaMotorToDeltaLoc(MotorSetPosition delta) {
+			double d1 = delta.get(0), d2 = delta.get(1), d3 = delta.get(2), d4 = delta.get(3);
+			double direction = Math.atan2(d2 + d3, d1 + d4);
+			double distance = Math.hypot(d2 + d3, d1 + d4) / parameters.moveMult;
+			direction += Math.PI / 4;
+			return XY.fromPolar(direction, distance);
+		}
+	}
 	
 	private class GyroRotateTask extends TaskAdapter {
 		private static final double ANGLE_TOLERANCE  = 1.5;
@@ -167,7 +161,6 @@ public class MecanumDrive extends TaskProgram {
 		private       int    consecutive = 0;
 		
 		public GyroRotateTask(double degreesToTurn, double speed) {
-			if (speed <= 0 || speed > 1) throw new IllegalArgumentException("MaxSpeed not 0-1");
 			this.degreesToTurn = degreesToTurn;
 			this.speed = speed;
 		}
@@ -186,11 +179,8 @@ public class MecanumDrive extends TaskProgram {
 		@Override
 		public boolean loop() {
 			double curAngle = getCurAngle();
-			MotorSetPower output = moveController.getPower(targetLocation,
-			                                               currentLocation,
-			                                               targetAngle,
-			                                               curAngle,
-			                                               speed);
+			MotorSetPower output =
+				moveController.getPower(targetLocation, curLocation, targetAngle, curAngle, speed);
 			wheels.setPower(output);
 			boolean hit = Math.abs(curAngle - targetAngle) < ANGLE_TOLERANCE;
 			if (hit) {
@@ -203,9 +193,20 @@ public class MecanumDrive extends TaskProgram {
 		
 	}
 	
-	public static class Parameters {
-		public boolean useGyro        = false;
-		public int     wheelTolerance = 25;
+	public static class Parameters implements Cloneable {
+		public final boolean useGyro        = true;
+		public       int     wheelTolerance = 25;
+		public       int     rampRate       = 4;
+		public       int     moveMult       = 4450;
+		
+		@Override
+		public Parameters clone() {
+			try {
+				return (Parameters) super.clone();
+			} catch (CloneNotSupportedException e) {
+				throw new Error();
+			}
+		}
 	}
 	
 }

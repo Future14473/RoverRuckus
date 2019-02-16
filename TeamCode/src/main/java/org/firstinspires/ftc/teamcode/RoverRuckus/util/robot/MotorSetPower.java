@@ -63,9 +63,9 @@ public final class MotorSetPower {
 		if (rampRate <= 0) throw new IllegalArgumentException();
 		double[] o = new double[4];
 		for (int i = 0; i < 4; i++) {
-			if (Math.abs(this.power[i]-pastPower.power[i]) <= rampRate) o[i] = this.power[i];
-			else o[i] = this.power[i] < pastPower.power[i] ? pastPower.power[i]-rampRate :
-			            pastPower.power[i]+rampRate;
+			if (Math.abs(this.power[i] - pastPower.power[i]) <= rampRate) o[i] = this.power[i];
+			else o[i] = this.power[i] < pastPower.power[i] ? pastPower.power[i] - rampRate :
+			            pastPower.power[i] + rampRate;
 		}
 		return fromArray(o);
 	}
@@ -103,7 +103,7 @@ public final class MotorSetPower {
 	 */
 	public static MotorSetPower calcPolarNonstandard(
 		double direction, double moveSpeed, double turnRate) {
-		return calcPolar(Math.PI / 2-direction, moveSpeed, turnRate);
+		return calcPolar(Math.PI / 2 - direction, moveSpeed, turnRate);
 	}
 	
 	/**
@@ -121,11 +121,11 @@ public final class MotorSetPower {
 			if (turnRate == 0) return ZERO;
 			if (turnRate == 1) return TURN;
 		}
-		double robotAngle = direction-Math.PI / 4;
-		double v1 = moveSpeed * Math.cos(robotAngle)+turnRate;
-		double v2 = moveSpeed * Math.sin(robotAngle)-turnRate;
-		double v3 = moveSpeed * Math.sin(robotAngle)+turnRate;
-		double v4 = moveSpeed * Math.cos(robotAngle)-turnRate;
+		double robotAngle = direction - Math.PI / 4;
+		double v1 = moveSpeed * Math.cos(robotAngle) + turnRate;
+		double v2 = moveSpeed * Math.sin(robotAngle) - turnRate;
+		double v3 = moveSpeed * Math.sin(robotAngle) + turnRate;
+		double v4 = moveSpeed * Math.cos(robotAngle) - turnRate;
 		return new MotorSetPower(v1, v2, v3, v4);
 	}
 	

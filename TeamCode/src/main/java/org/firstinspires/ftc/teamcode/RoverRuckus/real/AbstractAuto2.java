@@ -73,9 +73,7 @@ public abstract class AbstractAuto2 extends OurLinearOpMode {
 		hookAndLook.add(startGoldLook::awaitTrue);//
 		goldLook = hookAndLook.call(new GoldLookDoubleCallable(hardwareMap));
 		//hurray for method chain calls. unnecessary but it looks cool
-		hookAndLook.then(unHooked::awaitTrue)
-		           .then(this::retractHook)
-		           .thenStop();
+		hookAndLook.then(unHooked::awaitTrue).then(this::retractHook).thenStop();
 	}
 	
 	private void resetEncoders() {
@@ -104,17 +102,13 @@ public abstract class AbstractAuto2 extends OurLinearOpMode {
 	private void unHook() throws InterruptedException {
 		robot.hook.setPower(1);
 		//decreasing
-		waitUntil(
-				() -> robot.hook.getCurrentPosition() <= HOOK_TURN_START_LOOK);
+		waitUntil(() -> robot.hook.getCurrentPosition() <= HOOK_TURN_START_LOOK);
 		startGoldLook.setTrue();
 		telemetry.addLine("GOLD LOOK STARTED");
 		telemetry.update();
 		waitUntil(() -> robot.hook.getCurrentPosition() <= HOOK_TURN_END);
 		robot.hook.setPower(0);
-		drive.moveXY(-0.15, 0.05, 10)
-		     .then(unHooked::setTrue)
-		     .moveXY(0, 0.1, 10)
-		     .rotate(-10, 10);
+		drive.moveXY(-0.15, 0.05, 10).then(unHooked::setTrue).moveXY(0, 0.1, 10).rotate(-10, 10);
 	}
 	
 	private void knockOffGold() throws InterruptedException {
@@ -123,16 +117,15 @@ public abstract class AbstractAuto2 extends OurLinearOpMode {
 			look = goldLook.get(4, SECONDS);
 		} catch (ExecutionException e) {
 			e.getCause().printStackTrace();
-		} catch (TimeoutException e) {
+		} catch (TimeoutException ignored) {
 			telemetry.addLine("FAIL-SAFE HAPPENED");
 			look = 2;
 		}
 		goldLook.cancel(true);
-		telemetry.addData("Gold is at:", (look == 0) ? "left" :
-		                                 ((look == 1) ? "middle" : "right"));
+		telemetry.addData("Gold is at:", (look == 0) ? "left" : ((look == 1) ? "middle" : "right"
+		));
 		telemetry.update();
-		drive.moveXY(-0.35 + 0.5 * look, 0.45, 10)
-		     .moveXY(0, 0.25, 10)//knock off
+		drive.moveXY(-0.35 + 0.5 * look, 0.45, 10).moveXY(0, 0.25, 10)//knock off
 		     .moveXY(0, -0.35, 10).moveXY(-0.6 - 0.5 * look, 0.05, 10);
 	}
 	

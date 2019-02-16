@@ -37,8 +37,7 @@ public final class XY {
 	public XY rotate(double radians) {
 		double cosA = Math.cos(radians);
 		double sinA = Math.sin(radians);
-		return new XY(this.x * cosA - this.y * sinA,
-		              this.x * sinA + this.y * cosA);
+		return new XY(this.x * cosA - this.y * sinA, this.x * sinA + this.y * cosA);
 	}
 	
 	public XY limitMagnitudeTo(double max) {
@@ -55,8 +54,7 @@ public final class XY {
 		return Math.atan2(y, x);
 	}
 	
-	public static XY fromPolar(double direction, double magnitude) {
-		return new XY(Math.cos(direction) * magnitude,
-		              Math.sin(direction) * magnitude);
+	public static XY fromPolar(double direction, double radius) {
+		return new XY(Math.cos(direction) * radius, Math.sin(direction) * radius);
 	}
 }

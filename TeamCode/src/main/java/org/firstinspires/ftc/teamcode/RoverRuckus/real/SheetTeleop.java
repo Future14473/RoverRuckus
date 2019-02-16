@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.SheetMetalRobot;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.shared.Constants.*;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.Button.State.*;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State.LOWER;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State.UPPER;
@@ -18,42 +19,10 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State
 @SuppressWarnings("Duplicates")
 @TeleOp(group = "1real", name = "Teleop")
 public class SheetTeleop extends OurLinearOpMode {
-	//Encoder limits
-	//"at home" position for all encoders
-	private static final int             MOTOR_MIN                     = 100;
-	//maximum arm extension (both arms)
-	private static final int             ARM_MAX                       = 4450;
-	//maximum hook extension
-	private static final int             HOOK_MAX                      = 26000;
-	private static final int             HOOK_NULLIFY                  = 1500;
-	//initial extensions during auto extend
-	private static final int             INITIAL_EXTENSION_COLLECT_ARM = 2000;
-	private static final int             INITIAL_EXTENSION_SCORE_ARM_  = ARM_MAX;
-	//Servo positions
-	//Collect door positions
-	private static final double          COLLECT_DOOR_CLOSED           = 0.71;
-	private static final double          COLLECT_DOOR_OPEN             = 0.39;
-	//Score dump positions
-	private static final double          SCORE_DUMP_HOME               = 0.65;
-	private static final double          SCORE_DUMP_DOWN               = 0;
-	//parker
-	private static final double          PARKER_HOME                   = 0.6;
-	//Mults
-	private static final double          SPEED_MULT_FAST               = 100;
-	private static final double          SPEED_MULT_NORM               = 1;
-	private static final double          SPEED_MULT_SLOW               = 0.4;
-	//Powers
-	private static final double          IDLE_POWER_IN                 = -0.6;
-	private static final double          IDLE_POWER_COLLECT_ARM        = 0.05;
-	private static final double          IDLE_POWER_SCORE_ARM          = 0.1;
-	private static final double          IDLE_POWER_SCOOPER            = 0.6;
-	//Other constants
-	private static final int             TRANSFER_SLEEP_TIME           = 200;
 	//Motors and servos, for readability and functionality
-	private              SheetMetalRobot robot;
-	private              MoveController  moveController                =
-		new MoveController(BaseRobot.RAMP_RATE);
-	private              LimitedMotor    collectArm, scoreArm, hook;
+	private SheetMetalRobot robot;
+	private MoveController  moveController = new MoveController(BaseRobot.RAMP_RATE);
+	private LimitedMotor    collectArm, scoreArm, hook;
 	private DcMotor scooper;
 	private Servo   collectDoor;
 	private Servo   scoreDump;
@@ -112,7 +81,7 @@ public class SheetTeleop extends OurLinearOpMode {
 			\*----------------*/
 			boolean userAdvance = true;
 			boolean autoAdvance = false;
-			double triggerSum = gamepad2.right_trigger-gamepad2.left_trigger;
+			double triggerSum = gamepad2.right_trigger - gamepad2.left_trigger;
 			if (gamepad2.right_bumper) triggerSum = 1;
 			else if (gamepad2.left_bumper) triggerSum = -1;
 			if (Math.abs(robot.hook.getCurrentPosition()) > HOOK_NULLIFY) {
@@ -135,7 +104,7 @@ public class SheetTeleop extends OurLinearOpMode {
 				break;
 			case COLLECT:
 				scooper.setPower(triggerSum);
-				collectArm.setPowerLimited(-gamepad2.right_stick_y+IDLE_POWER_COLLECT_ARM,
+				collectArm.setPowerLimited(-gamepad2.right_stick_y + IDLE_POWER_COLLECT_ARM,
 				                           gamepad2.x);
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 				scoreArm.setPowerLimited(IDLE_POWER_IN);
@@ -153,14 +122,14 @@ public class SheetTeleop extends OurLinearOpMode {
 				if (autoAdvance) {
 					collectDoor.setPosition(COLLECT_DOOR_OPEN);
 					// NOW...
-					sleepEndTime = System.nanoTime()+MILLISECONDS.toNanos(TRANSFER_SLEEP_TIME);
+					sleepEndTime = System.nanoTime() + MILLISECONDS.toNanos(TRANSFER_SLEEP_TIME);
 					//pseudo sleep.
 				}
 				userAdvance = false;
 				break;
 			case TRANSFER:
-				if (System.nanoTime()-sleepEndTime < 0) break;
-				scooper.setPower(1+triggerSum); //PUSH THINGS UP!
+				if (System.nanoTime() - sleepEndTime < 0) break;
+				scooper.setPower(1 + triggerSum); //PUSH THINGS UP!
 				collectArm.setPowerLimited(IDLE_POWER_IN); //keep in
 				collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
 				scoreArm.setPowerLimited(IDLE_POWER_IN); //keep in
@@ -179,7 +148,8 @@ public class SheetTeleop extends OurLinearOpMode {
 				scooper.setPower(0); //idle
 				collectArm.setPowerLimited(IDLE_POWER_IN); //keep in
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
-				scoreArm.setPowerLimited(-gamepad2.right_stick_y+IDLE_POWER_SCORE_ARM, gamepad1.x);
+				scoreArm.setPowerLimited(-gamepad2.right_stick_y + IDLE_POWER_SCORE_ARM,
+				                         gamepad1.x);
 				if (gp2rbp.pressed()) {
 					scoreDump.setPosition(SCORE_DUMP_DOWN);
 				} else if (gp2lbp.pressed()) {
@@ -218,9 +188,9 @@ public class SheetTeleop extends OurLinearOpMode {
 				if (gp1yState == HELD) {
 					speedMult = 0;
 				} else if (gp1yState == RELEASED) {
-					rotationOffSet = robot.getAngle()+direction;
+					rotationOffSet = robot.getAngle() + direction;
 				}
-				direction += robot.getAngle()-rotationOffSet;
+				direction += robot.getAngle() - rotationOffSet;
 				telemetry.addData("DIRECTION", "GYRO");
 			} else {
 				if (gp1yState == PRESSED) reverseDrive = !reverseDrive;
@@ -253,11 +223,11 @@ public class SheetTeleop extends OurLinearOpMode {
 		private static final ArmState[] values = ArmState.values();
 		
 		public ArmState next() {
-			return values[(this.ordinal()+1) % values.length];
+			return values[(this.ordinal() + 1) % values.length];
 		}
 		
 		public ArmState prev() {
-			int ord = (this.ordinal() / 2 * 2-2+values.length) % values.length;
+			int ord = (this.ordinal() / 2 * 2 - 2 + values.length) % values.length;
 			return values[ord];
 		}
 	}

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
-import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import org.firstinspires.ftc.teamcode.RoverRuckus.externalLib.MiniPID;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.MoveController;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
@@ -14,10 +12,8 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 class LocationMoveController extends MoveController {
 	private final MiniPID turnPID = new MiniPID(0.035, 0, 0.13);
 	
-	public LocationMoveController(
-		double rampRate, PIDFCoefficients pidfCoefficients) {
+	public LocationMoveController(double rampRate) {
 		super(rampRate);
-		MotorControlAlgorithm algorithm = pidfCoefficients.algorithm;
 		turnPID.setSetpoint(0);
 		turnPID.setOutputLimits(1);
 		turnPID.setOutputRampRate(rampRate);
@@ -26,11 +22,11 @@ class LocationMoveController extends MoveController {
 	
 	public MotorSetPower getPower(
 		XY targetLocation, XY currentLocation, //
-		double targetDirection, double curDirection, double speed) {
+		double targetAngle, double curAngle, double speed) {
 		double elapsedTime = getElapsedTime();
-		double angleToTarget = targetLocation.subtract(currentLocation).angle()-curDirection;
+		double angleToTarget = targetLocation.subtract(currentLocation).angle() - curAngle;
 		XY targetMovement = XY.fromPolar(angleToTarget, speed);
-		double targetTurnRate = turnPID.getOutput(curDirection, targetDirection, elapsedTime);
+		double targetTurnRate = turnPID.getOutput(curAngle, targetAngle, elapsedTime);
 		return getPower(targetMovement, targetTurnRate, elapsedTime);
 	}
 	

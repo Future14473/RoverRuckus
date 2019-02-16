@@ -41,7 +41,7 @@ public final class MotorSetPosition {
 		return Arrays.toString(position);
 	}
 	
-	public MotorSetPosition delta(MotorSetPosition prevPosition) {
+	public MotorSetPosition subtract(MotorSetPosition prevPosition) {
 		int[] position = new int[4];
 		for (int i = 0; i < 4; i++) {
 			position[i] = this.position[i] - prevPosition.position[i];
