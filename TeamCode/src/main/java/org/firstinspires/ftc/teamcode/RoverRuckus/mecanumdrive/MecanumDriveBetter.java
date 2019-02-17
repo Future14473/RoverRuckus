@@ -1,54 +1,170 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
+import android.support.annotation.CallSuper;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.Task;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSet;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPosition;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 
 import java.util.Objects;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower.calcPolarNonstandard;
 
 /**
  * A task program that controls the autonomous motion of wheels.
- * Uses motor encoders to dynamically correct motion,
- * Optionally uses gyroscope (YOU SHOULD USE THIS) to increase
- * accuracy in turning and direction.
- * <p>
- * Orientation: <br>
- * <pre>
- *       -deg<-(0)->+deg
- *             +Y
- *              |
- * -90deg  -X --O-- +X  +90deg
- *              |
- *             -Y
- *          +/-180deg
- * </pre>
+ * Uses motor encoders to dynamically correct motion, and gyroscope to
+ * correct orientation and direction.
+ * Orientation is always relative to the current robot position, AFTER any simultaneous or
+ * previous turns.
  */
+@SuppressWarnings("unused")
 public class MecanumDriveBetter extends TaskProgram {
-	private final Parameters parameters;
-	private final IRobot     robot;
-	private final MotorSet   wheels;
+	private static final AngleUnit    ourAngleUnit    = AngleUnit.RADIANS;
+	private static final DistanceUnit ourDistanceUnit = DistanceUnit.INCH;
 	
-	private final LocationMoveController moveController;
+	private final Parameters        parameters;
+	private final IRobot            robot;
+	private final MotorSet          wheels;
+	private final LocationTracker   locationTracker;
+	private final PIDMoveController moveController;
+	private       MoveTask          adjustmentTask;
 	
-	private XY     targetLocation = new XY();
-	private XY     curLocation    = new XY();
-	private double targetAngle    = 0;
-	
-	//current angle is method.
 	public MecanumDriveBetter(IRobot robot, Parameters parameters) {
-		super(true);
+		super("MecanumDrive", true);
 		this.robot = Objects.requireNonNull(robot);
 		this.parameters = parameters.clone();
 		this.wheels = robot.getWheels();
-		moveController = new LocationMoveController(parameters.rampRate);
+		moveController = new PIDMoveController(this.parameters.maxAngularAcceleration,
+		                                       this.parameters.maxTranslationalAcceleration);
+		locationTracker = new LocationTracker(parameters.ticksPerUnit);
+		init();
+	}
+	
+	private void init() {
+		adjustmentTask = new MoveTask(XY.ZERO, 2, this.parameters.translationalToleranceFine,
+		                              0, 2, this.parameters.angularToleranceFine,
+		                              this.parameters.consecutiveFine) {
+			@Override
+			public String toString() {
+				return "Adjustment";
+			}
+		};
+		
+		if (this.parameters.adjustAtEnd) super.addOnDoneTask(adjustmentTask);
+		super.addOnDoneTask(wheels::stop);
+	}
+	
+	private XY xyFromUnit(double x, double y, DistanceUnit distanceUnit) {
+		return new XY(ourDistanceUnit.fromUnit(distanceUnit, x),
+		              ourDistanceUnit.fromUnit(distanceUnit, y));
+	}
+	
+	private double angleFromUnit(double angle, AngleUnit angleUnit) {
+		return ourAngleUnit.getUnnormalized().fromUnit(angleUnit.getUnnormalized(), angle);
+	}
+	
+	public MecanumDriveBetter turnAndMove(
+			double angle, double maxAngularSpeed, AngleUnit angleUnit,
+			double x, double y, double maxTranslationSpeed, DistanceUnit distanceUnit) {
+		
+		add(new MoveTask(xyFromUnit(x, y, distanceUnit),
+		                 maxTranslationSpeed,
+		                 parameters.translationalToleranceCoarse,
+		                 angleFromUnit(angle, angleUnit),
+		                 maxAngularSpeed,
+		                 parameters.angularToleranceCoarse,
+		                 parameters.consecutiveCoarse));
+		return this;
+	}
+	
+	public MecanumDriveBetter turnAndMoveFine(
+			double angle, double maxAngularSpeed, AngleUnit angleUnit,
+			double x, double y, double maxTranslationSpeed, DistanceUnit distanceUnit) {
+		
+		add(new MoveTask(xyFromUnit(x, y, distanceUnit),
+		                 maxTranslationSpeed,
+		                 parameters.translationalToleranceFine,
+		                 angleFromUnit(angle, angleUnit),
+		                 maxAngularSpeed,
+		                 parameters.angularToleranceFine,
+		                 parameters.consecutiveFine));
+		return this;
+	}
+	
+	public MecanumDriveBetter move(
+			double x, double y, double maxTranslationSpeed, DistanceUnit distanceUnit) {
+		add(new MoveTask(xyFromUnit(x, y, distanceUnit),
+		                 maxTranslationSpeed,
+		                 parameters.translationalToleranceCoarse,
+		                 0,
+		                 maxTranslationSpeed * parameters.idleAngularSpeedMult,
+		                 -1,
+		                 parameters.consecutiveCoarse));
+		return this;
+	}
+	
+	public MecanumDriveBetter moveFine(
+			double x, double y, double maxTranslationSpeed, DistanceUnit distanceUnit) {
+		add(new MoveTask(xyFromUnit(x, y, distanceUnit),
+		                 maxTranslationSpeed,
+		                 parameters.translationalToleranceFine,
+		                 0,
+		                 maxTranslationSpeed * parameters.idleAngularSpeedMult,
+		                 -1,
+		                 parameters.consecutiveFine));
+		return this;
+	}
+	
+	public MecanumDriveBetter turn(
+			double angle, double maxAngularSpeed, AngleUnit angleUnit) {
+		add(new MoveTask(XY.ZERO,
+		                 maxAngularSpeed * parameters.idleTranslationalSpeedMult,
+		                 -1,
+		                 angleFromUnit(angle, angleUnit),
+		                 maxAngularSpeed,
+		                 parameters.angularToleranceCoarse,
+		                 parameters.consecutiveCoarse));
+		return this;
+	}
+	
+	public MecanumDriveBetter turnFine(
+			double angle, double maxAngularSpeed, AngleUnit angleUnit) {
+		add(new MoveTask(XY.ZERO,
+		                 maxAngularSpeed * parameters.idleTranslationalSpeedMult,
+		                 -1,
+		                 angleFromUnit(angle, angleUnit),
+		                 maxAngularSpeed,
+		                 parameters.angularToleranceFine,
+		                 parameters.consecutiveFine));
+		return this;
+	}
+	
+	public MecanumDriveBetter adjust() {
+		add(adjustmentTask);
+		return this;
+		
+	}
+	
+	public MecanumDriveBetter phantomTurnAndMove(
+			double angle, AngleUnit angleUnit, double x, double y, DistanceUnit distanceUnit) {
+		add(new ChangeTargetLocationTask(xyFromUnit(x, y, distanceUnit),
+		                                 angleFromUnit(angle, angleUnit)));
+		return this;
+	}
+	
+	public MecanumDriveBetter phantomMove(double x, double y, DistanceUnit distanceUnit) {
+		add(new ChangeTargetLocationTask(xyFromUnit(x, y, distanceUnit)));
+		return this;
+	}
+	
+	public MecanumDriveBetter phantomTurn(double angle, AngleUnit angleUnit) {
+		add(new ChangeTargetLocationTask(angleFromUnit(angle, angleUnit)));
+		return this;
 	}
 	
 	@Override
@@ -59,145 +175,146 @@ public class MecanumDriveBetter extends TaskProgram {
 	
 	@Override
 	public void start() {
-		targetAngle = robot.getAngle();
-		wheels.setTargetPositionTolerance(parameters.wheelTolerance);
+		updateLocation();
 		super.start();
 	}
 	
-	/*private void moveExact(
-			double directionRadians, double distance, double speed) {
-		
-	}
-	
-	private void moveCoarse(
-			double directionRadians, double distance, double speed) {
-		
-	}*/
-	
-	/**
-	 * Adds a Task that represents moving the robot in a straight line the
-	 * specified direction and distance
-	 */
-	public void move(double direction, double distance, double speed) {
-		direction = Math.toRadians(direction);
-		add(new OldStraightMoveTask(robot,
-		                            calcPolarNonstandard(direction, 1, 0),
-		                            distance * OldStraightMoveTask.MOVE_MULT,
-		                            speed));
-	}
-	
-	/**
-	 * Moves the robot to the specified relative location on the coordinate
-	 * plane
-	 */
-	public MecanumDriveBetter moveXY(double x, double y, double speed) {
-		double direction = Math.toDegrees(Math.atan2(x, y));
-		double distance = Math.hypot(x, y);
-		move(direction, distance, speed);
+	@Override
+	public MecanumDriveBetter sleep(long millis) {
+		super.sleep(millis);
 		return this;
 	}
 	
-/*	public void moveXY(double x, double y, DistanceUnit unit, double speed) {
-		//TODO!!!
-		//NOTE: DETERMINE UNITS
-	}*/
-	
-	/**
-	 * Rotates the robot a specific number of degrees.
-	 */
-	public MecanumDriveBetter rotate(double degreesToTurn, double speed) {
-		if (!parameters.useGyro) {
-			degreesToTurn = Math.toRadians(degreesToTurn);
-			add(new OldStraightMoveTask(robot,
-			                            calcPolarNonstandard(0, 0, Math.signum(degreesToTurn)),
-			                            Math.abs(degreesToTurn) * OldStraightMoveTask.TURN_MULT,
-			                            speed));
-		} else {
-			add(new GyroRotateTask(degreesToTurn, speed));
-		}
-		return this;
+	private void updateLocation() {
+		locationTracker.updateLocation(robot.getAngle(), wheels.getCurrentPosition());
 	}
 	
-	private double getCurAngle() {
-		return robot.getAngle();
-	}
-	
-	private abstract class GyroAwareMoveTask extends TaskAdapter {
-		protected double           curAngle;
-		private   MotorSetPosition lastMotorPos;
+	private class ChangeTargetLocationTask implements Task {
+		private final XY     toTranslate;
+		private final double toTurn;
 		
-		protected abstract boolean inLoop();
-		
-		@Override
-		public boolean loop() {
-			updateLocation();
-			return inLoop();
+		private ChangeTargetLocationTask(double toTurn) {
+			this(XY.ZERO, toTurn);
 		}
 		
-		private void updateLocation() {
-			curAngle = getCurAngle();
-			MotorSetPosition curMotorPos = wheels.getCurrentPosition();
-			MotorSetPosition deltaMotorPos = curMotorPos.subtract(lastMotorPos);
-			lastMotorPos = curMotorPos;
-			XY deltaLocation = deltaMotorToDeltaLoc(deltaMotorPos).rotate(curAngle);
-			curLocation = curLocation.add(deltaLocation);
+		private ChangeTargetLocationTask(XY toTranslate) {
+			this(toTranslate, 0);
 		}
 		
-		private XY deltaMotorToDeltaLoc(MotorSetPosition delta) {
-			double d1 = delta.get(0), d2 = delta.get(1), d3 = delta.get(2), d4 = delta.get(3);
-			double direction = Math.atan2(d2 + d3, d1 + d4);
-			double distance = Math.hypot(d2 + d3, d1 + d4) / parameters.moveMult;
-			direction += Math.PI / 4;
-			return XY.fromPolar(direction, distance);
-		}
-	}
-	
-	private class GyroRotateTask extends TaskAdapter {
-		private static final double ANGLE_TOLERANCE  = 1.5;
-		private static final int    CONSECUTIVE_HITS = 4;
-		
-		private final double speed;
-		private final double degreesToTurn;
-		private       int    consecutive = 0;
-		
-		public GyroRotateTask(double degreesToTurn, double speed) {
-			this.degreesToTurn = degreesToTurn;
-			this.speed = speed;
+		private ChangeTargetLocationTask(XY toTranslate, double toTurn) {
+			this.toTranslate = toTranslate;
+			this.toTurn = toTurn;
 		}
 		
 		@Override
+		public void run() {
+			locationTracker.addToTargetAngle(toTurn);
+			locationTracker.addToTargetLocation(toTranslate);
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("ChangeTargetLocationTask{toTranslate=%s, toTurn=%s}",
+			                     toTranslate,
+			                     toTurn);
+		}
+	}
+	
+	private class MoveTask extends TaskAdapter {
+		private final double maxAngularSpeed;
+		private final double maxTranslationalSpeed;
+		private final double translationalTolerance;
+		private final double angularTolerance;
+		private final int    consecutive;
+		private final double toTurn;
+		private final XY     toTranslate;
+		
+		private double numConsecutive;
+		
+		/**
+		 * Constructs a new MoveTask, that instructs the robot to move to a certain
+		 * location and/or turn a certain amount. Has tolerance settings.
+		 *
+		 * @param toTranslate            The relative position to move, referenced AFTER a turn
+		 *                               occurs.
+		 * @param maxTranslationalSpeed  The maximum translational speed this robot will move at.
+		 * @param translationalTolerance The maximum distance the robot will tolerate being away
+		 *                               from the target position before stop. A negative
+		 *                               tolerance indicates infinite tolerance.
+		 * @param toTurn                 The number of radians to turn
+		 * @param maxAngularSpeed        The maximum angular speed to move at.
+		 * @param angularTolerance       The maximum angle the robot will tolerate being away from
+		 *                               the target angle before stop. A negative tolerance
+		 *                               indicates infinite tolerance.
+		 * @param consecutive            The number of consecutive cycles the the above two
+		 */
+		public MoveTask(
+				XY toTranslate, double maxTranslationalSpeed, double translationalTolerance,
+				double toTurn, double maxAngularSpeed, double angularTolerance,
+				int consecutive) {
+			if (maxAngularSpeed <= 0 || maxTranslationalSpeed <= 0 || consecutive <= 1)
+				throw new IllegalArgumentException();
+			this.toTranslate = toTranslate;
+			this.maxTranslationalSpeed = maxTranslationalSpeed;
+			this.translationalTolerance = translationalTolerance;
+			this.toTurn = toTurn;
+			this.maxAngularSpeed = maxAngularSpeed;
+			this.angularTolerance = angularTolerance;
+			this.consecutive = consecutive;
+		}
+		
+		@Override
+		@CallSuper
 		public void start() {
-			targetAngle += degreesToTurn;
+			//reset lastAngle and motorPos
+			//update targetLocation and Angle
+			locationTracker.addToTargetAngle(toTurn);
+			locationTracker.addToTargetLocation(toTranslate);
 			wheels.setMode(RUN_USING_ENCODER);
 		}
 		
 		@Override
-		public void stop() {
-			wheels.stop();
+		public boolean loop() {
+			updateLocation();
+			MotorSetPower output = moveController.getPower(locationTracker,
+			                                               maxAngularSpeed,
+			                                               maxTranslationalSpeed);
+			wheels.setPower(output);
+			boolean hit = (translationalTolerance <= 0 ||
+			               locationTracker.getLocationError().magnitude() <
+			               translationalTolerance) &&
+			              (angularTolerance <= 0 ||
+			               Math.abs(locationTracker.getAngularError()) < angularTolerance);
+			if (hit) numConsecutive++;
+			else numConsecutive = 0;
+			return numConsecutive >= consecutive;
 		}
 		
 		@Override
-		public boolean loop() {
-			double curAngle = getCurAngle();
-			MotorSetPower output =
-				moveController.getPower(targetLocation, curLocation, targetAngle, curAngle, speed);
-			wheels.setPower(output);
-			boolean hit = Math.abs(curAngle - targetAngle) < ANGLE_TOLERANCE;
-			if (hit) {
-				consecutive++;
-			} else {
-				consecutive = 0;
-			}
-			return consecutive >= CONSECUTIVE_HITS;
+		public String toString() {
+			return String.format(
+					"MoveTask{toTurn=%s, toTranslate=%s}",
+					toTurn,
+					toTranslate);
 		}
-		
 	}
 	
 	public static class Parameters implements Cloneable {
-		public final boolean useGyro        = true;
-		public       int     wheelTolerance = 25;
-		public       int     rampRate       = 4;
-		public       int     moveMult       = 4450;
+		public static final DistanceUnit distanceUnit = ourDistanceUnit;
+		public static final AngleUnit    angleUnit    = ourAngleUnit;
+		
+		public double  ticksPerUnit                 = 125;
+		public double  maxAngularAcceleration       = 3;
+		public double  maxTranslationalAcceleration = 3;
+		public double  angularToleranceCoarse       = 7;
+		public double  angularToleranceFine         = 1;
+		public double  translationalToleranceCoarse = 0.1;
+		public double  translationalToleranceFine   = 0.03;
+		public double  idleAngularSpeedMult         = 0.5;
+		public double  idleTranslationalSpeedMult   = 0.5;
+		public int     consecutiveCoarse            = 2;
+		public int     consecutiveFine              = 5;
+		public boolean adjustAtEnd                  = false;
 		
 		@Override
 		public Parameters clone() {

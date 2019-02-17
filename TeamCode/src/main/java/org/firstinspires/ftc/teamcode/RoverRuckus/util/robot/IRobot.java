@@ -15,8 +15,7 @@ public interface IRobot {
 	 * Gets the orientation of the robot, on a plane parallel to the floor.
 	 * Normal orientation: radians, to the left is 0, Counterclockwise is
 	 * positive.
-	 * As long as relative positions are consistent, this angle doesn't have
-	 * to mean anything.
+	 * As long as relative positions are consistent, specific angles do not have to mean much.
 	 */
 	double getAngle();
 }

@@ -18,7 +18,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 /**
  * Base autonomous.
  */
-@SuppressWarnings("Duplicates")
 public abstract class AbstractAuto2 extends OurLinearOpMode {
 	private static final int    HOOK_TURN_START_LOOK = -21000;
 	private static final int    HOOK_TURN_END        = -26000;
@@ -71,7 +70,7 @@ public abstract class AbstractAuto2 extends OurLinearOpMode {
 	private void loadLookAndHook() {
 		//preload lookAndHook tasks.
 		hookAndLook.add(startGoldLook::awaitTrue);//
-		goldLook = hookAndLook.call(new GoldLookDoubleCallable(hardwareMap));
+		goldLook = hookAndLook.submit(new GoldLookDoubleCallable(hardwareMap));
 		//hurray for method chain calls. unnecessary but it looks cool
 		hookAndLook.then(unHooked::awaitTrue).then(this::retractHook).thenStop();
 	}

@@ -16,7 +16,7 @@ public abstract class TaskAdapter implements Task {
 	/**
 	 * Run once on the Task's start.
 	 */
-	public abstract void start();
+	protected abstract void start();
 	
 	@Override
 	public final void run() {
@@ -35,14 +35,15 @@ public abstract class TaskAdapter implements Task {
 	 *
 	 * @apiNote inside a finally block.
 	 */
-	public void stop() {}
+	protected void stop() {
+	}
 	
 	/**
 	 * Called continuously when the Task is running.
 	 *
 	 * @return if the task is completed or not
 	 */
-	public boolean loop() {
+	protected boolean loop() {
 		return true;
 	}
 }

@@ -6,6 +6,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
  * Immutable.
  */
 public final class XY {
+	public static final XY ZERO = new XY();
 	
 	public final double x, y;
 	
@@ -40,21 +41,30 @@ public final class XY {
 		return new XY(this.x * cosA - this.y * sinA, this.x * sinA + this.y * cosA);
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("{%s, %s}", x, y);
+	}
+	
 	public XY limitMagnitudeTo(double max) {
 		double magnitude = magnitude();
 		if (magnitude <= max) return this;
-		return scale(max / magnitude);
+		return this.scale(max / magnitude);
 	}
 	
 	public XY rampTo(XY other, double rampRate) {
 		return other.subtract(this).limitMagnitudeTo(rampRate).add(this);
 	}
 	
-	public double angle() {
-		return Math.atan2(y, x);
+	public double angleTo(XY o) {
+		return Math.atan2(this.x * o.y - this.y * o.x, this.x * o.x + this.y * o.y);
 	}
 	
-	public static XY fromPolar(double direction, double radius) {
-		return new XY(Math.cos(direction) * radius, Math.sin(direction) * radius);
+	public double dot(XY o) {
+		return x * o.x + y * o.y;
+	}
+	
+	public static XY fromPolar(double magnitude, double angle) {
+		return new XY(Math.cos(angle) * magnitude, Math.sin(angle) * magnitude);
 	}
 }

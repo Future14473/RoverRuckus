@@ -11,6 +11,7 @@ import java.util.Arrays;
  *
  * @see MotorSet
  */
+@SuppressWarnings("WeakerAccess")
 public final class MotorSetPower {
 	public static final MotorSetPower ZERO = new MotorSetPower();
 	public static final MotorSetPower TURN = new MotorSetPower(1, -1, 1, -1);
@@ -63,9 +64,9 @@ public final class MotorSetPower {
 		if (rampRate <= 0) throw new IllegalArgumentException();
 		double[] o = new double[4];
 		for (int i = 0; i < 4; i++) {
-			if (Math.abs(this.power[i]-pastPower.power[i]) <= rampRate) o[i] = this.power[i];
-			else o[i] = this.power[i] < pastPower.power[i] ? pastPower.power[i]-rampRate :
-			            pastPower.power[i]+rampRate;
+			if (Math.abs(this.power[i] - pastPower.power[i]) <= rampRate) o[i] = this.power[i];
+			else o[i] = this.power[i] < pastPower.power[i] ? pastPower.power[i] - rampRate :
+			            pastPower.power[i] + rampRate;
 		}
 		return fromArray(o);
 	}
@@ -102,7 +103,7 @@ public final class MotorSetPower {
 	 * @return the calculated MotorSetPower
 	 */
 	public static MotorSetPower calcPolarNonstandard(
-		double direction, double moveSpeed, double turnRate) {
+			double direction, double moveSpeed, double turnRate) {
 		return calcPolar(Math.PI / 2 - direction, moveSpeed, turnRate);
 	}
 	
@@ -116,7 +117,7 @@ public final class MotorSetPower {
 	 * @return the calculated MotorSetPower
 	 */
 	public static MotorSetPower calcPolar(
-		double direction, double moveSpeed, double turnRate) {
+			double direction, double moveSpeed, double turnRate) {
 		if (moveSpeed == 0) {
 			if (turnRate == 0) return ZERO;
 			if (turnRate == 1) return TURN;
@@ -139,7 +140,7 @@ public final class MotorSetPower {
 	 * @return the calculated MotorSetPower
 	 */
 	public static MotorSetPower calcRectilinear(
-		double x, double y, double turnRate) {
+			double x, double y, double turnRate) {
 		return calcPolar(Math.atan2(y, x), Math.hypot(x, y), turnRate);
 	}
 	
@@ -150,7 +151,7 @@ public final class MotorSetPower {
 		return new MotorSetPower(power);
 	}
 	
-	public static MotorSetPower fromXY(XY curMovement, double turnRate) {
-		return calcRectilinear(curMovement.x, curMovement.y, turnRate);
+	public static MotorSetPower fromXYT(XY moveRate, double turnRate) {
+		return calcRectilinear(moveRate.x, moveRate.y, turnRate);
 	}
 }

@@ -1,35 +1,27 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.tasks;
 
 import com.qualcomm.robotcore.util.RobotLog;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.MoreReflect;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OpModeLifetimeRegistrar;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 
-/**
- * An interface to represent a class that does the actual running of {@code
- * Task}s
- * Tasks are put into a queue and run one at a time. This class
- * contains several other methods to interact with the
- * queue and the running of the MoveTasks. Running of {@code Task}s
- * are done in a separate thread. <br>
- *
- * @see Task
- */
-public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
-	//executors are too complicated for us to need em. Simple is faster and
-	// simpler.
-	private static final String TAG = TaskExecutor.class.getSimpleName();
+class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
+	private static final String        TAG     = TaskExecutor.class.getSimpleName();
+	private final        String        name;
+	private final        AtomicBoolean running = new AtomicBoolean(true);
 	
-	private final BlockingQueue<Task> queue    = new LinkedBlockingQueue<>();
-	private final Thread              theThread;
-	private final AtomicBoolean       running  = new AtomicBoolean(false);
-	private final Object              doneLock = new Object();
-	private final String              name;
-	private       boolean             done     = true;
+	private final    Object              isDoneLock  = new Object();
+	private final    Thread              theThread;
+	private final    BlockingQueue<Task> queue       = new LinkedBlockingQueue<>();
+	private          List<Task>          onDoneTasks = new LinkedList<>();
+	private volatile Task                curTask;
 	
 	public TaskExecutor(String name) {
 		this.name = name;
@@ -39,10 +31,7 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	}
 	
 	public TaskExecutor() {
-		this.name = TAG;
-		theThread = new Thread(this::run);
-		theThread.setName(TAG);
-		theThread.setDaemon(true);
+		this(TAG);
 	}
 	
 	/**
@@ -50,25 +39,21 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	 */
 	public void add(Task task) {
 		if (task == null) throw new NullPointerException();
+		if (!running.get()) throw new IllegalStateException();
 		queue.add(task);
 	}
-	
-	/**
-	 * Cancels all enqueued MoveTasks and stops
-	 * any moveTask currently running
-	 */
-	public void cancelTasks() {
-		queue.clear();
-		theThread.interrupt();
-	}
+
+//	@Override
+//	public void cancelTasks() {
+//		queue.clear();
+//		theThread.interrupt();
+//	}
 	
 	/**
 	 * @return true if no tasks are running, false otherwise
 	 */
 	public boolean isDone() {
-		synchronized (doneLock) {
-			return done;
-		}
+		return !running.get() && curTask == null && queue.isEmpty();
 	}
 	
 	/**
@@ -77,8 +62,8 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	 * @throws InterruptedException if the thread is interrupted while waiting
 	 */
 	public void waitUntilDone() throws InterruptedException {
-		synchronized (doneLock) {
-			while (!done) doneLock.wait();
+		synchronized (isDoneLock) {
+			while (!isDone()) isDoneLock.wait();
 		}
 	}
 	
@@ -86,24 +71,40 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	 * Starts internal thread.
 	 */
 	public void start() {
-		running.set(true);
 		theThread.start();
+	}
+	
+	/**
+	 * Adds a task to a list of tasks to be run, when all normal tasks
+	 * are done. (isDone returns true).
+	 * Should ideally be fast/small tasks.
+	 */
+	public void addOnDoneTasks(Task task) {
+		onDoneTasks.add(task);
+	}
+	
+	/**
+	 * Removes an on done task.
+	 */
+	public void removeOnDoneTask(Task task) {
+		onDoneTasks.remove(task);
 	}
 	
 	@Override
 	public void stop() {
-		RobotLog.vv(TAG, "%s: stopping", name);
 		if (!running.getAndSet(false)) return;
+		RobotLog.vv(TAG, "%s: stopping", name);
 		theThread.interrupt();
-		synchronized (doneLock) {
-			done = true;
-			doneLock.notifyAll();
-		}
+		cleanup();
 	}
 	
-	@Override
-	protected void finalize() {
-		stop();
+	private void cleanup() {
+		running.set(false);
+		synchronized (isDoneLock) {
+			isDoneLock.notifyAll();
+		}
+		queue.clear();
+		curTask = null;
 	}
 	
 	/**
@@ -113,35 +114,32 @@ public class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 		try {
 			doTasks();
 		} finally {
-			synchronized (doneLock) {
-				done = true;
-				doneLock.notifyAll();
-			}
+			cleanup();
 		}
 	}
 	
 	private void doTasks() {
 		while (running.get()) try {
-			Task curTask;
-			synchronized (doneLock) { //we can't say done while polling queue.
-				if (queue.isEmpty()) { //if we're done, set and notify
-					RobotLog.vv(TAG, "%s: notifying done", name);
-					done = true;
-					doneLock.notifyAll();
+			if (queue.isEmpty()) {
+				RobotLog.vv(TAG, "%s: Done", name);
+				synchronized (isDoneLock) {
+					isDoneLock.notifyAll();
 				}
-				curTask = queue.poll(2, MINUTES);
-				if (curTask == null) {
-					stop();
-					break;
+				for (Task onDoneTask : onDoneTasks) {
+					RobotLog.vv(TAG, "%s: running onDoneTask %s", name,
+					            MoreReflect.getInformativeName(onDoneTask));
+					onDoneTask.run();
 				}
-				done = false;
+			}
+			curTask = queue.poll(2, MINUTES);
+			if (curTask == null) {
+				running.set(false);
+				return;
 			}
 			if (!Thread.interrupted()) {
-				RobotLog.vv(TAG, "%s: running %s", name, curTask);
+				RobotLog.vv(TAG, "%s: running %s", name, MoreReflect.getInformativeName(curTask));
 				curTask.run();
 			}
 		} catch (InterruptedException ignored) {}
 	}
 }
-	
-

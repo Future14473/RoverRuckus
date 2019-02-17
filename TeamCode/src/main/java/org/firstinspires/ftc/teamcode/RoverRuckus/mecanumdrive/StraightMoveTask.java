@@ -15,14 +15,14 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENC
  * moves the robot's wheels uniformly.
  * For moving or turning.
  */
-public class OldStraightMoveTask extends TaskAdapter {
+public class StraightMoveTask extends TaskAdapter {
 	public final static double           TURN_MULT = 1205;
-	//change to tweak "rotate x
+	//change to tweak "turn x
 	// deg" precisely.   Degrees wheel turn per radian robot turn
 	public final static double           MOVE_MULT = 4450;
 	//change to tweak "move x
 	// meters" precisely. Degrees wheel turn per yard robot move
-	protected final     IRobot           robot;
+	private final       IRobot           robot;
 	// per
 	// unit.
 	//TODO: Make above protected
@@ -33,7 +33,7 @@ public class OldStraightMoveTask extends TaskAdapter {
 	private             MotorSetPosition targPos;
 	private             MotorSetPosition curPos;
 	
-	OldStraightMoveTask(
+	StraightMoveTask(
 			IRobot robot, MotorSetPower targPower, double mult, double speed) {
 		this.targPower = targPower;
 		this.speed = speed;
@@ -78,7 +78,7 @@ public class OldStraightMoveTask extends TaskAdapter {
 		return getMaxOff() < motors.getTargetPositionTolerance() * 2;
 	}
 	
-	protected void setPower(double avgProgress) {
+	private void setPower(double avgProgress) {
 		double[] power = new double[4];
 		for (int i = 0; i < 4; i++) {
 			power[i] = (targPower.getPower(i) *

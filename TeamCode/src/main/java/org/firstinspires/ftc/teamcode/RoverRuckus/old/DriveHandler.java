@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Separate utility class to handle omnidirectional motion on mecanum wheels.
  */
+@SuppressWarnings("ALL")
 public class DriveHandler {
 	private static final MotorPowerSet   ZERO      =
 			new MotorPowerSet(0, 0, 0, 0);
@@ -16,7 +17,7 @@ public class DriveHandler {
 	//change to tweak "move x meters"
 	// precisely. Degrees wheel turn per unit.
 	static               double          TURN_MULT = 1205;
-	//change to tweak "rotate x deg" precisely
+	//change to tweak "turn x deg" precisely
 	// .   Degrees wheel turn per
 	private final        Object          moveLock  = new Object();
 	private final        Object          doneLock  = new Object();
@@ -54,12 +55,14 @@ public class DriveHandler {
 	DriveHandler(OldRobot r) {
 		this(r.leftFront, r.rightFront, r.leftBack, r.rightBack);
 	}
-	
-	void setModeEncoder() {
-		for (int i = 0; i < 4; i++) {
-			motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		}
-	}
+
+// --Commented out by Inspection START (2/16/2019 9:16 PM):
+//	void setModeEncoder() {
+//		for (int i = 0; i < 4; i++) {
+//			motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//		}
+//	}
+// --Commented out by Inspection STOP (2/16/2019 9:16 PM)
 	
 	/**
 	 * Stops the MoveThread. For use in non-linear OpMode.
@@ -117,7 +120,7 @@ public class DriveHandler {
 	}
 	
 	/**
-	 * ads a move task to rotate in place a specified number of degrees,
+	 * ads a move task to turn in place a specified number of degrees,
 	 * positive or negative.
 	 */
 	public void turn(double degrees, double speed) throws InterruptedException {

@@ -11,7 +11,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODE
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
-public class PrintedRobot extends SheetMetalRobot { //extend to keep functionality and not
+public class PrintedRobot extends BaseRobot { //extend to keep functionality and not
 	// destroy the world with errors.
 	
 	public final DcMotor hook, scooper, collectArm, scoreArm;
@@ -22,7 +22,7 @@ public class PrintedRobot extends SheetMetalRobot { //extend to keep functionali
 	private      MotorSetPower pastPower = MotorSetPower.ZERO;
 	
 	public PrintedRobot(HardwareMap hardwareMap) {
-		super(hardwareMap, 0);
+		super(hardwareMap);
 		pastTime = System.nanoTime();
 		
 		hook = hardwareMap.get(DcMotor.class, "Hook");
@@ -67,7 +67,7 @@ public class PrintedRobot extends SheetMetalRobot { //extend to keep functionali
 		long curTime = System.nanoTime();
 		MotorSetPower actualPower = MotorSetPower.calcPolarNonstandard(direction, speed, turnRate)
 		                                         .rampFrom(pastPower,
-		                                                   RAMP_RATE / 1e9 * (curTime-pastTime));
+		                                                   RAMP_RATE / 1e9 * (curTime - pastTime));
 		pastTime = curTime;
 		pastPower = actualPower;
 		wheels.setPower(actualPower);
