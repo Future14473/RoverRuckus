@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.jetbrains.annotations.Nullable;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 
@@ -57,8 +56,8 @@ public class LimitedMotor {
 	}
 	
 	private void setPowerLimited(
-			double power, @Nullable Integer lowerLimit,
-			@Nullable Integer upperLimit, boolean override) {
+			double power, Integer lowerLimit,
+			Integer upperLimit, boolean override) {
 		if (lowerLimit == null) lowerLimit = this.lowerLimit;
 		if (upperLimit == null) upperLimit = this.upperLimit;
 		State state = State.NONE;

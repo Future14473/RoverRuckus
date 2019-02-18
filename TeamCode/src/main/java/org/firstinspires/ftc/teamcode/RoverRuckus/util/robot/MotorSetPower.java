@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.robot;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
-
 import java.util.Arrays;
 
 /**
@@ -17,6 +15,9 @@ public final class MotorSetPower {
 	public static final MotorSetPower TURN = new MotorSetPower(1, -1, 1, -1);
 	private final       double[]      power;
 	
+	/**
+	 * Construct from four power levels.
+	 */
 	private MotorSetPower(double fl, double fr, double bl, double br) {
 		this.power = new double[]{fl, fr, bl, br};
 	}
@@ -123,10 +124,10 @@ public final class MotorSetPower {
 			if (turnRate == 1) return TURN;
 		}
 		double robotAngle = direction - Math.PI / 4;
-		double v1 = moveSpeed * Math.cos(robotAngle) + turnRate;
-		double v2 = moveSpeed * Math.sin(robotAngle) - turnRate;
-		double v3 = moveSpeed * Math.sin(robotAngle) + turnRate;
-		double v4 = moveSpeed * Math.cos(robotAngle) - turnRate;
+		double v1 = moveSpeed * Math.cos(robotAngle) - turnRate;
+		double v2 = moveSpeed * Math.sin(robotAngle) + turnRate;
+		double v3 = moveSpeed * Math.sin(robotAngle) - turnRate;
+		double v4 = moveSpeed * Math.cos(robotAngle) + turnRate;
 		return new MotorSetPower(v1, v2, v3, v4);
 	}
 	
@@ -151,7 +152,15 @@ public final class MotorSetPower {
 		return new MotorSetPower(power);
 	}
 	
-	public static MotorSetPower fromXYT(XY moveRate, double turnRate) {
-		return fromXYT(moveRate.x, moveRate.y, turnRate);
+	/**
+	 * Construct from diagonal components: less intermediary math.
+	 *
+	 * @param leftRate  The rate at which to move on the left diagonal
+	 * @param rightRate The rate at which to move on the right diagonal
+	 * @param turnRate  The rate at which to turn the robot
+	 */
+	public static MotorSetPower fromDiagonals(double rightRate, double leftRate, double turnRate) {
+		return new MotorSetPower(rightRate - turnRate, leftRate + turnRate, leftRate - turnRate,
+		                         rightRate + turnRate);
 	}
 }

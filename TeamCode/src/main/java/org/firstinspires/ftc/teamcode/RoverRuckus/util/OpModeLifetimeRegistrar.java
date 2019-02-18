@@ -22,7 +22,7 @@ public class OpModeLifetimeRegistrar {
 	 * @param stoppable to be stopped when an OpMode ends
 	 */
 	public static void register(Stoppable stoppable) {
-		register(stoppable, MoreReflect.getInformativeName(stoppable));
+		register(stoppable, Reflections.getInformativeName(stoppable));
 	}
 	
 	/**
@@ -53,12 +53,12 @@ public class OpModeLifetimeRegistrar {
 				}
 				
 				private void stop() {
-					RobotLog.vv(TAG, "Stopping: %s", name);
+					RobotLog.dd(TAG, "Stopping %s", name);
 					stoppable.stop();
 					opModeManager.unregisterListener(this);
 				}
 			});
-			RobotLog.vv(TAG, "Registered: %s", name);
+			RobotLog.dd(TAG, "Registered %s", name);
 		} else {
 			throw new RuntimeException("No OpMode manager");
 		}

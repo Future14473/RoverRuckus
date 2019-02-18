@@ -38,8 +38,8 @@ public class MecanumDrive extends TaskProgram {
 	private final        IRobot     robot;
 	private final        MotorSet   wheels;
 	
-	private final PIDMoveController moveController =
-			new PIDMoveController(RAMP_RATE);
+	private final PIDMoveCalculator moveController =
+			new PIDMoveCalculator(RAMP_RATE);
 	
 	private double targetAngle = 0;
 	

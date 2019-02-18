@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.SheetMetalRobot;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.shared.Constants.*;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.*;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.Button.State.*;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State.LOWER;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State.UPPER;

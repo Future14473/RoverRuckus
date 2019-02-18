@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.tasks;
 
 import com.qualcomm.robotcore.util.RobotLog;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.MoreReflect;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OpModeLifetimeRegistrar;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.Reflections;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -127,7 +127,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 				}
 				for (Task onDoneTask : onDoneTasks) {
 					RobotLog.vv(TAG, "%s: running onDoneTask %s", name,
-					            MoreReflect.getInformativeName(onDoneTask));
+					            Reflections.getInformativeName(onDoneTask));
 					onDoneTask.run();
 				}
 			}
@@ -137,7 +137,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 				return;
 			}
 			if (!Thread.interrupted()) {
-				RobotLog.vv(TAG, "%s: running %s", name, MoreReflect.getInformativeName(curTask));
+				RobotLog.vv(TAG, "%s: running %s", name, Reflections.getInformativeName(curTask));
 				curTask.run();
 			}
 		} catch (InterruptedException ignored) {}

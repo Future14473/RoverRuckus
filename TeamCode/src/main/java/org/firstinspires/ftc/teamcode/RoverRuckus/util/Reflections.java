@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
-public class MoreReflect {
-	private MoreReflect() {
+public class Reflections {
+	private Reflections() {
 	}
 	
 	private static String extractSimpleName(String fullName) {

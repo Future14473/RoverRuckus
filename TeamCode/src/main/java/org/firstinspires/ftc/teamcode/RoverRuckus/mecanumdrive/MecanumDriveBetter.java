@@ -3,15 +3,13 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 import android.support.annotation.CallSuper;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.Task;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSet;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
-
-import java.util.Objects;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 
@@ -27,21 +25,18 @@ public class MecanumDriveBetter extends TaskProgram {
 	private static final AngleUnit    ourAngleUnit    = AngleUnit.RADIANS;
 	private static final DistanceUnit ourDistanceUnit = DistanceUnit.INCH;
 	
-	private final Parameters        parameters;
-	private final IRobot            robot;
-	private final MotorSet          wheels;
-	private final LocationTracker   locationTracker;
-	private final PIDMoveController moveController;
-	private       MoveTask          adjustmentTask;
+	private final Parameters          parameters;
+	private final MotorSet            wheels;
+	private final RobotMoveController moveController;
+	private       MoveTask            adjustmentTask;
 	
 	public MecanumDriveBetter(IRobot robot, Parameters parameters) {
 		super("MecanumDrive", true);
-		this.robot = Objects.requireNonNull(robot);
 		this.parameters = parameters.clone();
 		this.wheels = robot.getWheels();
-		moveController = new PIDMoveController(this.parameters.maxAngularAcceleration,
-		                                       this.parameters.maxTranslationalAcceleration);
-		locationTracker = new LocationTracker(parameters.ticksPerUnit);
+		moveController = new RobotMoveController(robot, parameters.encoderTicksPerUnit,
+		                                         parameters.maxAngularAcceleration,
+		                                         parameters.maxTranslationalAcceleration);
 		init();
 	}
 	
@@ -186,7 +181,7 @@ public class MecanumDriveBetter extends TaskProgram {
 	}
 	
 	private void updateLocation() {
-		locationTracker.updateLocation(robot.getAngle(), wheels.getCurrentPosition());
+		moveController.updateLocation();
 	}
 	
 	private class ChangeTargetLocationTask implements Task {
@@ -208,8 +203,8 @@ public class MecanumDriveBetter extends TaskProgram {
 		
 		@Override
 		public void run() {
-			locationTracker.addToTargetAngle(toTurn);
-			locationTracker.addToTargetLocation(toTranslate);
+			moveController.addToTargetAngle(toTurn);
+			moveController.addToTargetLocation(toTranslate);
 		}
 		
 		@Override
@@ -268,23 +263,19 @@ public class MecanumDriveBetter extends TaskProgram {
 		public void start() {
 			//reset lastAngle and motorPos
 			//update targetLocation and Angle
-			locationTracker.addToTargetAngle(toTurn);
-			locationTracker.addToTargetLocation(toTranslate);
+			moveController.addToTargetAngle(toTurn);
+			moveController.addToTargetLocation(toTranslate);
 			wheels.setMode(RUN_USING_ENCODER);
 		}
 		
 		@Override
 		public boolean loop() {
-			updateLocation();
-			MotorSetPower output = moveController.getPower(locationTracker,
-			                                               maxAngularSpeed,
-			                                               maxTranslationalSpeed);
-			wheels.setPower(output);
+			moveController.updateAndMove(maxAngularSpeed, maxTranslationalSpeed);
 			boolean hit = (translationalTolerance <= 0 ||
-			               locationTracker.getLocationError().magnitude() <
+			               moveController.getLocationError().magnitude() <
 			               translationalTolerance) &&
 			              (angularTolerance <= 0 ||
-			               Math.abs(locationTracker.getAngularError()) < angularTolerance);
+			               Math.abs(moveController.getAngularError()) < angularTolerance);
 			if (hit) numConsecutive++;
 			else numConsecutive = 0;
 			return numConsecutive >= consecutive;
@@ -303,15 +294,15 @@ public class MecanumDriveBetter extends TaskProgram {
 		public static final DistanceUnit distanceUnit = ourDistanceUnit;
 		public static final AngleUnit    angleUnit    = ourAngleUnit;
 		
-		public double  ticksPerUnit                 = 125;
-		public double  maxAngularAcceleration       = 3;
-		public double  maxTranslationalAcceleration = 3;
+		public double  encoderTicksPerUnit          = Constants.ENCODER_TICKS_PER_INCH;
+		public double  maxAngularAcceleration       = Constants.DEFAULT_MAX_ACCELERATION;
+		public double  maxTranslationalAcceleration = Constants.DEFAULT_MAX_ACCELERATION;
 		public double  angularToleranceCoarse       = 7;
 		public double  angularToleranceFine         = 1;
 		public double  translationalToleranceCoarse = 0.1;
 		public double  translationalToleranceFine   = 0.03;
-		public double  idleAngularSpeedMult         = 0.5;
-		public double  idleTranslationalSpeedMult   = 0.5;
+		public double  idleAngularSpeedMult         = 0.3;
+		public double  idleTranslationalSpeedMult   = 0.3;
 		public int     consecutiveCoarse            = 2;
 		public int     consecutiveFine              = 5;
 		public boolean adjustAtEnd                  = false;

@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
+
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class PIDControl {
-	private static final double MAX_ELAPSED_TIME  = 0.15;
+public class PIDController {
 	private static final double ELAPSED_TIME_MULT = 100;
-	public               double p, i, d;
+	
+	public double p, i, d;
 	private double maxOutputRamp, maxError;
 	private double minOutput, maxOutput;
 	private double  maxIOutput;
@@ -17,13 +20,17 @@ public class PIDControl {
 	private double  lastInput  = 0;
 	private double  lastOutput = 0;
 	
-	public PIDControl(double p, double i, double d) {
+	public PIDController(double p, double i, double d) {
 		this.p = p;
 		this.i = i;
 		this.d = d;
 	}
 	
-	public PIDControl(
+	public PIDController(PIDCoefficients coefficients) {
+		this(coefficients.p, coefficients.i, coefficients.d);
+	}
+	
+	public PIDController(
 			double p, double i, double d, double maxOutputRamp, double maxError,
 			double minOutput, double maxOutput, double maxIOutput) {
 		this.p = p;
@@ -102,24 +109,24 @@ public class PIDControl {
 	 */
 	@SuppressWarnings("Duplicates")
 	public double getOutput(double input, double elapsedTime) {
-		if (noPrev || elapsedTime > MAX_ELAPSED_TIME) {
+		if (noPrev || elapsedTime > Constants.MAX_ELAPSED_TIME) {
 			lastInput = input;
-			elapsedTime = MAX_ELAPSED_TIME;
+			elapsedTime = 0;
 			noPrev = false;
 		}
-		elapsedTime *= ELAPSED_TIME_MULT;
 		double error = target - input;
 		if (reversed) error *= -1;
 		if (maxError != 0) error = limit(error, maxError);
 		if (maxIOutput != 0) iOutput = limit(iOutput, maxIOutput);
 		
 		double p = this.p * error;
-		double i = this.i * this.iOutput * elapsedTime;
-		double d = -this.d * (input - lastInput) / elapsedTime;
+		double i = this.i * this.iOutput * elapsedTime * ELAPSED_TIME_MULT;
+		double d = elapsedTime == 0 ? 0 :
+		           -this.d * (input - lastInput) / elapsedTime * ELAPSED_TIME_MULT;
 		double output = p + i + d;
 		
 		
-		double ramp = maxOutputRamp * elapsedTime / ELAPSED_TIME_MULT;
+		double ramp = maxOutputRamp * elapsedTime;
 		if (minOutput != maxOutput && (output < minOutput || output > maxOutput)) {
 			iOutput = 0;
 			output = limit(output, minOutput, maxOutput);

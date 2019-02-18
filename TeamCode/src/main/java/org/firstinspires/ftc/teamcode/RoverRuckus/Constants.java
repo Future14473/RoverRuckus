@@ -1,9 +1,6 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.shared;
+package org.firstinspires.ftc.teamcode.RoverRuckus;
 
 public class Constants {
-	private Constants() {
-	}
-	
 	//Encoder limits
 	//"at home" position for all encoders
 	public static final int    MOTOR_MIN                     = 100;
@@ -60,4 +57,14 @@ public class Constants {
 	public static final double IDLE_COLLECT_ARM_POWER        = 0.05;
 	public static final double IDLE_SCORE_ARM_POWER          = 0.1;
 	public static final double IDLE_SCOOPER_POWER            = 0.6;
+	//For movement tracking
+	public static final double ENCODER_TICKS_PER_INCH        = 125;
+	public static final double DEFAULT_MAX_ACCELERATION      = 5;
+	//For movePID
+	public static final double MAX_ANGULAR_ERROR             = Math.PI / 4;
+	public static final double MAX_TRANSLATIONAL_ERROR       = 12;
+	public static final double MAX_ELAPSED_TIME              = 0.1;
+	
+	private Constants() {
+	}
 }

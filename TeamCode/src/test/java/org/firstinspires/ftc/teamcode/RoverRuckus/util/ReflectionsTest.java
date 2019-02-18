@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MoreReflectTest {
+public class ReflectionsTest {
 	private TestFace testFace;
 	
 	@Before
@@ -18,8 +18,8 @@ public class MoreReflectTest {
 	
 	@Test
 	public void getName() {
-		System.out.println(MoreReflect.getInformativeName(testFace));
-		System.out.println(MoreReflect.getInformativeName((TestFace) () -> {}));
+		System.out.println(Reflections.getInformativeName(testFace));
+		System.out.println(Reflections.getInformativeName((TestFace) () -> {}));
 	}
 	
 	interface TestFace {

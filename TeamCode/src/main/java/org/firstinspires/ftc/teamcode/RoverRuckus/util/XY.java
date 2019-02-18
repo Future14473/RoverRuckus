@@ -37,15 +37,15 @@ public final class XY {
 		return Math.hypot(x, y);
 	}
 	
-	public XY rotate(double radians) {
-		double cosA = Math.cos(radians);
-		double sinA = Math.sin(radians);
+	public XY rotate(double angleRadians) {
+		double cosA = Math.cos(angleRadians);
+		double sinA = Math.sin(angleRadians);
 		return new XY(this.x * cosA - this.y * sinA, this.x * sinA + this.y * cosA);
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("{%.5f, %.5f}", x, y);
+		return String.format("XY{%.5f, %.5f}", x, y);
 	}
 	
 	public XY limitMagnitudeTo(double max) {
