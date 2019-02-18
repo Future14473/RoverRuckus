@@ -38,21 +38,22 @@ public class PIDMoveCalculator {
 			double maxAngularSpeed, double maxTranslationSpeed) {
 		anglePID.setMaxOutputs(maxAngularSpeed);
 		anglePID.setTarget(targetAngle);
-		XY diff = targetLocation.subtract(currentLocation).rotate(-currentAngle - Math.PI / 4);
+		XY diagonalDiff =
+				targetLocation.subtract(currentLocation).rotate(-currentAngle - Math.PI / 4);
 		//rotate together
 		//   (\) cos [x] is rightDiag, sin [y] is leftDiag
 		//            1,4                  2,3
 		rightDiagPID.setMaxOutputs(maxTranslationSpeed);
 		leftDiagPID.setMaxOutputs(maxTranslationSpeed);
-		rightDiagPID.setTarget(diff.x);
-		leftDiagPID.setTarget(diff.y);
+		rightDiagPID.setTarget(diagonalDiff.x);
+		leftDiagPID.setTarget(diagonalDiff.y);
 		
 		double elapsedTime = this.elapsedTime.seconds();
 		this.elapsedTime.reset();
 		
 		double turnRate = anglePID.getOutput(currentAngle, elapsedTime);
-		double rightRate = rightDiagPID.getOutput(0, elapsedTime); //1,4
-		double leftRate = leftDiagPID.getOutput(0, elapsedTime); //2,3
+		double rightRate = rightDiagPID.getOutput(0, elapsedTime);
+		double leftRate = leftDiagPID.getOutput(0, elapsedTime);
 		return MotorSetPower.fromDiagonals(rightRate, leftRate, turnRate);
 	}
 	

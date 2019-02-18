@@ -27,8 +27,8 @@ public final class MotorSetPower {
 	}
 	
 	private MotorSetPower(double[] power) {
-		if (power.length != 4) throw new AssertionError();
-		this.power = power.clone();
+		//if (power.length != 4) throw new AssertionError();
+		this.power = power;
 	}
 	
 	public double getPower(int i) {
@@ -61,6 +61,7 @@ public final class MotorSetPower {
 	 * difference between this power and given power is no greater
 	 * than maxAcceleration.
 	 */
+	@Deprecated
 	public MotorSetPower rampFrom(MotorSetPower pastPower, double rampRate) {
 		if (rampRate <= 0) throw new IllegalArgumentException();
 		double[] o = new double[4];
@@ -93,6 +94,10 @@ public final class MotorSetPower {
 		return String.format("MotorSetPower: {%s}", Arrays.toString(power));
 	}
 	
+	private static MotorSetPower fromPowers(double fl, double fr, double bl, double br) {
+		return internalFromArray(new double[]{fl, fr, bl, br});
+	}
+	
 	/**
 	 * Creates a  MotorSetPower that represents moving the robot in the
 	 * specified direction, turnRate, and speed;
@@ -103,6 +108,7 @@ public final class MotorSetPower {
 	 * @param turnRate  the rate at which the robot turns
 	 * @return the calculated MotorSetPower
 	 */
+	@Deprecated
 	public static MotorSetPower fromPolarNonStandard(
 			double direction, double moveSpeed, double turnRate) {
 		return fromPolar(Math.PI / 2 - direction, moveSpeed, turnRate);
@@ -132,27 +138,6 @@ public final class MotorSetPower {
 	}
 	
 	/**
-	 * Creates a new MotorSetPower that represents moving the robot in the
-	 * specified direction in rectilinear coordinates.
-	 *
-	 * @param x        the x component at which to move the robot
-	 * @param y        the y component at which to move the robot
-	 * @param turnRate the wait at which the robot turns
-	 * @return the calculated MotorSetPower
-	 */
-	public static MotorSetPower fromXYT(
-			double x, double y, double turnRate) {
-		return fromPolar(Math.atan2(y, x), Math.hypot(x, y), turnRate);
-	}
-	
-	public static MotorSetPower fromArray(double[] power) {
-		if (power.length != 4) throw new IllegalArgumentException();
-		if (Arrays.equals(power, ZERO.power)) return ZERO;
-		if (Arrays.equals(power, TURN.power)) return TURN;
-		return new MotorSetPower(power);
-	}
-	
-	/**
 	 * Construct from diagonal components: less intermediary math.
 	 *
 	 * @param leftRate  The rate at which to move on the left diagonal
@@ -160,7 +145,18 @@ public final class MotorSetPower {
 	 * @param turnRate  The rate at which to turn the robot
 	 */
 	public static MotorSetPower fromDiagonals(double rightRate, double leftRate, double turnRate) {
-		return new MotorSetPower(rightRate - turnRate, leftRate + turnRate, leftRate - turnRate,
-		                         rightRate + turnRate);
+		return fromPowers(rightRate - turnRate, leftRate + turnRate, leftRate - turnRate,
+		                  rightRate + turnRate);
+	}
+	
+	private static MotorSetPower internalFromArray(double[] power) {
+		if (Arrays.equals(power, ZERO.power)) return ZERO;
+		if (Arrays.equals(power, TURN.power)) return TURN;
+		return new MotorSetPower(power);
+	}
+	
+	public static MotorSetPower fromArray(double[] power) {
+		if (power.length != 4) throw new IllegalArgumentException();
+		return internalFromArray(power.clone());
 	}
 }

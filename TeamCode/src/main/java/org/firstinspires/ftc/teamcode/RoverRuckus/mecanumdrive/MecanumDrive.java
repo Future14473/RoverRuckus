@@ -38,7 +38,7 @@ public class MecanumDrive extends TaskProgram {
 	private final        IRobot     robot;
 	private final        MotorSet   wheels;
 	
-	private final PIDMoveCalculator moveController =
+	private final PIDMoveCalculator moveCalculator =
 			new PIDMoveCalculator(RAMP_RATE);
 	
 	private double targetAngle = 0;
@@ -134,7 +134,7 @@ public class MecanumDrive extends TaskProgram {
 		@Override
 		public boolean loop() {
 			double curAngle = getCurAngle();
-			MotorSetPower output = moveController.getPower(XY.ZERO,
+			MotorSetPower output = moveCalculator.getPower(XY.ZERO,
 			                                               XY.ZERO,
 			                                               targetAngle,
 			                                               curAngle,

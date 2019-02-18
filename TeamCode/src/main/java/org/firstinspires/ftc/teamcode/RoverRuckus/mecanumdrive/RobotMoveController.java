@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
  * and updating target location and angles and moving robot motors
  * to get there.
  */
+@SuppressWarnings("unused")
 public class RobotMoveController {
 	
 	private final PIDMoveCalculator pidMoveCalculator;
@@ -47,7 +48,6 @@ public class RobotMoveController {
 				targetAngle,
 				locationTracker.getCurrentAngle(),
 				maxAngularSpeed, maxTranslationSpeed));
-		
 	}
 	
 	public void updateAndMove(double maxAngularSpeed, double maxTranslationalSpeed) {
