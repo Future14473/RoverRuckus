@@ -41,7 +41,7 @@ public final class MotorSetPower {
 	 * @param maxPower
 	 */
 	
-	public MotorSetPower scaleDownTo(double maxPower) {
+	public MotorSetPower limitMagnitudeTo(double maxPower) {
 		if (maxPower <= 0) throw new IllegalArgumentException();
 		if (this == ZERO) return this;
 		double max = maxPower;
@@ -79,8 +79,8 @@ public final class MotorSetPower {
 	 * @return a new MotorSetPower which is this's power multiplied by mult
 	 */
 	
-	public MotorSetPower scaleTo(double mult) {
-		if (this == ZERO) return ZERO;
+	public MotorSetPower scale(double mult) {
+		if (this == ZERO || mult == 0) return ZERO;
 		return new MotorSetPower(power[0] * mult,
 		                         power[1] * mult,
 		                         power[2] * mult,
@@ -102,9 +102,9 @@ public final class MotorSetPower {
 	 * @param turnRate  the rate at which the robot turns
 	 * @return the calculated MotorSetPower
 	 */
-	public static MotorSetPower calcPolarNonstandard(
+	public static MotorSetPower fromPolarNonStandard(
 			double direction, double moveSpeed, double turnRate) {
-		return calcPolar(Math.PI / 2 - direction, moveSpeed, turnRate);
+		return fromPolar(Math.PI / 2 - direction, moveSpeed, turnRate);
 	}
 	
 	/**
@@ -112,11 +112,11 @@ public final class MotorSetPower {
 	 * specified direction, turnRate, and speed.
 	 *
 	 * @param direction the direction to move the robot, in radians
-	 * @param moveSpeed the speed of all these operations
-	 * @param turnRate  the rate at which the robot turns
+	 * @param moveSpeed the speed to move the robot
+	 * @param turnRate  the rate at which the robot turns while moving
 	 * @return the calculated MotorSetPower
 	 */
-	public static MotorSetPower calcPolar(
+	public static MotorSetPower fromPolar(
 			double direction, double moveSpeed, double turnRate) {
 		if (moveSpeed == 0) {
 			if (turnRate == 0) return ZERO;
@@ -134,14 +134,14 @@ public final class MotorSetPower {
 	 * Creates a new MotorSetPower that represents moving the robot in the
 	 * specified direction in rectilinear coordinates.
 	 *
-	 * @param direction the direction to move the robot
-	 * @param moveSpeed the speed of all these operations
-	 * @param turnRate  the wait at which the robot turns
+	 * @param x        the x component at which to move the robot
+	 * @param y        the y component at which to move the robot
+	 * @param turnRate the wait at which the robot turns
 	 * @return the calculated MotorSetPower
 	 */
-	public static MotorSetPower calcRectilinear(
+	public static MotorSetPower fromXYT(
 			double x, double y, double turnRate) {
-		return calcPolar(Math.atan2(y, x), Math.hypot(x, y), turnRate);
+		return fromPolar(Math.atan2(y, x), Math.hypot(x, y), turnRate);
 	}
 	
 	public static MotorSetPower fromArray(double[] power) {
@@ -152,6 +152,6 @@ public final class MotorSetPower {
 	}
 	
 	public static MotorSetPower fromXYT(XY moveRate, double turnRate) {
-		return calcRectilinear(moveRate.x, moveRate.y, turnRate);
+		return fromXYT(moveRate.x, moveRate.y, turnRate);
 	}
 }

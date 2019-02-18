@@ -59,13 +59,13 @@ public class PrintedRobot extends BaseRobot { //extend to keep functionality and
 //	 * turnRate, and speed.
 //	 */
 //	public void moveAt(double direction, double moveSpeed, double turnRate) {
-//		pastPower = MotorSetPower.calcPolarNonstandard(direction, moveSpeed, turnRate);
+//		pastPower = MotorSetPower.fromPolarNonStandard(direction, moveSpeed, turnRate);
 //		wheels.setPower(pastPower);
 //	}
 	
 	public void smoothMoveAt(double direction, double speed, double turnRate) {
 		long curTime = System.nanoTime();
-		MotorSetPower actualPower = MotorSetPower.calcPolarNonstandard(direction, speed, turnRate)
+		MotorSetPower actualPower = MotorSetPower.fromPolarNonStandard(direction, speed, turnRate)
 		                                         .rampFrom(pastPower,
 		                                                   RAMP_RATE / 1e9 * (curTime - pastTime));
 		pastTime = curTime;

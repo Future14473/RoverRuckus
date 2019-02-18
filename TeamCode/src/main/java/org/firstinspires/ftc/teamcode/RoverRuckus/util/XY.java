@@ -20,10 +20,12 @@ public final class XY {
 	}
 	
 	public XY add(XY other) {
+		if (other == null) return this;
 		return new XY(this.x + other.x, this.y + other.y);
 	}
 	
 	public XY subtract(XY other) {
+		if (other == null) return this;
 		return new XY(this.x - other.x, this.y - other.y);
 	}
 	
@@ -43,7 +45,7 @@ public final class XY {
 	
 	@Override
 	public String toString() {
-		return String.format("{%s, %s}", x, y);
+		return String.format("{%.5f, %.5f}", x, y);
 	}
 	
 	public XY limitMagnitudeTo(double max) {
@@ -53,14 +55,21 @@ public final class XY {
 	}
 	
 	public XY rampTo(XY other, double rampRate) {
+		if (other == null) return rampTo(ZERO, rampRate);
 		return other.subtract(this).limitMagnitudeTo(rampRate).add(this);
 	}
 	
 	public double angleTo(XY o) {
+		if (o == null) return angle();
 		return Math.atan2(this.x * o.y - this.y * o.x, this.x * o.x + this.y * o.y);
 	}
 	
+	public double angle() {
+		return Math.atan2(y, x);
+	}
+	
 	public double dot(XY o) {
+		if (o == null) return 0;
 		return x * o.x + y * o.y;
 	}
 	

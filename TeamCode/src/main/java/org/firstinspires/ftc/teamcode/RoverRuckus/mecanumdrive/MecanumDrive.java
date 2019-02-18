@@ -12,7 +12,7 @@ import java.util.Objects;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower.TURN;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower.calcPolarNonstandard;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower.fromPolarNonStandard;
 
 /**
  * A task program that controls the autonomous motion of wheels.
@@ -70,7 +70,7 @@ public class MecanumDrive extends TaskProgram {
 	public void move(double direction, double distance, double speed) {
 		direction = Math.toRadians(direction);
 		add(new StraightMoveTask(robot,
-		                         calcPolarNonstandard(direction, 1, 0),
+		                         fromPolarNonStandard(direction, 1, 0),
 		                         distance * StraightMoveTask.MOVE_MULT,
 		                         speed));
 	}
@@ -93,7 +93,7 @@ public class MecanumDrive extends TaskProgram {
 		if (!parameters.useGyro) {
 			degreesToTurn = Math.toRadians(degreesToTurn);
 			add(new StraightMoveTask(robot,
-			                         TURN.scaleTo(Math.signum(degreesToTurn)),
+			                         TURN.scale(Math.signum(degreesToTurn)),
 			                         Math.abs(degreesToTurn) * StraightMoveTask.TURN_MULT,
 			                         speed));
 		} else {

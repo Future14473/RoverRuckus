@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPosition;
 
 public class LocationTracker {
 	private final double ticksPerUnit;
-	private       double targetAngle, currentAngle, lastAngle;
+	private       double targetAngle, lastAngle;
 	private XY targetLocation, currentLocation;
 	private MotorSetPosition lastMotorPos = null;
 	
@@ -34,20 +34,25 @@ public class LocationTracker {
 	}
 	
 	public double getCurrentAngle() {
-		return currentAngle;
+		return lastAngle;
+	}
+	
+	public void reset(double currentAngle, MotorSetPosition currentMotorPos) {
+		this.lastAngle = currentAngle;
+		this.lastMotorPos = currentMotorPos;
 	}
 	
 	public void updateLocation(double currentAngle, MotorSetPosition currentMotorPos) {
-		this.currentAngle = currentAngle;
+		
 		MotorSetPosition deltaMotorPos = currentMotorPos.subtract(lastMotorPos);
-		XY deltaLocation = deltaMotorToDeltaLocation(deltaMotorPos);
-		currentLocation = currentLocation.add(deltaLocation);
+		XY deltaLocation = deltaMotorToDeltaLocation(deltaMotorPos, currentAngle);
+		currentLocation = deltaLocation.add(currentLocation);
 		
 		lastAngle = currentAngle;
 		lastMotorPos = currentMotorPos;
 	}
 	
-	private XY deltaMotorToDeltaLocation(MotorSetPosition delta) {
+	private XY deltaMotorToDeltaLocation(MotorSetPosition delta, double currentAngle) {
 		double d1 = delta.get(0), d2 = delta.get(1), d3 = delta.get(2), d4 = delta.get(3);
 		double moveAngle = Math.atan2(d2 + d3, d1 + d4);
 		double dist = Math.hypot(d2 + d3, d1 + d4) / ticksPerUnit;
@@ -56,12 +61,12 @@ public class LocationTracker {
 		double x;
 		double y;
 		// turn on circle from (1,0) of radius r (dist/turn) and angle turn.
-		if (Math.abs(turn % (Math.PI * 2)) < 1e-5) {
-			x = 0;
-			y = dist;
+		if (Math.abs(turn) < 1e-5) {
+			x = dist;
+			y = 0;
 		} else {
-			x = dist * (Math.cos(turn) - 1) / turn;
-			y = dist * (Math.sin(turn) / turn);
+			x = dist * (Math.sin(turn) / turn);
+			y = dist * (1 - Math.cos(turn)) / turn;
 		}
 		return new XY(x, y).rotate(moveAngle + lastAngle);
 	}
@@ -71,6 +76,6 @@ public class LocationTracker {
 	}
 	
 	public double getAngularError() {
-		return targetAngle - currentAngle;
+		return targetAngle - lastAngle;
 	}
 }

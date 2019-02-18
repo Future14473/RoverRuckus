@@ -18,7 +18,7 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPowe
  */
 //immutable
 public final class MotorSet implements Iterable<DcMotorEx> {
-	private static final double          MAX_POWER = 0.9;
+	private static final double          MAX_POWER = 0.95;
 	private final        List<DcMotorEx> motors;
 	
 	public MotorSet(DcMotorEx fl, DcMotorEx fr, DcMotorEx bl, DcMotorEx br) {
@@ -38,7 +38,7 @@ public final class MotorSet implements Iterable<DcMotorEx> {
 	 * @param power the power to set the motors
 	 */
 	public void setPower(MotorSetPower power) {
-		power = power.scaleDownTo(MAX_POWER);
+		power = power.limitMagnitudeTo(MAX_POWER);
 		for (int i = 0; i < 4; i++) {
 			motors.get(i).setPower(power.getPower(i));
 		}
@@ -49,7 +49,7 @@ public final class MotorSet implements Iterable<DcMotorEx> {
 	 * position.
 	 *
 	 * @return a MotorSetPosition representing all the motors's current
-	 * position.
+	 * 		position.
 	 */
 	
 	public MotorSetPosition getCurrentPosition() {
@@ -115,11 +115,10 @@ public final class MotorSet implements Iterable<DcMotorEx> {
 	
 	/**
 	 * Returns the target position tolerance of the first motor, in encoder
-	 * ticks, usually indicating what all the
-	 * motors's target position is.
+	 * ticks.
 	 *
 	 * @return the target position tolerance of the first motor, in encoder
-	 * ticks.
+	 * 		ticks.
 	 */
 	public int getTargetPositionTolerance() {
 		return motors.get(0).getTargetPositionTolerance();

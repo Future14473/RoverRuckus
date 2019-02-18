@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.*;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.BaseRobot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.SheetMetalRobot;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
@@ -198,12 +199,13 @@ public class SheetTeleop extends OurLinearOpMode {
 				telemetry.addData("DIRECTION", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
 			}
 			
-			double turnRate = gamepad1.right_stick_x * speedMult;
 			double speed = Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
 			                        1.7) *
 			               speedMult;
-			robot.wheels.setPower(rampedMoveController.getPower(XY.fromPolar(speed, direction),
-			                                                    turnRate));
+			MotorSetPower power = rampedMoveController.getPower(
+					new XY(gamepad1.left_stick_x, -gamepad1.left_stick_y).scale(speedMult),
+					gamepad1.right_stick_x * speedMult);
+			robot.wheels.setPower(power);
 			//hook
 			hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0, gamepad1.dpad_down);
 			if (gp1dpadlr.pressed()) {

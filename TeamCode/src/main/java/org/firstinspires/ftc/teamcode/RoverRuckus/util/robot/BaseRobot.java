@@ -63,6 +63,10 @@ public abstract class BaseRobot implements IRobot {
 	
 	@Override
 	public double getAngle() {
-		return -direction.getAsDouble();
+		return direction.getAsDouble();
+	}
+	
+	public boolean imuInitted() {
+		return imu.isGyroCalibrated();
 	}
 }
