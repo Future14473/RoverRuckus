@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.*;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.BaseRobot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.SheetMetalRobot;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
@@ -18,9 +18,9 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State.UPPER;
 
 @TeleOp(group = "1real", name = "Teleop")
-public class SheetTeleop extends OurLinearOpMode {
+public class TheTeleop extends OurLinearOpMode {
 	//Motors and servos, for readability and functionality
-	private SheetMetalRobot      robot;
+	private CurRobot             robot;
 	private RampedMoveController rampedMoveController =
 			new RampedMoveController(BaseRobot.RAMP_RATE);
 	private LimitedMotor         collectArm, scoreArm, hook;
@@ -56,7 +56,7 @@ public class SheetTeleop extends OurLinearOpMode {
 	
 	@Override
 	protected void initialize() {
-		robot = new SheetMetalRobot(hardwareMap);
+		robot = new CurRobot(hardwareMap);
 		robot.initIMU();
 		robot.wheels.setMode(RUN_USING_ENCODER);
 		robot.wheels.setZeroPowerBehavior(FLOAT);
@@ -76,7 +76,9 @@ public class SheetTeleop extends OurLinearOpMode {
 		while (opModeIsActive()) {
 			//FOR GAMEPAD1, CHANGED BY GAMEPAD2 2 is fast, 1 is normal, 0 is
 			// slow.
-			int speedMode = gamepad1.right_bumper ? 2 : (gamepad1.left_bumper ? 0 : 1);
+			SpeedMode speedMode = gamepad1.right_bumper ?
+			                      SpeedMode.FAST : gamepad1.left_bumper ?
+			                                       SpeedMode.SLOW : SpeedMode.NORMAL;
 			/*----------------*\
 		    |    GAMEPAD 2     |
 			\*----------------*/
@@ -142,7 +144,7 @@ public class SheetTeleop extends OurLinearOpMode {
 				collectDoor.setPosition(COLLECT_DOOR_OPEN); //keep open
 				scoreArm.setPowerLimited(1, null, INITIAL_EXTENSION_SCORE_ARM_);
 				scoreDump.setPosition(SCORE_DUMP_HOME);
-				speedMode = 0; //GO SLOW
+				speedMode = SpeedMode.SLOW; //GO SLOW
 				autoAdvance = scoreArm.getLastState() == UPPER;
 				break;
 			case SCORE:
@@ -156,7 +158,7 @@ public class SheetTeleop extends OurLinearOpMode {
 				} else if (gp2lbp.pressed()) {
 					scoreDump.setPosition(SCORE_DUMP_HOME);
 				}
-				speedMode = 0; // GO SLOW
+				speedMode = SpeedMode.SLOW; // GO SLOW
 				userAdvance = true;
 				break;
 			}
@@ -167,27 +169,27 @@ public class SheetTeleop extends OurLinearOpMode {
 			}
 			//angler always userControlled.
 			angler.setPower(-gamepad2.left_stick_y);
-			telemetry.addData("Prev state: (press B)", armState.prev());
-			telemetry.addData("            ARM STATE", armState);
-			telemetry.addData("Next state  (press A)", armState.next());
+			//encoder reset
 			if (gp2lsb.pressed()) {
 				collectArm.resetEncoder();
 			}
 			if (gp2rsb.pressed()) {
 				scoreArm.resetEncoder();
 			}
+			telemetry.addData("Prev state: (press B)", armState.prev());
+			telemetry.addData("            ARM STATE", armState);
+			telemetry.addData("Next state  (press A)", armState.next());
 			/*-----------------*\
 		    |     GAMEPAD 1     |
 			\* ----------------*/
-			double speedMult = (speedMode == 2) ? SPEED_MULT_FAST :
-			                   (speedMode == 1 ? SPEED_MULT_NORM : SPEED_MULT_SLOW);
 			double direction = Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y);
 			
 			if (gp1b.pressed()) gyroDrive = !gyroDrive;
+			
 			Button.State gp1yState = gp1y.getState();
 			if (gyroDrive) {
 				if (gp1yState == HELD) {
-					speedMult = 0;
+					speedMode = SpeedMode.STOP;
 				} else if (gp1yState == RELEASED) {
 					rotationOffSet = robot.getAngle() + direction;
 				}
@@ -199,12 +201,11 @@ public class SheetTeleop extends OurLinearOpMode {
 				telemetry.addData("DIRECTION", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
 			}
 			
-			double speed = Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
-			                        1.7) *
-			               speedMult;
+			double moveSpeed = Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
+			                            1.7);
 			MotorSetPower power = rampedMoveController.getPower(
-					new XY(gamepad1.left_stick_x, -gamepad1.left_stick_y).scale(speedMult),
-					gamepad1.right_stick_x * speedMult);
+					XY.fromPolar(moveSpeed, direction).scale(speedMode.mult),
+					-gamepad1.right_stick_x * speedMode.mult);
 			robot.wheels.setPower(power);
 			//hook
 			hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0, gamepad1.dpad_down);
@@ -216,7 +217,6 @@ public class SheetTeleop extends OurLinearOpMode {
 		}
 	}
 	
-	@SuppressWarnings("WeakerAccess")
 	private enum ArmState {
 		TO_COLLECT,
 		COLLECT,
@@ -233,6 +233,18 @@ public class SheetTeleop extends OurLinearOpMode {
 		public ArmState prev() {
 			int ord = (this.ordinal() / 2 * 2 - 2 + values.length) % values.length;
 			return values[ord];
+		}
+	}
+	
+	private enum SpeedMode {
+		FAST(SPEED_MULT_FAST),
+		NORMAL(SPEED_MULT_NORM),
+		SLOW(SPEED_MULT_SLOW),
+		STOP(0);
+		public final double mult;
+		
+		SpeedMode(double mult) {
+			this.mult = mult;
 		}
 	}
 }

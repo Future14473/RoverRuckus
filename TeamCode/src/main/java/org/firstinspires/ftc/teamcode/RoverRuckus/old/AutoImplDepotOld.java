@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name = "Auto Next to Depot", group = "Autonomous")
 @Disabled
-public class AutoImplDepot extends AbstractAuto {
+public class AutoImplDepotOld extends AbstractAutoOld {
 	@Override
 	protected void positionForDepot() throws InterruptedException {
 		robot.drive.turn(-135, 10);

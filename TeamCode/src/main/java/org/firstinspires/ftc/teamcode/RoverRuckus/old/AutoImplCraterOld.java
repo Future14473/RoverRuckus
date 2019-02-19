@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name = "Auto Next to Crater", group = "Autonomous")
 @Disabled
-public class AutoImplCrater extends AbstractAuto {
+public class AutoImplCraterOld extends AbstractAutoOld {
 	@Override
 	protected void positionForDepot() throws InterruptedException {
 		robot.drive.turn(47, 10);

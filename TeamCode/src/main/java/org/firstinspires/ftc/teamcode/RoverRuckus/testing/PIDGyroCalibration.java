@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.PrintedRobot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -24,12 +24,12 @@ public class PIDGyroCalibration extends OurLinearOpMode {
 	
 	@Override
 	protected void initialize() throws InterruptedException {
-		PrintedRobot robot = new PrintedRobot(hardwareMap);
+		CurRobot robot = new CurRobot(hardwareMap);
 		robot.initIMU();
 		MecanumDrive.Parameters parameters = new MecanumDrive.Parameters();
 		parameters.useGyro = true;
 		drive = new MecanumDrive(robot, parameters);
-		waitUntil(robot.imu::isGyroCalibrated, 3, SECONDS);
+		waitUntil(robot::imuIsGyroCalibrated, 3, SECONDS);
 	}
 	
 	@Override

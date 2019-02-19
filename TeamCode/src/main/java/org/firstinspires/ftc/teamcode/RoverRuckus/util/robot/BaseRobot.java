@@ -66,7 +66,7 @@ public abstract class BaseRobot implements IRobot {
 		return direction.getAsDouble();
 	}
 	
-	public boolean imuGyroCalibrated() {
+	public boolean imuIsGyroCalibrated() {
 		return imu.isGyroCalibrated();
 	}
 }

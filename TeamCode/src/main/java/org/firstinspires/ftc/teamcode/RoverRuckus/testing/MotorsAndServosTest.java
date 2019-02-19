@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.SheetMetalRobot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 
 @SuppressWarnings("unused")
 @TeleOp(group = "test")
@@ -17,7 +17,7 @@ public class MotorsAndServosTest extends OpMode {
 	
 	@Override
 	public void init() {
-		SheetMetalRobot robot = new SheetMetalRobot(hardwareMap);
+		CurRobot robot = new CurRobot(hardwareMap);
 		motor = robot.scoreArm;
 		//motor.setDirection(DcMotorSimple.Direction.REVERSE);
 		//servo = robot.scoreDump;

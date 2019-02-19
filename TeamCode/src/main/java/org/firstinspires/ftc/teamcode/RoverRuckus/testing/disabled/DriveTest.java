@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.PrintedRobot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 
 @Autonomous
 @Disabled
@@ -13,7 +13,7 @@ public class DriveTest extends OurLinearOpMode {
 	
 	@Override
 	protected void initialize() {
-		PrintedRobot robot = new PrintedRobot(hardwareMap);
+		CurRobot robot = new CurRobot(hardwareMap);
 		drive = new MecanumDrive(robot, new MecanumDrive.Parameters());
 	}
 	

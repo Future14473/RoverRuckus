@@ -8,25 +8,25 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.LocationTracker;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.RampedMoveController;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.SheetMetalRobot;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @TeleOp(group = "test")
 @Disabled
 public class LocationTrackerAndRampedMoveTest extends OurLinearOpMode {
-	private SheetMetalRobot      robot;
+	private CurRobot             robot;
 	private LocationTracker      locationTracker;
 	private RampedMoveController rampedMoveController =
 			new RampedMoveController(Constants.DEFAULT_MAX_ACCELERATION);
 	
 	@Override
 	protected void initialize() throws InterruptedException {
-		robot = new SheetMetalRobot(hardwareMap);
+		robot = new CurRobot(hardwareMap);
 		locationTracker = new LocationTracker(Constants.ENCODER_TICKS_PER_INCH);
 		robot.initIMU();
-		waitUntil(robot::imuGyroCalibrated, 3, SECONDS);
+		waitUntil(robot::imuIsGyroCalibrated, 3, SECONDS);
 	}
 	
 	@Override

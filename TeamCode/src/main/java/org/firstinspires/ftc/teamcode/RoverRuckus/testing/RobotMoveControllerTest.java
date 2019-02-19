@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.RobotMoveControll
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.PrintedRobot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -19,11 +19,11 @@ public class RobotMoveControllerTest extends OurLinearOpMode {
 	
 	@Override
 	protected void initialize() throws InterruptedException {
-		PrintedRobot robot = new PrintedRobot(hardwareMap);
+		CurRobot robot = new CurRobot(hardwareMap);
 		moveController = new RobotMoveController(robot, Constants.ENCODER_TICKS_PER_INCH,
 		                                         2);
 		robot.initIMU();
-		waitUntil(robot::imuGyroCalibrated, 3, SECONDS);
+		waitUntil(robot::imuIsGyroCalibrated, 3, SECONDS);
 	}
 	
 	@Override

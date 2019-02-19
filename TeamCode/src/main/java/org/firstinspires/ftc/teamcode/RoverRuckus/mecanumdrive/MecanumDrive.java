@@ -153,6 +153,12 @@ public class MecanumDrive extends TaskProgram {
 		
 	}
 	
+	@Override
+	public MecanumDrive sleep(long millis) {
+		super.sleep(millis);
+		return this;
+	}
+	
 	public static class Parameters {
 		public boolean useGyro        = false;
 		public int     wheelTolerance = 25;
