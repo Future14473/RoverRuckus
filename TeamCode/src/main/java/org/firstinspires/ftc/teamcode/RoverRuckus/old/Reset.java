@@ -10,7 +10,7 @@ public class Reset extends LinearOpMode {
 	private OldRobot robot = new OldRobot();
 	
 	@Override
-	public void runOpMode() throws InterruptedException {
+	public void runOpMode() {
 		robot.init(hardwareMap);
 		robot.drive.addLinearOpMode(this);
 		waitForStart();
@@ -22,7 +22,8 @@ public class Reset extends LinearOpMode {
 			pastPos = robot.hooke.getCurrentPosition();
 			idle();
 			sleep(100);
-		} while (robot.hooke.getCurrentPosition() > pastPos && opModeIsActive());
+		} while (robot.hooke.getCurrentPosition() > pastPos &&
+		         opModeIsActive());
 		robot.hooke.setPower(0);
 		telemetry.addLine("Doing Rotation...");
 		telemetry.update();
@@ -31,7 +32,8 @@ public class Reset extends LinearOpMode {
 			pastPos = robot.arm.getCurrentPosition();
 			idle();
 			sleep(100);
-		} while (robot.rotation.getCurrentPosition() > pastPos + 20 && opModeIsActive());
+		} while (robot.rotation.getCurrentPosition() > pastPos + 20 &&
+		         opModeIsActive());
 		robot.arm.setPower(0);
 		telemetry.addLine("Done");
 		telemetry.update();

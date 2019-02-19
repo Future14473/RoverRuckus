@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 @Disabled
 public class GoldKnockOffDouble extends LinearOpMode {
 	private GoldLookDouble goldLooker = new GoldLookDouble();
-	private OldRobot robot = new OldRobot();
+	private OldRobot       robot      = new OldRobot();
 	
 	@Override
 	public void runOpMode() throws InterruptedException {
@@ -45,7 +45,8 @@ public class GoldKnockOffDouble extends LinearOpMode {
 		}
 		robot.drive.moveXY(0, 0.2, 10);
 		robot.drive.moveXY(0, -0.2, 10);
-		robot.drive.moveXY(-0.5 * look, 0, 10); //CHANGE THIS TO INCLUDE MORE DISTANCE
+		robot.drive.moveXY(-0.5 * look, 0,
+		                   10); //CHANGE THIS TO INCLUDE MORE DISTANCE
 		robot.drive.waitForDone();
 	}
 }

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
 @Autonomous(name = "Old Auto Next to Crater", group = "autonomous")
 @Disabled
 public class OldAutoNextToCrater extends LinearOpMode {
-	private OldRobot robot = new OldRobot();
+	private OldRobot       robot      = new OldRobot();
 	private GoldLookDouble goldLooker = new GoldLookDouble();
 	
 	@Override
@@ -31,7 +31,8 @@ public class OldAutoNextToCrater extends LinearOpMode {
 		robot.hooke.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		robot.hooke.setPower(1);
 		//decreasing
-		while (Math.abs(-26000 - robot.hooke.getCurrentPosition()) > 100 && opModeIsActive()) {
+		while (Math.abs(-26000 - robot.hooke.getCurrentPosition()) > 100 &&
+		       opModeIsActive()) {
 			idle();
 		}
 		robot.hooke.setPower(0);

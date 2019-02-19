@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class AutoImplCraterDelay extends AutoImplCrater {
 	@Override
 	protected void positionForDepot() throws InterruptedException {
-		sleep(2000);
+		drive.sleep(2000);
 		super.positionForDepot();
 	}
 	

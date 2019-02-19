@@ -8,11 +8,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name = "THE ACTUAL TELEOP", group = "teleop")
 @Disabled
 public class TeleOpReal extends OpMode {
-	private static final int ARM_MIN = 10;
-	private OldRobot robot = new OldRobot();
-	private boolean pastGamepad1y;
-	private boolean reverseDrive = false;
-	private boolean pastGamepad2x;
+	private static final int      ARM_MIN      = 10;
+	private              OldRobot robot        = new OldRobot();
+	private              boolean  pastGamepad1y;
+	private              boolean  reverseDrive = false;
+	private              boolean  pastGamepad2x;
 	
 	@Override
 	public void init() {
@@ -28,13 +28,20 @@ public class TeleOpReal extends OpMode {
 		}
 		pastGamepad1y = gamepad1.y;
 		//MOVE BOT
-		double speedMult = gamepad1.right_bumper ? 10 : (gamepad1.left_bumper ? 1.0 / 3 : 1);
-		double angle = Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+		double speedMult = gamepad1.right_bumper ? 10 :
+		                   (gamepad1.left_bumper ? 1.0 / 3 : 1);
+		double angle =
+				Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y);
 		if (reverseDrive) angle += Math.PI;
-		double speed = Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y), 1.7) * speedMult;
-		double turnRate = gamepad1.right_stick_x * speedMult * 2; //prioritize turning over moving.
+		double speed = Math.pow(
+				Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
+				1.7) *
+		               speedMult;
+		double turnRate = gamepad1.right_stick_x * speedMult *
+		                  2; //prioritize turning over moving.
 		robot.drive.moveAt(angle, turnRate, speed);
-		telemetry.addData("DIRECTION", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
+		telemetry.addData("DIRECTION",
+		                  reverseDrive ? "HOOK FRONT" : "ARM FRONT");
 		//TAPE
 		/*if (gamepad1.a) {
 			robot.tape.setPower(-1); //out
@@ -60,7 +67,8 @@ public class TeleOpReal extends OpMode {
 		}
 		pastGamepad2x = gamepad2.x;
 		//ARM: with limits, and smartness
-		if (!gamepad2.x && robot.arm.getCurrentPosition() < ARM_MIN && gamepad2.left_stick_y > 0) robot.arm.setPower(0);
+		if (!gamepad2.x && robot.arm.getCurrentPosition() < ARM_MIN &&
+		    gamepad2.left_stick_y > 0) robot.arm.setPower(0);
 		else robot.arm.setPower(gamepad2.left_stick_y / 2);
 		
 		//ROTATION

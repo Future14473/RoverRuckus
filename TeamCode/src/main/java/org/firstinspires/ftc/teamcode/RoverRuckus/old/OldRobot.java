@@ -9,8 +9,7 @@ public class OldRobot {
 	public DcMotor hooke, rotation, arm, collection;
 	public Servo marker, flicker, opener;
 	public DriveHandler drive;
-	public DcMotor rightFront, rightBack, leftFront, leftBack;
-	
+	public DcMotor      rightFront, rightBack, leftFront, leftBack;
 	
 	public OldRobot() {
 	}

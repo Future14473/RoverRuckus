@@ -4,10 +4,13 @@
       <w>dpadlr</w>
       <w>gamepad</w>
       <w>interactable</w>
+      <w>interruptable</w>
       <w>mecanum</w>
       <w>mult</w>
       <w>overriden</w>
+      <w>pidf</w>
       <w>rotater</w>
+      <w>setpoint</w>
       <w>targ</w>
       <w>tele</w>
       <w>teleop</w>
