@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GoldLookDouble;
 
 @Autonomous(name = "Old Auto Next to Crater", group = "autonomous")
 @Disabled

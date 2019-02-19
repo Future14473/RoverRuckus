@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
-import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.AutoMoveController;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.Button;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.RampedMoveController;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.AutoMoveController;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.RampedMoveController;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.XY;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 

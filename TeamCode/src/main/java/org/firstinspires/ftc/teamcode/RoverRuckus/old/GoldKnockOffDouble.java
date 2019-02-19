@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.old;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GoldLookDouble;
 
 @Autonomous(name = "Gold knockOff double look", group = "Test")
 @Disabled

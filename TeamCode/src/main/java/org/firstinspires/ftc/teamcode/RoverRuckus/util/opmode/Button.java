@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode;
 
 import java.util.function.BooleanSupplier;
 
@@ -10,7 +10,9 @@ public class Button implements BooleanSupplier {
 	private final BooleanSupplier cur;
 	private       boolean         past = false;
 	
-	public Button(BooleanSupplier button) {this.cur = button;}
+	public Button(BooleanSupplier button) {
+		this.cur = button;
+	}
 	
 	public State getState() {
 		State o = cur.getAsBoolean() ? (past ? State.HELD : State.PRESSED) :

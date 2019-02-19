@@ -1,13 +1,12 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 
 /**
  * A interface to represents an algorithm that calculates
  * motor powers given target and current positions and angle.
  */
-public interface MotorControlAlgorithm {
+public interface TargetLocationAlgorithm {
 	/**
 	 * Calculates power to move the robot given target
 	 * and current positions and angle.

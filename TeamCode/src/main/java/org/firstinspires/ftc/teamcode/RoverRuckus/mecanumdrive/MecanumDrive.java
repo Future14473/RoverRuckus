@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.Task;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.DualPIDTargetLocationAlgorithm;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.TargetLocationAlgorithm;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.XY;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSet;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
@@ -38,8 +40,8 @@ public class MecanumDrive extends TaskProgram {
 	private final        IRobot     robot;
 	private final        MotorSet   wheels;
 	
-	private final MotorControlAlgorithm motorControlAlgorithm =
-			new DualPIDMotorControlAlgorithm(RAMP_RATE);
+	private final TargetLocationAlgorithm targetLocationAlgorithm =
+			new DualPIDTargetLocationAlgorithm(RAMP_RATE);
 	
 	private double targetAngle = 0;
 	
@@ -135,12 +137,12 @@ public class MecanumDrive extends TaskProgram {
 		public boolean loop() {
 			double curAngle = getCurAngle();
 			//RobotLog.dd("MecanumDrive", "curAngle: %.5f", curAngle);
-			MotorSetPower output = motorControlAlgorithm.getPower(XY.ZERO,
-			                                                      XY.ZERO,
-			                                                      targetAngle,
-			                                                      curAngle,
-			                                                      speed,
-			                                                      speed);
+			MotorSetPower output = targetLocationAlgorithm.getPower(XY.ZERO,
+			                                                        XY.ZERO,
+			                                                        targetAngle,
+			                                                        curAngle,
+			                                                        speed,
+			                                                        speed);
 			wheels.setPower(output);
 			boolean hit = Math.abs(curAngle - targetAngle) < ANGLE_TOLERANCE;
 			if (hit) {

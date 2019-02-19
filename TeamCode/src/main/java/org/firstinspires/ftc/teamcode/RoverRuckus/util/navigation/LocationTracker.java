@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPosition;
 
 public class LocationTracker {

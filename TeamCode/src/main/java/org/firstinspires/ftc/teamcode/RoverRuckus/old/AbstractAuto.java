@@ -2,8 +2,8 @@
 //
 //import com.qualcomm.robotcore.util.ElapsedTime;
 //import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
-//import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
-//import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
+//import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GoldLookDouble;
+//import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 //import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 //
 //import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;

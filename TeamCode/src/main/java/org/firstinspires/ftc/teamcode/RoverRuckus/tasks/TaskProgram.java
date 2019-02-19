@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.tasks;
 
 import android.support.annotation.CallSuper;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.OpModeLifetimeRegistrar;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OpModeLifetimeRegistrar;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.old;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDouble;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GoldLookDouble;
 
 @Deprecated
 public abstract class AbstractAutoOld extends LinearOpMode {

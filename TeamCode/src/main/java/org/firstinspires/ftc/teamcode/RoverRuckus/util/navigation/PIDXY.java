@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
 
 @SuppressWarnings("unused")
-public class PIDControllerXY {
+public class PIDXY {
 	private static final double ELAPSED_TIME_MULT = 100;
 	
 	public double p, i, d;
@@ -20,17 +20,17 @@ public class PIDControllerXY {
 	private XY      lastInput  = XY.ZERO;
 	private XY      lastOutput = XY.ZERO;
 	
-	public PIDControllerXY(double p, double i, double d) {
+	public PIDXY(double p, double i, double d) {
 		this.p = p;
 		this.i = i;
 		this.d = d;
 	}
 	
-	public PIDControllerXY(PIDCoefficients coefficients) {
+	public PIDXY(PIDCoefficients coefficients) {
 		this(coefficients.p, coefficients.i, coefficients.d);
 	}
 	
-	public PIDControllerXY(
+	public PIDXY(
 			double p, double i, double d, double maxOutputRamp, double maxError,
 			double maxOutput, double maxIOutput) {
 		this.p = p;

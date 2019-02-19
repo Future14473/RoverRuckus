@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.GoldLookDoubleCallable;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.SimpleCondition;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GoldLookDoubleCallable;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.SimpleCondition;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 
 import java.util.concurrent.ExecutionException;

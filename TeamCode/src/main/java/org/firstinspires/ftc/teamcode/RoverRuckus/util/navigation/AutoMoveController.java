@@ -1,38 +1,37 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 
 /**
- * Puts MotorControlAlgorithm and RobotLocationTracker together, storing
+ * Puts TargetLocationAlgorithm and RobotLocationTracker together, storing
  * and updating target location and angles and moving robot motors
  * to get there.
  */
 @SuppressWarnings("unused")
 public class AutoMoveController {
 	
-	private final MotorControlAlgorithm motorControlAlgorithm;
-	private final LocationTracker       locationTracker;
-	private final IRobot                robot;
-	private       double                targetAngle    = 0;
-	private       XY                    targetLocation = XY.ZERO;
+	private final TargetLocationAlgorithm targetLocationAlgorithm;
+	private final LocationTracker         locationTracker;
+	private final IRobot                  robot;
+	private       double                  targetAngle    = 0;
+	private       XY                      targetLocation = XY.ZERO;
 	
 	public AutoMoveController(IRobot robot, double ticksPerUnit, double maxAngularAcceleration,
 	                          double maxTranslationalAcceleration) {
 		this.robot = robot;
-		motorControlAlgorithm =
+		targetLocationAlgorithm =
 				Constants.USE_XY_PID ?
-				new XYPIDMotorControlAlgorithm(maxAngularAcceleration,
-				                               maxTranslationalAcceleration) :
-				new DualPIDMotorControlAlgorithm(maxAngularAcceleration,
-				                                 maxTranslationalAcceleration);
+				new PIDXYTargetLocationAlgorithm(maxAngularAcceleration,
+				                                 maxTranslationalAcceleration) :
+				new DualPIDTargetLocationAlgorithm(maxAngularAcceleration,
+				                                   maxTranslationalAcceleration);
 		locationTracker = new LocationTracker(ticksPerUnit);
 	}
 	
 	public AutoMoveController(IRobot robot, double ticksPerUnit, double maxAcceleration) {
 		this.robot = robot;
-		motorControlAlgorithm = new DualPIDMotorControlAlgorithm(maxAcceleration);
+		targetLocationAlgorithm = new DualPIDTargetLocationAlgorithm(maxAcceleration);
 		locationTracker = new LocationTracker(ticksPerUnit);
 	}
 	
@@ -53,7 +52,7 @@ public class AutoMoveController {
 	}
 	
 	public void moveToTarget(double maxAngularSpeed, double maxTranslationSpeed) {
-		robot.getWheels().setPower(motorControlAlgorithm.getPower(
+		robot.getWheels().setPower(targetLocationAlgorithm.getPower(
 				targetLocation,
 				locationTracker.getCurrentLocation(),
 				targetAngle,

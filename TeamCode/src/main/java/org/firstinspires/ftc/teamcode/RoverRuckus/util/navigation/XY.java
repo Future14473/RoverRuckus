@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
 /**
  * Represents an XY position.

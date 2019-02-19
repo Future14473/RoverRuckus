@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -28,7 +28,8 @@ public class GoldLookDouble {
 			"/LaIEh4phJs35awBUu+g" +
 			"+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG" +
 			"/jRUsWLH1cs35" +
-			"/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT+485YdwnaxuS8K9";
+			"/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT" +
+			"+485YdwnaxuS8K9";
 	private final        ExecutorService  executorService      =
 			Executors.newSingleThreadExecutor();
 	private              VuforiaLocalizer vuforia;

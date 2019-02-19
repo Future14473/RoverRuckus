@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.tasks;
 
 import com.qualcomm.robotcore.util.RobotLog;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.OpModeLifetimeRegistrar;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Reflections;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OpModeLifetimeRegistrar;
 
 import java.util.LinkedList;
 import java.util.List;

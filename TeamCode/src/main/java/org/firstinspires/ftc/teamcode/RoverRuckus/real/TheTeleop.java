@@ -4,7 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.*;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.RampedMoveController;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.XY;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.BaseRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
@@ -13,9 +17,9 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.*;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.Button.State.*;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State.LOWER;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.LimitedMotor.State.UPPER;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button.State.*;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor.State.LOWER;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor.State.UPPER;
 
 @TeleOp(group = "1real", name = "Teleop")
 public class TheTeleop extends OurLinearOpMode {

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.util;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 

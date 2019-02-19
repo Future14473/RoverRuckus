@@ -1,10 +1,7 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.PIDController;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.PIDControllerXY;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.XY;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.*;
@@ -13,25 +10,25 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.*;
  * Calculates movement given target and current direction and locations, using PID and
  * acceleration capping to calculate power output.
  */
-public class XYPIDMotorControlAlgorithm implements MotorControlAlgorithm {
+public class PIDXYTargetLocationAlgorithm implements TargetLocationAlgorithm {
 	
 	//wheels 1, 4
-	private final PIDControllerXY translationalPID =
-			new PIDControllerXY(PID_COEFFICIENTS_TRANSLATIONAL);
+	private final PIDXY translationalPID =
+			new PIDXY(PID_COEFFICIENTS_TRANSLATIONAL);
 	//rotational
-	private final PIDController   anglePID         = new PIDController(PID_COEFFICIENTS_ANGULAR);
+	private final PID   anglePID         = new PID(PID_COEFFICIENTS_ANGULAR);
 	
 	private final ElapsedTime elapsedTime = new ElapsedTime();
 	
-	public XYPIDMotorControlAlgorithm(double maxAngularAcceleration,
-	                                  double maxTranslationalAcceleration) {
+	public PIDXYTargetLocationAlgorithm(double maxAngularAcceleration,
+	                                    double maxTranslationalAcceleration) {
 		anglePID.setRampRate(maxAngularAcceleration);
 		anglePID.setMaxError(MAX_ANGULAR_ERROR);
 		translationalPID.setRampRate(maxTranslationalAcceleration * Math.sqrt(2));
 		translationalPID.setMaxError(MAX_TRANSLATIONAL_ERROR);
 	}
 	
-	public XYPIDMotorControlAlgorithm(double maxAcceleration) {
+	public PIDXYTargetLocationAlgorithm(double maxAcceleration) {
 		this(maxAcceleration, maxAcceleration);
 	}
 	
