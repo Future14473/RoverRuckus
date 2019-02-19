@@ -205,7 +205,7 @@ public class TheTeleop extends OurLinearOpMode {
 			                            1.7);
 			MotorSetPower power = rampedMoveController.getPower(
 					XY.fromPolar(moveSpeed, direction).scale(speedMode.mult),
-					-gamepad1.right_stick_x * speedMode.mult);
+					-gamepad1.right_stick_x * speedMode.mult, 1, 1);
 			robot.wheels.setPower(power);
 			//hook
 			hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0, gamepad1.dpad_down);

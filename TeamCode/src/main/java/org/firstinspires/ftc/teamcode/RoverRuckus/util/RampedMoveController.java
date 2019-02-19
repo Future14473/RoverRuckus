@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 @SuppressWarnings("WeakerAccess")
 public class RampedMoveController {
 	
-	private final double      maxTranslationalAcceleration;
 	private final double      maxAngularAcceleration;
+	private final double      maxTranslationalAcceleration;
 	private final ElapsedTime elapsedTime = new ElapsedTime();
 	private       double      rightRate   = 0;
 	private       double      leftRate    = 0;
@@ -38,24 +38,26 @@ public class RampedMoveController {
 	}
 	
 	public MotorSetPower getPower(
-			XY targetTranslationalVelocity, double targetAngularVelocity) {
+			XY targetTranslationalVelocity, double targetAngularVelocity,
+			double maxTranslationalVelocity, double maxAngularVelocity) {
 		double elapsedTime = this.elapsedTime.seconds();
 		this.elapsedTime.reset();
-		return getPower(targetTranslationalVelocity, targetAngularVelocity, elapsedTime);
+		return getPower(targetTranslationalVelocity, targetAngularVelocity,
+		                maxTranslationalVelocity, maxAngularVelocity, elapsedTime);
 	}
 	
 	public MotorSetPower getPower(
-			XY targetTranslationalVelocity, double targetAngularVelocity, double elapsedTime) {
+			XY targetTranslationalVelocity, double targetAngularVelocity,
+			double maxTranslationalVelocity, double maxAngularVelocity, double elapsedTime) {
 		targetTranslationalVelocity = targetTranslationalVelocity.rotate(-Math.PI / 4);
-		double targRightRate = targetTranslationalVelocity.x;
-		//noinspection SuspiciousNameCombination
-		double targLeftRate = targetTranslationalVelocity.y;
-		
+		double targRightRate = limit(targetTranslationalVelocity.x, maxTranslationalVelocity);
+		double targLeftRate = limit(targetTranslationalVelocity.y, maxTranslationalVelocity);
+		targetAngularVelocity = limit(targetAngularVelocity, maxAngularVelocity);
 		return getPower(targRightRate, targLeftRate, targetAngularVelocity, elapsedTime);
 	}
 	
-	protected MotorSetPower getPower(double targRightRate, double targLeftRate,
-	                                 double targetAngularVelocity, double elapsedTime) {
+	private MotorSetPower getPower(double targRightRate, double targLeftRate,
+	                               double targetAngularVelocity, double elapsedTime) {
 		if (elapsedTime > Constants.MAX_ELAPSED_TIME) elapsedTime = 0;
 		double translationalRamp = this.maxTranslationalAcceleration * elapsedTime;
 		double angularRamp = this.maxAngularAcceleration * elapsedTime;
@@ -74,6 +76,10 @@ public class RampedMoveController {
 	
 	private double constrain(double v, double min, double max) {
 		return v < min ? min : v > max ? max : v;
+	}
+	
+	private double limit(double v, double max) {
+		return constrain(v, -max, max);
 	}
 	
 }

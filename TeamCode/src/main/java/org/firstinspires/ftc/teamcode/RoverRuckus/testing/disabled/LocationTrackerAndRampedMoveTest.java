@@ -37,7 +37,7 @@ public class LocationTrackerAndRampedMoveTest extends OurLinearOpMode {
 		while (opModeIsActive()) {
 			MotorSetPower power = rampedMoveController.getPower(
 					new XY(gamepad1.left_stick_x, -gamepad1.left_stick_y).scale(2),
-					gamepad1.right_stick_x * 2);
+					gamepad1.right_stick_x * 2, 1, 1);
 			robot.wheels.setPower(power);
 			locationTracker.updateLocation(robot.getAngle(),
 			                               robot.getWheels().getCurrentPosition());

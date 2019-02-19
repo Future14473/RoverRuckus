@@ -53,4 +53,7 @@ public class LocationTracker {
 		return new XY(x, y).rotate(moveAngle + lastAngle);
 	}
 	
+	public void normalizeTargetLocation(double angle) {
+	
+	}
 }

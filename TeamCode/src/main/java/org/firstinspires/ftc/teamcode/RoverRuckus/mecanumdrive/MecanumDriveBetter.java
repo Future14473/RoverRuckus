@@ -25,18 +25,18 @@ public class MecanumDriveBetter extends TaskProgram {
 	private static final AngleUnit    ourAngleUnit    = AngleUnit.RADIANS;
 	private static final DistanceUnit ourDistanceUnit = DistanceUnit.INCH;
 	
-	private final Parameters          parameters;
-	private final MotorSet            wheels;
-	private final RobotMoveController moveController;
-	private final MoveTask            adjustmentTask;
+	private final Parameters         parameters;
+	private final MotorSet           wheels;
+	private final AutoMoveController moveController;
+	private final MoveTask           adjustmentTask;
 	
 	public MecanumDriveBetter(IRobot robot, Parameters parameters) {
 		super("Mecanum Drive", true);
 		this.parameters = parameters.clone();
 		this.wheels = robot.getWheels();
-		moveController = new RobotMoveController(robot, parameters.encoderTicksPerUnit,
-		                                         parameters.maxAngularAcceleration,
-		                                         parameters.maxTranslationalAcceleration);
+		moveController = new AutoMoveController(robot, parameters.encoderTicksPerUnit,
+		                                        parameters.maxAngularAcceleration,
+		                                        parameters.maxTranslationalAcceleration);
 		adjustmentTask = new MoveTask(XY.ZERO, 2, this.parameters.translationalToleranceFine,
 		                              0, 2, this.parameters.angularToleranceFine,
 		                              this.parameters.consecutiveFine) {

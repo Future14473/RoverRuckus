@@ -38,8 +38,8 @@ public class MecanumDrive extends TaskProgram {
 	private final        IRobot     robot;
 	private final        MotorSet   wheels;
 	
-	private final PIDMoveCalculator moveCalculator =
-			new PIDMoveCalculator(RAMP_RATE);
+	private final MotorControlAlgorithm motorControlAlgorithm =
+			new DualPIDMotorControlAlgorithm(RAMP_RATE);
 	
 	private double targetAngle = 0;
 	
@@ -135,12 +135,12 @@ public class MecanumDrive extends TaskProgram {
 		public boolean loop() {
 			double curAngle = getCurAngle();
 			//RobotLog.dd("MecanumDrive", "curAngle: %.5f", curAngle);
-			MotorSetPower output = moveCalculator.getPower(XY.ZERO,
-			                                               XY.ZERO,
-			                                               targetAngle,
-			                                               curAngle,
-			                                               speed,
-			                                               speed);
+			MotorSetPower output = motorControlAlgorithm.getPower(XY.ZERO,
+			                                                      XY.ZERO,
+			                                                      targetAngle,
+			                                                      curAngle,
+			                                                      speed,
+			                                                      speed);
 			wheels.setPower(output);
 			boolean hit = Math.abs(curAngle - targetAngle) < ANGLE_TOLERANCE;
 			if (hit) {
