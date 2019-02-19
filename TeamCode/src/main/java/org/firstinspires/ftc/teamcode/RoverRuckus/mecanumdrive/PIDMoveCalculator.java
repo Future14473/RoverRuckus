@@ -16,15 +16,16 @@ public class PIDMoveCalculator {
 	private final PIDController rightDiagPID = new PIDController(0.1, 0, 0.1);
 	//wheels 2, 3
 	private final PIDController leftDiagPID  = new PIDController(0.1, 0, 0.1);
-	private final PIDController anglePID     = new PIDController(0.035, 0, 0.13);
+	//rotational
+	private final PIDController anglePID     = new PIDController(2, 0, 6);
 	private final ElapsedTime   elapsedTime  = new ElapsedTime();
 	
 	public PIDMoveCalculator(double maxAngularAcceleration, double maxTranslationalAcceleration) {
 		anglePID.setRampRate(maxAngularAcceleration);
 		anglePID.setMaxError(Constants.MAX_ANGULAR_ERROR);
 		rightDiagPID.setRampRate(maxTranslationalAcceleration);
-		rightDiagPID.setMaxError(Constants.MAX_TRANSLATIONAL_ERROR);
 		leftDiagPID.setRampRate(maxTranslationalAcceleration);
+		rightDiagPID.setMaxError(Constants.MAX_TRANSLATIONAL_ERROR);
 		leftDiagPID.setMaxError(Constants.MAX_TRANSLATIONAL_ERROR);
 	}
 	
@@ -38,11 +39,11 @@ public class PIDMoveCalculator {
 			double maxAngularSpeed, double maxTranslationSpeed) {
 		anglePID.setMaxOutputs(maxAngularSpeed);
 		anglePID.setTarget(targetAngle);
-		XY diagonalDiff =
-				targetLocation.subtract(currentLocation).rotate(-currentAngle - Math.PI / 4);
 		//rotate together
 		//   (\) cos [x] is rightDiag, sin [y] is leftDiag
 		//            1,4                  2,3
+		XY diagonalDiff =
+				targetLocation.subtract(currentLocation).rotate(-currentAngle - Math.PI / 4);
 		rightDiagPID.setMaxOutputs(maxTranslationSpeed);
 		leftDiagPID.setMaxOutputs(maxTranslationSpeed);
 		rightDiagPID.setTarget(diagonalDiff.x);
@@ -52,8 +53,10 @@ public class PIDMoveCalculator {
 		this.elapsedTime.reset();
 		
 		double turnRate = anglePID.getOutput(currentAngle, elapsedTime);
-		double rightRate = rightDiagPID.getOutput(0, elapsedTime);
-		double leftRate = leftDiagPID.getOutput(0, elapsedTime);
+		double rightRate = 0;
+		//rightRate = rightDiagPID.getOutput(0, elapsedTime);
+		double leftRate = 0;
+		//leftRate = leftDiagPID.getOutput(0, elapsedTime);
 		return MotorSetPower.fromDiagonals(rightRate, leftRate, turnRate);
 	}
 	

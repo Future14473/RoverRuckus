@@ -18,7 +18,7 @@ public class MotorsAndServosTest extends OpMode {
 	@Override
 	public void init() {
 		SheetMetalRobot robot = new SheetMetalRobot(hardwareMap);
-		motor = robot.hook;
+		motor = robot.scoreArm;
 		//motor.setDirection(DcMotorSimple.Direction.REVERSE);
 		//servo = robot.scoreDump;
 		//crServo = hardwareMap.get(CRServo.class, "Collector");

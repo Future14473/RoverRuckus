@@ -60,8 +60,8 @@ public class SheetTeleop extends OurLinearOpMode {
 		robot.initIMU();
 		robot.wheels.setMode(RUN_USING_ENCODER);
 		robot.wheels.setZeroPowerBehavior(FLOAT);
-		scoreArm = new LimitedMotor(robot.scoreArm, MOTOR_MIN, ARM_MAX, true);
-		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, ARM_MAX, true);
+		scoreArm = new LimitedMotor(robot.scoreArm, MOTOR_MIN, SCORE_ARM_MAX, true);
+		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, COLLECT_ARM_MAX, true);
 		hook = new LimitedMotor(robot.hook, MOTOR_MIN, HOOK_MAX, true);
 		scooper = robot.scooper;
 		collectDoor = robot.collectDoor;

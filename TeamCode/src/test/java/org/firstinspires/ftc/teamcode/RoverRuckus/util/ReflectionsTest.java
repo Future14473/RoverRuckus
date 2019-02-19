@@ -19,10 +19,20 @@ public class ReflectionsTest {
 	@Test
 	public void getName() {
 		System.out.println(Reflections.getInformativeName(testFace));
-		System.out.println(Reflections.getInformativeName((TestFace) () -> {}));
+		System.out.println(Reflections.getInformativeName(new Inner()));
+		//System.out.println(Reflections.getInformativeName((TestFace) () -> {}));
+		
 	}
 	
 	interface TestFace {
 		void a();
+	}
+	
+	private class Inner implements TestFace {
+		
+		@Override
+		public void a() {
+		
+		}
 	}
 }

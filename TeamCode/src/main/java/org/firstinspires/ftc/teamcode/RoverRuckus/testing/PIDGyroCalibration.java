@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
+package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Button;
@@ -10,7 +9,6 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.PrintedRobot;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @TeleOp(group = "test")
-@Disabled
 public class PIDGyroCalibration extends OurLinearOpMode {
 	private static boolean      shouldComplete = true;
 	private        double       p              = 0.35;
@@ -38,7 +36,7 @@ public class PIDGyroCalibration extends OurLinearOpMode {
 	protected void run() {
 		while (opModeIsActive()) {
 			if (a.pressed()) {
-				drive.rotate(34, 1);
+				drive.rotate(45, 1);
 			}
 			if (b.pressed())
 				shouldComplete = !shouldComplete;

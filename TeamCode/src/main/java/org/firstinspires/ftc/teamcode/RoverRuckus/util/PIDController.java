@@ -122,7 +122,7 @@ public class PIDController {
 		double p = this.p * error;
 		double i = this.i * this.iOutput * elapsedTime * ELAPSED_TIME_MULT;
 		double d = elapsedTime == 0 ? 0 :
-		           -this.d * (input - lastInput) / elapsedTime * ELAPSED_TIME_MULT;
+		           -this.d * (input - lastInput) / (elapsedTime * ELAPSED_TIME_MULT);
 		double output = p + i + d;
 		
 		
@@ -136,7 +136,10 @@ public class PIDController {
 			output = limit(output, lastOutput - ramp, lastOutput + ramp);
 		}
 		iOutput += error;
-		
+//		RobotLog.dd("PID",
+//		            "%nCurrent: %.5f; Target: %.5f%nError: %.5f%nPID outputs: %.5f, %.5f, %" +
+//		            ".5f%nOutput: %.5f",
+//		            input, target, error, p, i, d, output);
 		
 		lastInput = input;
 		lastOutput = output;

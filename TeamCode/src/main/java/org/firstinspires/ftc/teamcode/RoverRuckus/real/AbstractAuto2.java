@@ -69,10 +69,10 @@ public abstract class AbstractAuto2 extends OurLinearOpMode {
 	
 	private void loadLookAndHook() {
 		//preload lookAndHook tasks.
-		hookAndLook.add(startGoldLook::awaitTrue);//
+		hookAndLook.add(startGoldLook::await);//
 		goldLook = hookAndLook.submit(new GoldLookDoubleCallable(hardwareMap));
 		//hurray for method chain calls. unnecessary but it looks cool
-		hookAndLook.then(unHooked::awaitTrue).then(this::retractHook).thenStop();
+		hookAndLook.then(unHooked::await).then(this::retractHook).thenStop();
 	}
 	
 	private void resetEncoders() {
@@ -102,12 +102,12 @@ public abstract class AbstractAuto2 extends OurLinearOpMode {
 		robot.hook.setPower(1);
 		//decreasing
 		waitUntil(() -> robot.hook.getCurrentPosition() <= HOOK_TURN_START_LOOK);
-		startGoldLook.setTrue();
+		startGoldLook.signal();
 		telemetry.addLine("GOLD LOOK STARTED");
 		telemetry.update();
 		waitUntil(() -> robot.hook.getCurrentPosition() <= HOOK_TURN_END);
 		robot.hook.setPower(0);
-		drive.moveXY(-0.15, 0.05, 10).then(unHooked::setTrue).moveXY(0, 0.1, 10).rotate(-10, 10);
+		drive.moveXY(-0.15, 0.05, 10).then(unHooked::signal).moveXY(0, 0.1, 10).rotate(-10, 10);
 	}
 	
 	private void knockOffGold() throws InterruptedException {

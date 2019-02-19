@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
+package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.SheetMetalRobot;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @TeleOp(group = "test")
+@Disabled
 public class LocationTrackerAndRampedMoveTest extends OurLinearOpMode {
 	private SheetMetalRobot      robot;
 	private LocationTracker      locationTracker;
@@ -24,7 +26,7 @@ public class LocationTrackerAndRampedMoveTest extends OurLinearOpMode {
 		robot = new SheetMetalRobot(hardwareMap);
 		locationTracker = new LocationTracker(Constants.ENCODER_TICKS_PER_INCH);
 		robot.initIMU();
-		waitUntil(robot::imuInitted, 3, SECONDS);
+		waitUntil(robot::imuGyroCalibrated, 3, SECONDS);
 	}
 	
 	@Override

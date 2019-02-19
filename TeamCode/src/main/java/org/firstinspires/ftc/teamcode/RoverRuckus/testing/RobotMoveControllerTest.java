@@ -23,7 +23,7 @@ public class RobotMoveControllerTest extends OurLinearOpMode {
 		moveController = new RobotMoveController(robot, Constants.ENCODER_TICKS_PER_INCH,
 		                                         2);
 		robot.initIMU();
-		waitUntil(robot::imuInitted, 3, SECONDS);
+		waitUntil(robot::imuGyroCalibrated, 3, SECONDS);
 	}
 	
 	@Override

@@ -7,29 +7,29 @@ public class SimpleCondition {
 	private boolean condition = false;
 	
 	/**
-	 * No interrupt exception variant
+	 * Waits until some other thread calls signal on this object.
+	 * Returns if interrupted.
 	 */
-	public synchronized void awaitTrue() {
+	public synchronized void await() {
 		try {
-			awaitTrue(0);
+			awaitInterruptibility();
 		} catch (InterruptedException ignored) {}
 	}
 	
 	/**
-	 * yes interrupt variant
+	 * Waits until some other thread calls signal on this object.
+	 *
+	 * @throws InterruptedException if interrupted while waiting.
 	 */
-	public synchronized void awaitTrue(int dummy) throws InterruptedException {
+	public synchronized void awaitInterruptibility() throws InterruptedException {
 		while (condition) this.wait();
 	}
 	
-	public synchronized void setTrue() {
+	public synchronized void signal() {
 		condition = true;
 		this.notifyAll();
 	}
 	
-	public synchronized void setFalse() {
-		condition = false;
-	}
 }
 
 

@@ -4,18 +4,15 @@ public class Reflections {
 	private Reflections() {
 	}
 	
-	private static String extractSimpleName(String fullName) {
-		int $ = fullName.indexOf('$');
-		if ($ == -1) $ = fullName.length();
-		return fullName.substring(fullName.lastIndexOf('.') + 1, $);
-	}
-	
 	public static String getInformativeName(Object o) {
 		Class<?> clazz = o.getClass();
-		//lambdas
+		//if lambdas
 		if (clazz.isSynthetic()) {
+			String fullName = o.toString();
+			int $ = fullName.indexOf('$');
+			if ($ == -1) $ = fullName.length();
 			return String.format("%s-(lambda)-> %s",
-			                     extractSimpleName(o.toString()),
+			                     fullName.substring(fullName.lastIndexOf('.') + 1, $),
 			                     clazz.getInterfaces()[0].getSimpleName());
 		}
 		//If override toString, use that.
@@ -24,22 +21,31 @@ public class Reflections {
 				return o.toString();
 		} catch (NoSuchMethodException e) {
 			//shouldn't happen
-			return extractSimpleName(o.toString());
+			String name = clazz.getName();
+			return name.substring(name.lastIndexOf('.') + 1);
 		}
-		StringBuilder builder = new StringBuilder();
-		while (clazz != null && clazz.isAnonymousClass()) {
-			builder.append(extractSimpleName(clazz.getName())).append("-(anonymous)-> ");
-			Class<?> superclass = clazz.getSuperclass(); //will have if anonymous
-			if (superclass == Object.class) { //anonymous class might implement interface
+		//if anonymous, find out type.
+		if (clazz.isAnonymousClass()) {
+			StringBuilder builder = new StringBuilder();
+			String declaringName = clazz.getName();
+			builder.append(declaringName, declaringName.lastIndexOf('.') + 1,
+			               declaringName.length())
+			       .append("-(anonymous)-> ");
+			Class<?> superclass = clazz.getSuperclass(); //will not be null for anonymous
+			if (superclass == Object.class) { //may implement interface
 				Class<?>[] interfaces = clazz.getInterfaces();
 				if (interfaces.length != 0) clazz = interfaces[0];
-				else clazz = Object.class; //or could also simply extend Object.
-				break;
+				else clazz = Object.class; //or just extend Object.
+			} else {
+				clazz = superclass; //otherwise it extends its superclass.
 			}
-			clazz = superclass;
+			if (clazz != null) {
+				String name = clazz.getName();
+				return builder.append(name, name.lastIndexOf('.') + 1, name.length())
+				              .toString();
+			} else return builder.append('?').toString(); //shouldn't happen
 		}
-		if (clazz == null) clazz = o.getClass(); //shouldn't happen
-		//fallthrough
-		return builder.append(extractSimpleName(clazz.getName())).toString();
+		String fullName = clazz.getSimpleName();
+		return fullName.substring(fullName.lastIndexOf('.') + 1);
 	}
 }

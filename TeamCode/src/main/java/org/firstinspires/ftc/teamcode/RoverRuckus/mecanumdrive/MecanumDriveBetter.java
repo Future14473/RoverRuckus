@@ -28,19 +28,15 @@ public class MecanumDriveBetter extends TaskProgram {
 	private final Parameters          parameters;
 	private final MotorSet            wheels;
 	private final RobotMoveController moveController;
-	private       MoveTask            adjustmentTask;
+	private final MoveTask            adjustmentTask;
 	
 	public MecanumDriveBetter(IRobot robot, Parameters parameters) {
-		super("MecanumDrive", true);
+		super("Mecanum Drive", true);
 		this.parameters = parameters.clone();
 		this.wheels = robot.getWheels();
 		moveController = new RobotMoveController(robot, parameters.encoderTicksPerUnit,
 		                                         parameters.maxAngularAcceleration,
 		                                         parameters.maxTranslationalAcceleration);
-		init();
-	}
-	
-	private void init() {
 		adjustmentTask = new MoveTask(XY.ZERO, 2, this.parameters.translationalToleranceFine,
 		                              0, 2, this.parameters.angularToleranceFine,
 		                              this.parameters.consecutiveFine) {

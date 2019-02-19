@@ -90,8 +90,8 @@ public class MecanumDrive extends TaskProgram {
 	 * Rotates the robot a specific number of degrees.
 	 */
 	public MecanumDrive rotate(double degreesToTurn, double speed) {
+		degreesToTurn = Math.toRadians(degreesToTurn);
 		if (!parameters.useGyro) {
-			degreesToTurn = Math.toRadians(degreesToTurn);
 			add(new StraightMoveTask(robot,
 			                         TURN.scale(Math.signum(degreesToTurn)),
 			                         Math.abs(degreesToTurn) * StraightMoveTask.TURN_MULT,
@@ -107,7 +107,7 @@ public class MecanumDrive extends TaskProgram {
 	}
 	
 	private class GyroRotateTask extends TaskAdapter {
-		private static final double ANGLE_TOLERANCE  = 1.5;
+		private static final double ANGLE_TOLERANCE  = 0.02;
 		private static final int    CONSECUTIVE_HITS = 4;
 		
 		private final double speed;
@@ -134,6 +134,7 @@ public class MecanumDrive extends TaskProgram {
 		@Override
 		public boolean loop() {
 			double curAngle = getCurAngle();
+			//RobotLog.dd("MecanumDrive", "curAngle: %.5f", curAngle);
 			MotorSetPower output = moveCalculator.getPower(XY.ZERO,
 			                                               XY.ZERO,
 			                                               targetAngle,

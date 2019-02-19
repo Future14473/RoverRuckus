@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util.robot;
 
 import java.util.function.DoubleSupplier;
 
+import static java.lang.Math.PI;
+
 /**
  * A utility wrapper, used for angle measurement, that keeps track of
  * differences
@@ -9,24 +11,28 @@ import java.util.function.DoubleSupplier;
  * position cumulatively (can do multiple revolutions).
  */
 class CumulativeDirection implements DoubleSupplier {
-	private final DoubleSupplier directionInDegrees;
-	private       double         curDirection = 0;
+	private final DoubleSupplier rawDirection;
+	private       double         direction = 0;
 	
-	public CumulativeDirection(DoubleSupplier directionInRadians) {
+	/**
+	 * Construct via DoubleSupplier for direction, IN RADIANS.
+	 */
+	public CumulativeDirection(DoubleSupplier rawDirection) {
 		//paranoia!!!
-		this.directionInDegrees =
-				directionInRadians instanceof CumulativeDirection ?
-				((CumulativeDirection) directionInRadians).directionInDegrees :
-				directionInRadians;
+		this.rawDirection =
+				rawDirection instanceof CumulativeDirection ?
+				((CumulativeDirection) rawDirection).rawDirection :
+				rawDirection;
 	}
 	
 	@Override
 	public double getAsDouble() {
-		double newDirection = directionInDegrees.getAsDouble();
-		curDirection +=
-				((newDirection - curDirection) + Math.PI) % (2 * Math.PI) -
-				Math.PI;
-		return curDirection;
+		double curRawDirection = rawDirection.getAsDouble();
+		double diffDirection =
+				((curRawDirection - direction) % (2 * PI) + 3 * PI) % (2 * PI) - PI;
+		//RobotLog.dd("CumulativeDir", "DiffDirection: %.5f", diffDirection);
+		direction += diffDirection;
+		return direction;
 	}
 	
 }

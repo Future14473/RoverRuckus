@@ -6,8 +6,8 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPosition;
 public class LocationTracker {
 	private final double           ticksPerUnit;
 	private       double           lastAngle;
-	private       MotorSetPosition lastMotorPos = null;
-	private       XY               currentLocation;
+	private       MotorSetPosition lastMotorPos    = null;
+	private       XY               currentLocation = XY.ZERO;
 	
 	public LocationTracker(double ticksPerUnit) {
 		this.ticksPerUnit = ticksPerUnit;
