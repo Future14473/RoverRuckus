@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.Task;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.DualPIDTargetLocationAlgorithm;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.AxesDualPIDTargLocAlg;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.TargetLocationAlgorithm;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.XY;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.XYR;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSet;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
@@ -24,7 +26,7 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPowe
  * <p>
  * Orientation: <br>
  * <pre>
- *       -deg<-(0)->+deg
+ *           <-(0)->
  *             +Y
  *              |
  * -90deg  -X --O-- +X  +90deg
@@ -34,14 +36,15 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPowe
  * </pre>
  */
 @SuppressWarnings("ALL")
+@Deprecated
 public class MecanumDrive extends TaskProgram {
-	private static final int        RAMP_RATE = 4;
-	private final        Parameters parameters;
-	private final        IRobot     robot;
-	private final        MotorSet   wheels;
+	private final Parameters  parameters;
+	private final IRobot      robot;
+	private final MotorSet    wheels;
+	private final ElapsedTime elapsedTime = new ElapsedTime();
 	
 	private final TargetLocationAlgorithm targetLocationAlgorithm =
-			new DualPIDTargetLocationAlgorithm(RAMP_RATE);
+			new AxesDualPIDTargLocAlg();
 	
 	private double targetAngle = 0;
 	
@@ -78,7 +81,7 @@ public class MecanumDrive extends TaskProgram {
 	}
 	
 	/**
-	 * Moves the robot to the specified relative location on the coordinate
+	 * Moves the robot to the specified relative location on the XY
 	 * plane
 	 */
 	public MecanumDrive moveXY(double x, double y, double speed) {
@@ -126,6 +129,7 @@ public class MecanumDrive extends TaskProgram {
 		public void start() {
 			targetAngle += degreesToTurn;
 			wheels.setMode(RUN_USING_ENCODER);
+			elapsedTime.reset();
 		}
 		
 		@Override
@@ -137,12 +141,13 @@ public class MecanumDrive extends TaskProgram {
 		public boolean loop() {
 			double curAngle = getCurAngle();
 			//RobotLog.dd("MecanumDrive", "curAngle: %.5f", curAngle);
-			MotorSetPower output = targetLocationAlgorithm.getPower(XY.ZERO,
-			                                                        XY.ZERO,
-			                                                        targetAngle,
-			                                                        curAngle,
-			                                                        speed,
-			                                                        speed);
+			MotorSetPower output =
+					targetLocationAlgorithm.getPower(new XYR(XY.ZERO, targetAngle),
+					                                 new XYR(XY.ZERO, curAngle),
+					                                 speed,
+					                                 speed,
+					                                 elapsedTime.seconds());
+			elapsedTime.reset();
 			wheels.setPower(output);
 			boolean hit = Math.abs(curAngle - targetAngle) < ANGLE_TOLERANCE;
 			if (hit) {

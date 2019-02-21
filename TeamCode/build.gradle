@@ -13,6 +13,7 @@
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
+apply plugin: 'kotlin-android'
 
 android {
     compileOptions {
@@ -24,4 +25,8 @@ dependencies {
     implementation 'org.jetbrains:annotations:15.0'
     // Required -- JUnit 4 framework
     testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

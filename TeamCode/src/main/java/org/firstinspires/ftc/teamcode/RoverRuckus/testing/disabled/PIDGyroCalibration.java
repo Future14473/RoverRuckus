@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
+package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @TeleOp(group = "test")
+@Disabled
 public class PIDGyroCalibration extends OurLinearOpMode {
 	private static boolean      shouldComplete = true;
 	private        double       p              = 0.35;

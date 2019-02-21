@@ -16,10 +16,6 @@ public class CurRobot extends BaseRobot {
 	public Servo flicker, markerDoor, collectDoor, scoreDump, parker;
 	public CRServo angler;
 	
-	CurRobot(HardwareMap hardwareMap, int dummy) {
-		super(hardwareMap);
-	}
-	
 	public CurRobot(HardwareMap hardwareMap) {
 		super(hardwareMap);
 		

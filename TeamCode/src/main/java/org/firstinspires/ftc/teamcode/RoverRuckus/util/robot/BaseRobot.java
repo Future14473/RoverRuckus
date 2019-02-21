@@ -13,8 +13,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 
 public abstract class BaseRobot implements IRobot {
-	//maximum acceleration in powerLevel/second
-	public static final  double              RAMP_RATE                 = 2.5;
 	private static final int                 TARGET_POSITION_TOLERANCE = 25;
 	public final         MotorSet            wheels;
 	protected final      CumulativeDirection direction;

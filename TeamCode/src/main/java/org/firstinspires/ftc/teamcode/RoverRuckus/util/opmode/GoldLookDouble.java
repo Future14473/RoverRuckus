@@ -155,12 +155,10 @@ public class GoldLookDouble {
 	 * Initialize the Tensor Flow Object Detection engine.
 	 */
 	private void initTfod(HardwareMap hardwareMap) {
-		int tfodMonitorViewId = hardwareMap.appContext.getResources()
-		                                              .getIdentifier(
-				                                              "tfodMonitorViewId",
-				                                              "id",
-				                                              hardwareMap.appContext
-						                                              .getPackageName());
+		int tfodMonitorViewId = hardwareMap.appContext
+				.getResources().getIdentifier(
+						"tfodMonitorViewId", "id",
+						hardwareMap.appContext.getPackageName());
 		TFObjectDetector.Parameters tfodParameters =
 				new TFObjectDetector.Parameters(tfodMonitorViewId);
 		tfod = ClassFactory.getInstance()

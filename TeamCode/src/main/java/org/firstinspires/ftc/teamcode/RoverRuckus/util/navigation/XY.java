@@ -6,13 +6,9 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
  * Immutable.
  */
 public final class XY {
-	public static final XY ZERO = new XY();
+	public static final XY ZERO = new XY(0, 0);
 	
 	public final double x, y;
-	
-	public XY() {
-		this(0, 0);
-	}
 	
 	public XY(double x, double y) {
 		this.x = x;
