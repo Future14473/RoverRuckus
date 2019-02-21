@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
+
+import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.MAX_ELAPSED_TIME;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class PID {
-	private static final double ELAPSED_TIME_MULT = 100;
+	private static final double ELAPSED_TIME_MULT = 200;
 	
 	public double p, i, d;
 	private double maxOutputRamp, maxError;
@@ -109,7 +110,7 @@ public class PID {
 	 */
 	@SuppressWarnings("Duplicates")
 	public double getOutput(double input, double elapsedTime) {
-		if (noPrev || elapsedTime > Constants.MAX_ELAPSED_TIME) {
+		if (noPrev || elapsedTime > MAX_ELAPSED_TIME) {
 			lastInput = input;
 			elapsedTime = 0;
 			noPrev = false;
@@ -168,5 +169,11 @@ public class PID {
 	
 	public void setReversed(boolean reversed) {
 		this.reversed = reversed;
+	}
+	
+	public void setCoefficients(PIDCoefficients coefficients) {
+		this.p = coefficients.p;
+		this.i = coefficients.i;
+		this.d = coefficients.d;
 	}
 }

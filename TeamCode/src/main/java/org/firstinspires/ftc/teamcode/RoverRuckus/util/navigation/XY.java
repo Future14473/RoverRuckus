@@ -6,13 +6,9 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
  * Immutable.
  */
 public final class XY {
-	public static final XY ZERO = new XY();
+	public static final XY ZERO = new XY(0, 0);
 	
 	public final double x, y;
-	
-	public XY() {
-		this(0, 0);
-	}
 	
 	public XY(double x, double y) {
 		this.x = x;
@@ -59,18 +55,14 @@ public final class XY {
 		return other.subtract(this).limitMagnitudeTo(rampRate).add(this);
 	}
 	
-	public double angleTo(XY o) {
-		if (o == null) return angle();
-		return Math.atan2(this.x * o.y - this.y * o.x, this.x * o.x + this.y * o.y);
+	public double angleTo(XY other) {
+		if (other == null) return angle();
+		return Math.atan2(this.x * other.y - this.y * other.x,
+		                  this.x * other.x + this.y * other.y);
 	}
 	
 	public double angle() {
 		return Math.atan2(y, x);
-	}
-	
-	public double dot(XY o) {
-		if (o == null) return 0;
-		return x * o.x + y * o.y;
 	}
 	
 	public static XY fromPolar(double magnitude, double angle) {

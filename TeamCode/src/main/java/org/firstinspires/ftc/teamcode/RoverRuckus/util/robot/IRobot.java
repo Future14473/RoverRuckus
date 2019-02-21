@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.robot;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
-
 /**
- * The interface by which {@link TaskAdapter}s
- * can interact with the robot.
- * Implement on the actual robot, and passed as parameter to TaskExecutor
- * implementation
+ * The interface by which our library can interact with the robot.
+ * To avoid "inadvertent snooping".
  */
 public interface IRobot {
+	/**
+	 * Gets the MotorSet that represents the robot's wheels.
+	 */
 	MotorSet getWheels();
 	
 	/**

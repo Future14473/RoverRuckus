@@ -11,8 +11,7 @@ public interface TargetLocationAlgorithm {
 	 * Calculates power to move the robot given target
 	 * and current positions and angle.
 	 */
-	MotorSetPower getPower(
-			XY targetLocation, XY currentLocation,
-			double targetAngle, double currentAngle,
-			double maxAngularSpeed, double maxTranslationSpeed);
+	MotorSetPower getPower(XYR targetPosition, XYR currentPosition,
+	                       double maxAngularSpeed, double maxTranslationSpeed,
+	                       double elapsedTime);
 }

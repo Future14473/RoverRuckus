@@ -4,14 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.RampedMoveController;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.ManualMoveController;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.XY;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.BaseRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
@@ -25,8 +23,7 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMoto
 public class TheTeleop extends OurLinearOpMode {
 	//Motors and servos, for readability and functionality
 	private CurRobot             robot;
-	private RampedMoveController rampedMoveController =
-			new RampedMoveController(BaseRobot.RAMP_RATE);
+	private ManualMoveController manualMoveController;
 	private LimitedMotor         collectArm, scoreArm, hook;
 	private DcMotor scooper;
 	private Servo   collectDoor;
@@ -64,6 +61,7 @@ public class TheTeleop extends OurLinearOpMode {
 		robot.initIMU();
 		robot.wheels.setMode(RUN_USING_ENCODER);
 		robot.wheels.setZeroPowerBehavior(FLOAT);
+		manualMoveController = new ManualMoveController(robot);
 		scoreArm = new LimitedMotor(robot.scoreArm, MOTOR_MIN, SCORE_ARM_MAX, true);
 		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, COLLECT_ARM_MAX, true);
 		hook = new LimitedMotor(robot.hook, MOTOR_MIN, HOOK_MAX, true);
@@ -77,6 +75,10 @@ public class TheTeleop extends OurLinearOpMode {
 	@Override
 	protected void run() {
 		robot.parker.setPosition(PARKER_HOME);
+		//cycle count
+		long countEndTime = System.nanoTime() + 500000000;
+		int cycles = 0;
+		double cyclesPerSec = 0;
 		while (opModeIsActive()) {
 			//FOR GAMEPAD1, CHANGED BY GAMEPAD2 2 is fast, 1 is normal, 0 is
 			// slow.
@@ -102,7 +104,7 @@ public class TheTeleop extends OurLinearOpMode {
 			} else switch (armState) {
 			case TO_COLLECT:
 				scooper.setPower(0); //idle
-				collectArm.setPowerLimited(1, null, INITIAL_EXTENSION_COLLECT_ARM);
+				collectArm.setPowerLimited(1, null, COLLECT_ARM_INITIAL_EXTENSION);
 				//extend to initial
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED); //close door
 				scoreArm.setPowerLimited(IDLE_POWER_IN); //keep in
@@ -111,7 +113,7 @@ public class TheTeleop extends OurLinearOpMode {
 				break;
 			case COLLECT:
 				scooper.setPower(triggerSum);
-				collectArm.setPowerLimited(-gamepad2.right_stick_y + IDLE_POWER_COLLECT_ARM,
+				collectArm.setPowerLimited(-gamepad2.right_stick_y,
 				                           gamepad2.x);
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 				scoreArm.setPowerLimited(IDLE_POWER_IN);
@@ -144,18 +146,20 @@ public class TheTeleop extends OurLinearOpMode {
 				break;
 			case TO_SCORE:
 				scooper.setPower(0); //idle
-				collectArm.setPowerLimited(IDLE_POWER_IN); //keep in
+				//keep out of the way
+				collectArm.setPowerLimited(IDLE_POWER_OUT, null, COLLECT_ARM_AWAY);
 				collectDoor.setPosition(COLLECT_DOOR_OPEN); //keep open
-				scoreArm.setPowerLimited(1, null, INITIAL_EXTENSION_SCORE_ARM_);
+				scoreArm.setPowerLimited(1, null, SCORE_ARM_INITIAL_EXTENSION);
 				scoreDump.setPosition(SCORE_DUMP_HOME);
 				speedMode = SpeedMode.SLOW; //GO SLOW
 				autoAdvance = scoreArm.getLastState() == UPPER;
 				break;
 			case SCORE:
 				scooper.setPower(0); //idle
-				collectArm.setPowerLimited(IDLE_POWER_IN); //keep in
+				//keep out of the way
+				collectArm.setPowerLimited(IDLE_POWER_OUT, null, COLLECT_ARM_AWAY);
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
-				scoreArm.setPowerLimited(-gamepad2.right_stick_y + IDLE_POWER_SCORE_ARM,
+				scoreArm.setPowerLimited(-gamepad2.right_stick_y,
 				                         gamepad1.x);
 				if (gp2rbp.pressed()) {
 					scoreDump.setPosition(SCORE_DUMP_DOWN);
@@ -186,7 +190,7 @@ public class TheTeleop extends OurLinearOpMode {
 			/*-----------------*\
 		    |     GAMEPAD 1     |
 			\* ----------------*/
-			double direction = Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+			double direction = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
 			
 			if (gp1b.pressed()) gyroDrive = !gyroDrive;
 			
@@ -207,16 +211,21 @@ public class TheTeleop extends OurLinearOpMode {
 			
 			double moveSpeed = Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
 			                            1.7);
-			MotorSetPower power = rampedMoveController.getPower(
+			manualMoveController.driveAt(
 					XY.fromPolar(moveSpeed, direction).scale(speedMode.mult),
 					-gamepad1.right_stick_x * speedMode.mult, 1, 1);
-			robot.wheels.setPower(power);
 			//hook
 			hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0, gamepad1.dpad_down);
 			if (gp1dpadlr.pressed()) {
 				hook.resetEncoder();
 			}
-			
+			if (System.nanoTime() > countEndTime) {
+				cyclesPerSec = (cyclesPerSec + cycles * 2) / 2;
+				countEndTime += 5e8;
+				cycles = 0;
+			}
+			cycles++;
+			telemetry.addData("Cycles per second:", cyclesPerSec);
 			telemetry.update();
 		}
 	}

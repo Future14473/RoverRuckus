@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
 
-@SuppressWarnings("unused")
+import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.MAX_ELAPSED_TIME;
+
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class PIDXY {
-	private static final double ELAPSED_TIME_MULT = 100;
+	private static final double ELAPSED_TIME_MULT = 200;
 	
 	public double p, i, d;
 	private double maxOutputRamp, maxError;
@@ -97,7 +98,7 @@ public class PIDXY {
 	 */
 	@SuppressWarnings("Duplicates")
 	public XY getOutput(XY input, double elapsedTime) {
-		if (noPrev || elapsedTime > Constants.MAX_ELAPSED_TIME) {
+		if (noPrev || elapsedTime > MAX_ELAPSED_TIME) {
 			lastInput = input;
 			elapsedTime = 0;
 			noPrev = false;
@@ -114,11 +115,12 @@ public class PIDXY {
 		XY output = p.add(i).add(d);
 		
 		
-		double ramp = maxOutputRamp * elapsedTime;
+		double ramp = elapsedTime == 0 ? 0 : maxOutputRamp * elapsedTime;
 		if (maxOutput != 0 && output.magnitude() > maxOutput) {
 			iOutput = XY.ZERO;
 			output = output.limitMagnitudeTo(maxOutput);
-		} else if (ramp != 0 && output.subtract(lastOutput).magnitude() > ramp) {
+		}
+		if (maxOutputRamp != 0 && output.subtract(lastOutput).magnitude() > ramp) {
 			iOutput = XY.ZERO;
 			output = lastOutput.rampTo(output, ramp);
 		}
@@ -155,5 +157,11 @@ public class PIDXY {
 	
 	public void setReversed(boolean reversed) {
 		this.reversed = reversed;
+	}
+	
+	public void setCoefficients(PIDCoefficients coefficients) {
+		this.p = coefficients.p;
+		this.i = coefficients.i;
+		this.d = coefficients.d;
 	}
 }

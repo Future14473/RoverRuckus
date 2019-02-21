@@ -66,7 +66,7 @@
 //	private void finishHook() throws InterruptedException {
 //		robot.hook.setPower(-0.7);
 //		waitUntil(
-//				() -> Math.abs(robot.hook.getCurrentPosition()/* - 0 */) < 100);
+//				() -> Math.abs(robot.hook.getPosition()/* - 0 */) < 100);
 //		robot.hook.setPower(0);
 //	}
 //
@@ -74,11 +74,11 @@
 //		robot.hook.setPower(1);
 //		//decreasing
 //		waitUntil(
-//				() -> robot.hook.getCurrentPosition() <= HOOK_TURN_START_LOOK);
+//				() -> robot.hook.getPosition() <= HOOK_TURN_START_LOOK);
 //		goldLooker.start();
 //		telemetry.addLine("GOLD LOOK STARTED");
 //		telemetry.update();
-//		waitUntil(() -> robot.hook.getCurrentPosition() <= HOOK_TURN_END);
+//		waitUntil(() -> robot.hook.getPosition() <= HOOK_TURN_END);
 //		robot.hook.setPower(0);
 //		drive.moveXY(-0.15, 0.05, 10);
 //		drive.moveXY(0, 0.1, 10);

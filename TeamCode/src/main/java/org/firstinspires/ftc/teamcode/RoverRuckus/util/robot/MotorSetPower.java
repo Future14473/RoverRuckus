@@ -9,11 +9,12 @@ import java.util.Arrays;
  *
  * @see MotorSet
  */
-@SuppressWarnings("WeakerAccess")
 public final class MotorSetPower {
-	public static final MotorSetPower ZERO = new MotorSetPower();
-	public static final MotorSetPower TURN = new MotorSetPower(1, -1, 1, -1);
-	private final       double[]      power;
+	public static final MotorSetPower ZERO   = new MotorSetPower();
+	public static final MotorSetPower TURN   = new MotorSetPower(1, -1, 1, -1);
+	public static final double        X_MULT = 1.2;
+	
+	private final double[] power;
 	
 	/**
 	 * Construct from four power levels.
@@ -38,22 +39,25 @@ public final class MotorSetPower {
 	/**
 	 * Returns an new {@code MotorSetPower} that has its power levels scaled
 	 * down such that no power level is greater than the given maxPower.
-	 *
-	 * @param maxPower
 	 */
-	
 	public MotorSetPower limitMagnitudeTo(double maxPower) {
 		if (maxPower <= 0) throw new IllegalArgumentException();
 		if (this == ZERO) return this;
-		double max = maxPower;
-		for (int i = 0; i < 4; i++) {
-			max = Math.max(max, Math.abs(power[i]));
-		}
+		double max = getMaxPower();
+		if (max < maxPower) return this;
 		double[] o = new double[4];
 		for (int i = 0; i < 4; i++) {
 			o[i] = this.power[i] * maxPower / max;
 		}
 		return fromArray(o);
+	}
+	
+	public double getMaxPower() {
+		double max = 0;
+		for (int i = 0; i < 4; i++) {
+			max = Math.max(max, Math.abs(power[i]));
+		}
+		return max;
 	}
 	
 	/**
@@ -149,6 +153,10 @@ public final class MotorSetPower {
 		                  rightRate + turnRate);
 	}
 	
+	public double[] toArray() {
+		return power.clone();
+	}
+	
 	private static MotorSetPower internalFromArray(double[] power) {
 		if (Arrays.equals(power, ZERO.power)) return ZERO;
 		if (Arrays.equals(power, TURN.power)) return TURN;
@@ -158,5 +166,12 @@ public final class MotorSetPower {
 	public static MotorSetPower fromArray(double[] power) {
 		if (power.length != 4) throw new IllegalArgumentException();
 		return internalFromArray(power.clone());
+	}
+	
+	public static MotorSetPower fromXY(double x, double y, double turnRate) {
+		x *= X_MULT;
+		double direction = Math.atan2(y, x);
+		double speed = Math.hypot(x, y);
+		return fromPolar(direction, speed, turnRate);
 	}
 }

@@ -8,6 +8,8 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Reflections;
 
+import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.DEBUG_LOG;
+
 /**
  * A means to cleanup resources automatically at the end of an OpMode,
  * no matter where initialized
@@ -54,7 +56,8 @@ public class OpModeLifetimeRegistrar {
 				}
 				
 				private void stop() {
-					RobotLog.dd(TAG, "Stopping %s", name);
+					if (DEBUG_LOG)
+						RobotLog.dd(TAG, "Stopping %s", name);
 					stoppable.stop();
 					opModeManager.unregisterListener(this);
 				}

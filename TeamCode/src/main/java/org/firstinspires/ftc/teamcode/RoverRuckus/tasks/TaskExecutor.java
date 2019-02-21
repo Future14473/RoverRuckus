@@ -11,17 +11,19 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.VERBOSE_LOG;
 
 class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
-	private static final String        TAG     = TaskExecutor.class.getSimpleName();
-	private final        String        name;
-	private final        AtomicBoolean running = new AtomicBoolean(true);
+	private static final String TAG = TaskExecutor.class.getSimpleName();
 	
-	private final    Object              isDoneLock  = new Object();
-	private final    Thread              theThread;
-	private final    BlockingQueue<Task> queue       = new LinkedBlockingQueue<>();
-	private          List<Task>          onDoneTasks = new LinkedList<>();
-	private volatile Task                curTask;
+	private final String name;
+	
+	private final Thread              theThread;
+	private final AtomicBoolean       running     = new AtomicBoolean(true);
+	private final Object              isDoneLock  = new Object();
+	private final List<Task>          onDoneTasks = new LinkedList<>();
+	private final BlockingQueue<Task> tasksQueue  = new LinkedBlockingQueue<>();
+	private       Task                curTask;
 	
 	public TaskExecutor(String name) {
 		this.name = name;
@@ -40,7 +42,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	public void add(Task task) {
 		if (task == null) throw new NullPointerException();
 		if (!running.get()) throw new IllegalStateException();
-		queue.add(task);
+		tasksQueue.add(task);
 	}
 
 //	@Override
@@ -53,7 +55,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	 * @return true if no tasks are running, false otherwise
 	 */
 	public boolean isDone() {
-		return !running.get() && curTask == null && queue.isEmpty();
+		return !running.get() && curTask == null && tasksQueue.isEmpty();
 	}
 	
 	/**
@@ -93,7 +95,8 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	@Override
 	public void stop() {
 		if (!running.getAndSet(false)) return;
-		RobotLog.vv(TAG, "%s: stopping", name);
+		if (VERBOSE_LOG)
+			RobotLog.vv(TAG, "%s: stopping", name);
 		theThread.interrupt();
 		cleanup();
 	}
@@ -103,7 +106,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 		synchronized (isDoneLock) {
 			isDoneLock.notifyAll();
 		}
-		queue.clear();
+		tasksQueue.clear();
 		curTask = null;
 	}
 	
@@ -120,26 +123,31 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	
 	private void doTasks() {
 		while (running.get()) try {
-			if (queue.isEmpty()) {
-				RobotLog.vv(TAG, "%s: Done", name);
+			if (tasksQueue.isEmpty()) {
+				if (VERBOSE_LOG)
+					RobotLog.vv(TAG, "%s: done", name);
 				synchronized (isDoneLock) {
 					isDoneLock.notifyAll();
 				}
 				for (Task onDoneTask : onDoneTasks) {
-					RobotLog.vv(TAG, "%s: running onDoneTask %s", name,
-					            Reflections.getInformativeName(onDoneTask));
+					if (VERBOSE_LOG)
+						RobotLog.vv(TAG, "%s: running onDoneTask %s", name,
+						            Reflections.getInformativeName(onDoneTask));
 					onDoneTask.run();
 				}
 			}
-			curTask = queue.poll(2, MINUTES);
+			curTask = tasksQueue.poll(2, MINUTES);
 			if (curTask == null) {
 				running.set(false);
 				return;
 			}
 			if (!Thread.interrupted()) {
-				RobotLog.vv(TAG, "%s: running %s", name, Reflections.getInformativeName(curTask));
+				if (VERBOSE_LOG)
+					RobotLog.vv(TAG, "%s: running %s", name,
+					            Reflections.getInformativeName(curTask));
 				curTask.run();
 			}
+			
 		} catch (InterruptedException ignored) {}
 	}
 }

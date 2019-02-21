@@ -93,7 +93,7 @@
 //			double triggerSum = gamepad2.right_trigger - gamepad2.left_trigger;
 //			if (gamepad2.right_bumper) triggerSum = 1;
 //			else if (gamepad2.left_bumper) triggerSum = -1;
-//			if (Math.abs(robot.hook.getCurrentPosition()) > HOOK_NULLIFY) {
+//			if (Math.abs(robot.hook.getPosition()) > HOOK_NULLIFY) {
 //				//close everything.
 //				telemetry.addLine("HOOKING!!!!");
 //				scooper.setPower(0); //idle

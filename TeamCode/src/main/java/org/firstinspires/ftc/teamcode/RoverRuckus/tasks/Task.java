@@ -20,5 +20,6 @@ public interface Task extends Runnable {
 				runWithInterrupt();
 			} catch (InterruptedException ignored) { }
 		}
+		
 	}
 }

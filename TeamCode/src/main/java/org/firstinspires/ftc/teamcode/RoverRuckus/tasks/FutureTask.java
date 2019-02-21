@@ -18,4 +18,9 @@ public class FutureTask<V> extends java.util.concurrent.FutureTask<V>
 	public FutureTask(@NonNull Runnable runnable, V result) {
 		super(runnable, result);
 	}
+	
+	@Override
+	public String toString() {
+		return "CallableTask{}";
+	}
 }

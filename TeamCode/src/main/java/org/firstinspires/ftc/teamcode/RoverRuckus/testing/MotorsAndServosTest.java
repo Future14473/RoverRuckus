@@ -18,24 +18,24 @@ public class MotorsAndServosTest extends OpMode {
 	@Override
 	public void init() {
 		CurRobot robot = new CurRobot(hardwareMap);
-		motor = robot.scoreArm;
+		//motor = robot.scoreArm;
 		//motor.setDirection(DcMotorSimple.Direction.REVERSE);
-		//servo = robot.scoreDump;
+		servo = robot.scoreDump;
 		//crServo = hardwareMap.get(CRServo.class, "Collector");
 	}
 	
 	@Override
 	public void loop() {
-		//*
+		/*
 		if (gamepad1.a) {
 			motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 			motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		}
 		motor.setPower(-gamepad1.right_stick_y);
 		telemetry.addData("Gamepad1 Right stick Y(negated):", -gamepad1.right_stick_y);
-		telemetry.addData("Motor pos:", motor.getCurrentPosition());
+		telemetry.addData("Motor pos:", motor.getPosition());
 		//*/
-		/*
+		//*
 		if (gamepad1.dpad_up) {
 			if (pos < 0.998) pos += 0.002;
 		} else if (gamepad1.dpad_down) {

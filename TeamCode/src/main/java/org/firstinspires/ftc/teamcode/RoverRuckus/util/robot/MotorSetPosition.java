@@ -4,7 +4,8 @@ import java.util.Arrays;
 
 /**
  * Represents a set of power levels for motors, and surrounding
- * calculations on motor power levels
+ * calculations on motor power levels.
+ * Immutable.
  *
  * @see MotorSet
  */
@@ -53,5 +54,9 @@ public final class MotorSetPosition {
 	public static MotorSetPosition fromArray(int[] array) {
 		if (Arrays.equals(array, ZERO.position)) return ZERO;
 		return new MotorSetPosition(array);
+	}
+	
+	public int[] toArray() {
+		return position.clone();
 	}
 }
