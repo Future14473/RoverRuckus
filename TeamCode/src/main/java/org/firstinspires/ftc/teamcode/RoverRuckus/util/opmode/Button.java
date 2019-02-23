@@ -7,17 +7,17 @@ import java.util.function.BooleanSupplier;
  */
 @SuppressWarnings("unused")
 public class Button implements BooleanSupplier {
-	private final BooleanSupplier cur;
+	private final BooleanSupplier button;
 	private       boolean         past = false;
 	
 	public Button(BooleanSupplier button) {
-		this.cur = button;
+		this.button = button;
 	}
 	
 	public State getState() {
-		State o = cur.getAsBoolean() ? (past ? State.HELD : State.PRESSED) :
+		State o = button.getAsBoolean() ? (past ? State.HELD : State.PRESSED) :
 		          (past ? State.RELEASED : State.UP);
-		past = cur.getAsBoolean();
+		past = button.getAsBoolean();
 		return o;
 	}
 	
@@ -39,7 +39,11 @@ public class Button implements BooleanSupplier {
 	
 	@Override
 	public boolean getAsBoolean() {
-		return cur.getAsBoolean();
+		return button.getAsBoolean();
+	}
+	
+	public boolean isDown() {
+		return button.getAsBoolean();
 	}
 	
 	public enum State {

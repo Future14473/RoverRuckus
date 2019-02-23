@@ -46,7 +46,7 @@ public class PositionTracker {
 							.rotate(currentPosition.angle);
 			//remember to rotate by direction robot is moving.
 		}
-		currentPosition = new XYR(currentPosition.xy.add(deltaLocation), currentPosition.angle);
+		currentPosition = new XYR(currentPosition.xy.add(deltaLocation), currentAngle);
 		lastMotorPos = currentMotorPos;
 	}
 	

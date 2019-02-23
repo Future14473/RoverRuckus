@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.Magnitudes;
 public class Constants {
 	//Encoder limits -----------------------
 	//"at home" position for all encoders
-	public static final int        MOTOR_MIN                     = 50;
+	public static final int        MOTOR_MIN                     = 20;
 	//maximum arm extension
 	public static final int        SCORE_ARM_MAX                 = 1750;
 	public static final int        COLLECT_ARM_MAX               = 4450;
@@ -16,13 +16,13 @@ public class Constants {
 	//initial extensions during auto extensions
 	public static final int        COLLECT_ARM_INITIAL_EXTENSION = 2000;
 	public static final int        SCORE_ARM_INITIAL_EXTENSION   = SCORE_ARM_MAX;
-	public static final Integer    COLLECT_ARM_AWAY              = 300;
+	public static final Integer    COLLECT_ARM_AWAY              = 100;
 	// Servo positions -----------------------
 	//Collect door positions
 	public static final double     COLLECT_DOOR_CLOSED           = 0.71;
 	public static final double     COLLECT_DOOR_OPEN             = 0.30;
 	//Score dump positions
-	public static final double     SCORE_DUMP_HOME               = 0.55;
+	public static final double     SCORE_DUMP_HOME               = 0.58;
 	public static final double     SCORE_DUMP_DOWN               = 0;
 	//parker
 	public static final double     PARKER_HOME                   = 0.6;
@@ -31,7 +31,7 @@ public class Constants {
 	public static final double     SPEED_MULT_NORM               = 1;
 	public static final double     SPEED_MULT_SLOW               = 0.4;
 	//Powers -----------------------
-	public static final double     IDLE_POWER_IN                 = -0.8;
+	public static final double     IDLE_POWER_IN                 = -0.6;
 	public static final double     IDLE_POWER_OUT                = 0.8;
 	public static final double     IDLE_POWER_SCOOPER            = 0.6;
 	//Other constants -----------------------
@@ -44,7 +44,7 @@ public class Constants {
 	
 	//For PIDs -----------------------
 	public static final PIDCoefficients PID_COEFFICIENTS_TRANSLATIONAL =
-			new PIDCoefficients(0.1, 0, 1);
+			new PIDCoefficients(0.15, 0, 1.2);
 	public static final PIDCoefficients PID_COEFFICIENTS_ANGULAR       =
 			new PIDCoefficients(1.3, 0, 3);
 	

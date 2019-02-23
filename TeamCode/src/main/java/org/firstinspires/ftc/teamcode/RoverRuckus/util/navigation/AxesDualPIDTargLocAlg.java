@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.MAX_ANGULAR_ERROR;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.MAX_TRANSLATIONAL_ERROR;
@@ -40,24 +39,25 @@ public class AxesDualPIDTargLocAlg implements PIDTargLocAlg {
 	}
 	
 	@Override
-	public MotorSetPower getPower(XYR targetPosition, XYR currentPosition,
-	                              double maxAngularSpeed, double maxTranslationSpeed,
-	                              double elapsedTime) {
-		anglePID.setMaxOutputs(maxAngularSpeed);
+	public XYR getPower(XYR targetPosition, XYR currentPosition,
+	                    Magnitudes maxVelocities,
+	                    double elapsedTime) {
+		anglePID.setMaxOutputs(maxVelocities.angular);
 		anglePID.setTarget(targetPosition.angle);
 		//rotate together
 		//   (\) cos [x] is rightDiag, sin [y] is leftDiag
 		//            1,4                  2,3
 		XY diff = targetPosition.xy.subtract(currentPosition.xy);
-		xPID.setMaxOutputs(maxTranslationSpeed);
-		yPID.setMaxOutputs(maxTranslationSpeed);
+		
+		xPID.setMaxOutputs(maxVelocities.translational);
+		yPID.setMaxOutputs(maxVelocities.translational);
 		xPID.setTarget(diff.x);
 		yPID.setTarget(diff.y);
 		double turnRate = anglePID.getOutput(currentPosition.angle, elapsedTime);
 		double xRate = xPID.getOutput(0, elapsedTime);
 		double yRate = yPID.getOutput(0, elapsedTime);
 		XY toMove = new XY(xRate, yRate).rotate(-currentPosition.angle);
-		return MotorSetPower.fromXY(toMove.x, toMove.y, turnRate);
+		return new XYR(toMove, turnRate);
 	}
 	
 }

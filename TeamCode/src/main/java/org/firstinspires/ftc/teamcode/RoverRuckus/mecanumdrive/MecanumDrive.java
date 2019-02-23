@@ -6,11 +6,8 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.AxesDualPIDTargLocAlg;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.TargetLocationAlgorithm;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.XY;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.XYR;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSet;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 
 import java.util.Objects;
 
@@ -139,23 +136,23 @@ public class MecanumDrive extends TaskProgram {
 		
 		@Override
 		public boolean loop() {
-			double curAngle = getCurAngle();
-			//RobotLog.dd("MecanumDrive", "curAngle: %.5f", curAngle);
-			MotorSetPower output =
-					targetLocationAlgorithm.getPower(new XYR(XY.ZERO, targetAngle),
-					                                 new XYR(XY.ZERO, curAngle),
-					                                 speed,
-					                                 speed,
-					                                 elapsedTime.seconds());
-			elapsedTime.reset();
-			wheels.setPower(output);
-			boolean hit = Math.abs(curAngle - targetAngle) < ANGLE_TOLERANCE;
-			if (hit) {
-				consecutive++;
-			} else {
-				consecutive = 0;
-			}
-			return consecutive >= CONSECUTIVE_HITS;
+			throw new UnsupportedOperationException();
+//			//double curAngle = getCurAngle();
+//			//RobotLog.dd("MecanumDrive", "curAngle: %.5f", curAngle);
+//			MotorSetPower output =
+//					targetLocationAlgorithm.getPower(new XYR(XY.ZERO, targetAngle),
+//					                                 new XYR(XY.ZERO, curAngle),
+//					                                 new Magnitudes(speed),
+//					                                 elapsedTime.seconds());
+//			elapsedTime.reset();
+//			//wheels.setPower(output);
+//			boolean hit = Math.abs(curAngle - targetAngle) < ANGLE_TOLERANCE;
+//			if (hit) {
+//				consecutive++;
+//			} else {
+//				consecutive = 0;
+//			}
+//			return consecutive >= CONSECUTIVE_HITS;
 		}
 		
 	}

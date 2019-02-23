@@ -43,26 +43,26 @@ public class AutoMoveController {
 						XYR.modAngleTowards(targetPosition.angle, curAngle));
 	}
 	
-	public void moveToTarget(double maxAngularSpeed, double maxTranslationSpeed,
-	                         double elapsedTime) {
-		MotorSetPower power = targetLocationAlgorithm.getPower(
+	public void moveToTarget(Magnitudes maxVelocities, double elapsedTime) {
+		XYR targetRate = targetLocationAlgorithm.getPower(
 				targetPosition, positionTracker.getCurrentPosition(),
-				maxAngularSpeed, maxTranslationSpeed, elapsedTime);
-		if (power.getMaxPower() < MIN_POWER) robot.getWheels().stop();
+				maxVelocities, elapsedTime);
+		MotorSetPower power = rampedMoveController.getPower(targetRate, maxVelocities,
+		                                                    elapsedTime);
 		robot.getWheels().setPower(power);
 	}
 	
-	public boolean isOnTarget(double translationalTolerance, double angularTolerance) {
-		return (translationalTolerance <= 0 ||
-		        getLocationError().magnitude() < translationalTolerance) &&
-		       (angularTolerance <= 0 ||
-		        Math.abs(getAngularError()) < angularTolerance);
+	public boolean isOnTarget(Magnitudes tolerances) {
+		return (tolerances.translational <= 0 ||
+		        getLocationError().magnitude() < tolerances.translational) &&
+		       (tolerances.angular <= 0 ||
+		        Math.abs(getAngularError()) < tolerances.angular);
 	}
 	
-	public void updateAndMove(double maxAngularSpeed, double maxTranslationalSpeed,
+	public void updateAndMove(Magnitudes maxVelocities,
 	                          double elapsedTime) {
 		updateLocation();
-		moveToTarget(maxAngularSpeed, maxTranslationalSpeed, elapsedTime);
+		moveToTarget(maxVelocities, elapsedTime);
 	}
 	
 	public void addToTargetPosition(XYR toAdd) {

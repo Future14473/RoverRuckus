@@ -161,11 +161,9 @@ public class MecanumDriveBetter extends TaskProgram {
 	 * rotation.
 	 */
 	class PositionRobotTask extends TaskAdapter {
-		private final double maxAngularSpeed;
-		private final double angularTolerance;
-		private final double maxTranslationalSpeed;
-		private final double translationalTolerance;
-		private final int    consecutive;
+		private final Magnitudes maxVelocities;
+		private final Magnitudes tolerances;
+		private final int        consecutive;
 		
 		private double numConsecutive;
 		
@@ -188,10 +186,8 @@ public class MecanumDriveBetter extends TaskProgram {
 				int consecutive) {
 			if (maxAngularSpeed <= 0 || maxTranslationalSpeed <= 0 || consecutive <= 1)
 				throw new IllegalArgumentException();
-			this.maxTranslationalSpeed = maxTranslationalSpeed;
-			this.translationalTolerance = translationalTolerance;
-			this.maxAngularSpeed = maxAngularSpeed;
-			this.angularTolerance = angularTolerance;
+			this.maxVelocities = new Magnitudes(maxTranslationalSpeed, maxAngularSpeed);
+			this.tolerances = new Magnitudes(translationalTolerance, angularTolerance);
 			this.consecutive = consecutive;
 		}
 		
@@ -202,9 +198,9 @@ public class MecanumDriveBetter extends TaskProgram {
 		
 		@Override
 		public boolean loop() {
-			moveController.updateAndMove(maxAngularSpeed, maxTranslationalSpeed,
+			moveController.updateAndMove(maxVelocities,
 			                             time.getSecondsAndReset());
-			boolean hit = moveController.isOnTarget(translationalTolerance, angularTolerance);
+			boolean hit = moveController.isOnTarget(tolerances);
 			if (hit) numConsecutive++;
 			else numConsecutive = 0;
 			return numConsecutive >= consecutive;
@@ -213,16 +209,14 @@ public class MecanumDriveBetter extends TaskProgram {
 		@SuppressLint("DefaultLocale")
 		@Override
 		public String toString() {
-			return String.format("MoveTask{angTol: %.2f, posTol:%.2f}",
-			                     angularTolerance,
-			                     translationalTolerance);
+			return String.format("MoveTask: %s", tolerances);
 		}
 		
 	}
 	
 	/**
 	 * Creates move tasks: a composite task of changing target position, then moving there.
-	 * Will only consider translation/rotation tolerances if an actual movement/rotation occured,
+	 * Will only consider translation/rotation tolerances if an actual movement/rotation occurred,
 	 * respectively.
 	 */
 	//Google "OOP builder"

@@ -12,8 +12,9 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.DEFAULT_MAX_A
 
 @TeleOp(group = "test")
 public class AutoMoveControllerTest extends OurLinearOpMode {
-	private static final XY FORWARD  = new XY(0, 12);
-	private static final XY BACKWARD = new XY(0, -12);
+	public static final  Magnitudes MAX_VELOCITIES = new Magnitudes(0.8, 0.5);
+	private static final XY         FORWARD        = new XY(0, 12);
+	private static final XY         BACKWARD       = new XY(0, -12);
 	
 	private final Button               a           = new Button(() -> gamepad1.a);
 	private final Button               b           = new Button(() -> gamepad1.b);
@@ -58,8 +59,7 @@ public class AutoMoveControllerTest extends OurLinearOpMode {
 						gamepad1.right_stick_x * 1.5,
 						0.8, 0.4);
 			} else {
-				autoMoveController.moveToTarget(0.3, 1, time.seconds());
-				time.reset();
+				autoMoveController.moveToTarget(MAX_VELOCITIES, time.getSecondsAndReset());
 			}
 		}
 	}

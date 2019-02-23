@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.*;
 
@@ -32,27 +31,22 @@ public class AxesXYPIDTargLocAlg implements PIDTargLocAlg {
 	}
 	
 	@Override
-	public MotorSetPower getPower(XYR targetPosition, XYR currentPosition,
-	                              double maxAngularSpeed, double maxTranslationSpeed,
-	                              double elapsedTime) {
-		anglePID.setMaxOutputs(maxAngularSpeed);
+	public XYR getPower(XYR targetPosition, XYR currentPosition,
+	                    Magnitudes maxVelocities,
+	                    double elapsedTime) {
+		translationalPID.setMaxOutput(maxVelocities.translational);
+		translationalPID.setTarget(targetPosition.xy);
+		anglePID.setMaxOutputs(maxVelocities.angular);
 		anglePID.setTarget(targetPosition.angle);
-		//rotate together
-		//   (\) cos [x] is rightDiag, sin [y] is leftDiag
-		//            1,4                  2,3
-		XY axesDiff =
-				targetPosition.xy.subtract(currentPosition.xy);
-		translationalPID.setMaxOutput(maxTranslationSpeed);
-		translationalPID.setTarget(axesDiff);
-		
 		
 		double turnRate = anglePID.getOutput(currentPosition.angle, elapsedTime);
-		XY moveRate = translationalPID.getOutput(XY.ZERO, elapsedTime)
+		XY moveRate = translationalPID.getOutput(currentPosition.xy, elapsedTime)
 		                              .rotate(-currentPosition.angle);
 		//difference: rotate after. Rotating robot wont change extrinsic movement direction.
-//		RobotLog.dd("XYMotorControlAlg", "Diagonal diff: %s%nMoveRate: %s", diagonalDiff,
+//		RobotLog.dd("XYMotorControlAlg", "Diff: %s%nMoveRate: %s",
+//		            targetPosition.xy.subtract(currentPosition.xy),
 //		            moveRate);
-		return MotorSetPower.fromXY(moveRate.x, moveRate.y, turnRate);
+		return new XYR(moveRate, turnRate);
 	}
 	
 }

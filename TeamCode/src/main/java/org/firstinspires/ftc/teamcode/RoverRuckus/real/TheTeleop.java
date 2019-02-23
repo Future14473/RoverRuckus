@@ -15,7 +15,6 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.*;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button.State.*;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor.State.LOWER;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor.State.UPPER;
 
@@ -31,34 +30,28 @@ public class TheTeleop extends OurLinearOpMode {
 	private CRServo angler;
 	
 	//Variables for driving
-	private boolean  gyroDrive      = false;
-	private boolean  reverseDrive   = false;
-	private double   rotationOffSet = 0;
+	private boolean  reverseDrive = false;
 	//Buttons.
-	//toggle direction / reset gyro
-	private Button   gp1y           = new Button(() -> gamepad1.y);
-	//toggle gyro drive
-	private Button   gp1b           = new Button(() -> gamepad1.b);
-	private Button   gp2a           = new Button(() -> gamepad2.a); //to next stage
-	private Button   gp2b           = new Button(() -> gamepad2.b); //to prev stage.
+	private Button   gp1y         = new Button(() -> gamepad1.y); //toggle reverse
+	private Button   gp2a         = new Button(() -> gamepad2.a); //to next stage
+	private Button   gp2b         = new Button(() -> gamepad2.b); //to prev stage.
 	//opening/close scoreDump
-	private Button   gp2lbp         = new Button(() -> gamepad2.left_bumper);
-	private Button   gp2rbp         = new Button(() -> gamepad2.right_bumper);
+	private Button   gp2lbp       = new Button(() -> gamepad2.left_bumper);
+	private Button   gp2rbp       = new Button(() -> gamepad2.right_bumper);
 	//reset COLLECT encoder
-	private Button   gp2lsb         = new Button(() -> gamepad2.left_stick_button);
+	private Button   gp2lsb       = new Button(() -> gamepad2.left_stick_button);
 	//reset SCORE encoder
-	private Button   gp2rsb         = new Button(() -> gamepad2.right_stick_button);
+	private Button   gp2rsb       = new Button(() -> gamepad2.right_stick_button);
 	//reset HOOK encoder
-	private Button   gp1dpadlr      = new Button(() -> gamepad1.dpad_left || gamepad1.dpad_right);
+	private Button   gp1dpadlr    = new Button(() -> gamepad1.dpad_left || gamepad1.dpad_right);
 	//State
-	private ArmState armState       = ArmState.COLLECT;
+	private ArmState armState     = ArmState.COLLECT;
 	//pseudo sleep
 	private long     sleepEndTime;
 	
 	@Override
 	protected void initialize() {
 		robot = new CurRobot(hardwareMap);
-		robot.initIMU();
 		robot.wheels.setMode(RUN_USING_ENCODER);
 		robot.wheels.setZeroPowerBehavior(FLOAT);
 		manualMoveController = new ManualMoveController(robot);
@@ -147,9 +140,11 @@ public class TheTeleop extends OurLinearOpMode {
 			case TO_SCORE:
 				scooper.setPower(0); //idle
 				//keep out of the way
-				collectArm.setPowerLimited(IDLE_POWER_OUT, null, COLLECT_ARM_AWAY);
+				collectArm.setPowerLimited(1, null, COLLECT_ARM_AWAY);
 				collectDoor.setPosition(COLLECT_DOOR_OPEN); //keep open
-				scoreArm.setPowerLimited(1, null, SCORE_ARM_INITIAL_EXTENSION);
+				//TODO: MAKE BETTER
+				scoreArm.setPowerLimited(collectArm.getLastState() == UPPER ? 1 : 0.1, null,
+				                         SCORE_ARM_INITIAL_EXTENSION);
 				scoreDump.setPosition(SCORE_DUMP_HOME);
 				speedMode = SpeedMode.SLOW; //GO SLOW
 				autoAdvance = scoreArm.getLastState() == UPPER;
@@ -161,7 +156,7 @@ public class TheTeleop extends OurLinearOpMode {
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 				scoreArm.setPowerLimited(-gamepad2.right_stick_y,
 				                         gamepad1.x);
-				if (gp2rbp.pressed()) {
+				if (gp2rbp.isDown()) {
 					scoreDump.setPosition(SCORE_DUMP_DOWN);
 				} else if (gp2lbp.pressed()) {
 					scoreDump.setPosition(SCORE_DUMP_HOME);
@@ -190,25 +185,11 @@ public class TheTeleop extends OurLinearOpMode {
 			/*-----------------*\
 		    |     GAMEPAD 1     |
 			\* ----------------*/
+			if (gp1y.pressed()) reverseDrive = !reverseDrive;
+			telemetry.addData("DIRECTION", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
+			
 			double direction = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-			
-			if (gp1b.pressed()) gyroDrive = !gyroDrive;
-			
-			Button.State gp1yState = gp1y.getState();
-			if (gyroDrive) {
-				if (gp1yState == HELD) {
-					speedMode = SpeedMode.STOP;
-				} else if (gp1yState == RELEASED) {
-					rotationOffSet = robot.getAngle() + direction;
-				}
-				direction += robot.getAngle() - rotationOffSet;
-				telemetry.addData("DIRECTION", "GYRO");
-			} else {
-				if (gp1yState == PRESSED) reverseDrive = !reverseDrive;
-				if (reverseDrive) direction += Math.PI;
-				telemetry.addData("DIRECTION", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
-			}
-			
+			if (reverseDrive) direction += Math.PI;
 			double moveSpeed = Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
 			                            1.7);
 			manualMoveController.driveAt(

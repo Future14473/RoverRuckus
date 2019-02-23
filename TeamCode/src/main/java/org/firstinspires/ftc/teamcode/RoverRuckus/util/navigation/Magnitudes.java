@@ -19,4 +19,9 @@ public class Magnitudes {
 		this.translational = magnitude;
 		this.angular = magnitude;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("{translational=%.4f, angular=%.4f}", translational, angular);
+	}
 }
