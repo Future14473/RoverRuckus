@@ -15,8 +15,7 @@ public class ManualMoveController {
 	private final IRobot               robot;
 	private final CycleTime            time = new CycleTime();
 	
-	public ManualMoveController(
-			IRobot robot, RampedMoveController rampedMoveController) {
+	public ManualMoveController(IRobot robot, RampedMoveController rampedMoveController) {
 		this.rampedMoveController = rampedMoveController;
 		this.robot = robot;
 	}
@@ -29,13 +28,9 @@ public class ManualMoveController {
 		this(robot, new RampedMoveController(DEFAULT_MAX_ACCELERATIONS));
 	}
 	
-	public void driveAt(XY moveRate, double turnRate, double translationalVelocity,
-	                    double angularVelocity) {
-		robot.getWheels().setPower(
-				rampedMoveController.getPower(new XYR(moveRate, turnRate),
-				                              new Magnitudes(translationalVelocity,
-				                                             angularVelocity),
-				                              time.getSecondsAndReset()));
+	public void driveAt(XY moveRate, double turnRate) {
+		robot.getWheels()
+		     .setPower(rampedMoveController.getPower(new XYR(moveRate, turnRate),
+		                                             time.getSecondsAndReset()));
 	}
-	
 }

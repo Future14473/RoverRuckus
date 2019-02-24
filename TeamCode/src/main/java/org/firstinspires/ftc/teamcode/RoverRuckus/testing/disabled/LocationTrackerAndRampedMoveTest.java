@@ -39,8 +39,7 @@ public class LocationTrackerAndRampedMoveTest extends OurLinearOpMode {
 		while (opModeIsActive()) {
 			manualMoveController.driveAt(
 					new XY(gamepad1.left_stick_x, -gamepad1.left_stick_y).scale(2),
-					gamepad1.right_stick_x * 2,
-					1, 1);
+					gamepad1.right_stick_x * 2);
 			positionTracker.updateLocation(robot);
 			telemetry.addData("Current Position: ", positionTracker.getCurrentPosition());
 			telemetry.update();

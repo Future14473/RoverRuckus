@@ -55,32 +55,14 @@ public class Constants {
 	//Debug info
 	public static final boolean DEBUG_LOG               = true;
 	public static final boolean VERBOSE_LOG             = false;
-	//----------------------- OLD ------------------------------------
-//	//Encoder limits
-//	public static final int    ARM_MAX                       = 4450;
-//	public static final int    COLLECT_ARM_INITIAL_EXTENSION = 2000;
-//	//initial
-//	// extensions during auto extend
-//	public static final int    SCORE_ARM_INITIAL_EXTENSION   = ARM_MAX;
-//	//Servo positions
-//	//Collect door
-//	// positions
-//	public static final double SCORE_DOOR_CLOSED             = 0.9;
-//	//score door
-//	// positions;
-//	public static final double SCORE_DOOR_READY              = 0.85;
-//	public static final double SCORE_DOOR_GOLD               = 0.79;
-//	public static final double SCORE_DOOR_OPEN               = 0.65;
-//	public static final double PARKER_POSITION_HOME          = 0.6;
-//	//Mults
-//	public static final double SPEED_FAST_MULT               = 100;
-//	public static final double SPEED_NORMAL_MULT             = 1;
-//	public static final double SPEED_SLOW_MULT               = 0.4;
-//	//Powers
-//	public static final double IDLE_IN_POWER                 = -0.6;
-//	public static final double IDLE_COLLECT_ARM_POWER        = 0.05;
-//	public static final double IDLE_SCORE_ARM_POWER          = 0.1;
-//	public static final double          IDLE_SCOOPER_POWER = 0.6;
+	@SuppressWarnings("SpellCheckingInspection")
+	public static final String  VUFORIA_KEY             =
+			"Aavay7//////AAABmS26wV70nE/XoqC91tMM/rlwbqInv/YUads4QRll085q/yT" +
+			"+qW0qdyrUwXPXbvwDkGhnffFMGIizzvfrXviNCbfAAgJzSwDJuL0MJl3LRE2FU4JMKKU2v7V" +
+			"+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz/LaIEh4phJs35awBUu+g" +
+			"+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG/jRUsWLH1cs35" +
+			"/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT" +
+			"+485YdwnaxuS8K9";
 	
 	private Constants() {
 	}

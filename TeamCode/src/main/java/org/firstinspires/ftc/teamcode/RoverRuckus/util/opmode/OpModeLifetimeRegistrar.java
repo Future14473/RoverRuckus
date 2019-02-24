@@ -25,7 +25,7 @@ public class OpModeLifetimeRegistrar {
 	 * @param stoppable to be stopped when an OpMode ends
 	 */
 	public static void register(Stoppable stoppable) {
-		register(stoppable, Reflections.getInformativeName(stoppable));
+		register(stoppable, Reflections.readableName(stoppable));
 	}
 	
 	/**

@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * A simple time tracking deal that resets time everyTime time is polled.
+ * An extension of ElapsedTime that adds a single method,
+ * getSecondsAndReset, which is self explanatory
  */
 public class CycleTime extends ElapsedTime {
 	

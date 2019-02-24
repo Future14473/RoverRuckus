@@ -9,9 +9,9 @@ import java.util.Arrays;
  *
  * @see MotorSet
  */
+@SuppressWarnings("WeakerAccess")
 public final class MotorSetPower {
 	public static final MotorSetPower ZERO   = new MotorSetPower();
-	public static final MotorSetPower TURN   = new MotorSetPower(1, -1, 1, -1);
 	public static final double        X_MULT = 1.2;
 	
 	private final double[] power;
@@ -42,7 +42,6 @@ public final class MotorSetPower {
 	 */
 	public MotorSetPower limitMagnitudeTo(double maxPower) {
 		if (maxPower <= 0) throw new IllegalArgumentException();
-		if (this == ZERO) return this;
 		double max = getMaxPower();
 		if (max < maxPower) return this;
 		double[] o = new double[4];
@@ -60,46 +59,13 @@ public final class MotorSetPower {
 		return max;
 	}
 	
-	/**
-	 * Creates a new MotorSetPower that adjusts the power such that the
-	 * difference between this power and given power is no greater
-	 * than maxAcceleration.
-	 */
-	@Deprecated
-	public MotorSetPower rampFrom(MotorSetPower pastPower, double rampRate) {
-		if (rampRate <= 0) throw new IllegalArgumentException();
-		double[] o = new double[4];
-		for (int i = 0; i < 4; i++) {
-			if (Math.abs(this.power[i] - pastPower.power[i]) <= rampRate) o[i] = this.power[i];
-			else o[i] = this.power[i] < pastPower.power[i] ? pastPower.power[i] - rampRate :
-			            pastPower.power[i] + rampRate;
-		}
-		return fromArray(o);
-	}
-	
-	/**
-	 * Return a new MotorSetPower which is this MotorSetPower's powers
-	 * multiplied by mult
-	 *
-	 * @param mult the multiplier
-	 * @return a new MotorSetPower which is this's power multiplied by mult
-	 */
-	
-	public MotorSetPower scale(double mult) {
-		if (this == ZERO || mult == 0) return ZERO;
-		return new MotorSetPower(power[0] * mult,
-		                         power[1] * mult,
-		                         power[2] * mult,
-		                         power[3] * mult);
-	}
-	
 	@Override
 	public String toString() {
 		return String.format("MotorSetPower: {%s}", Arrays.toString(power));
 	}
 	
 	private static MotorSetPower fromPowers(double fl, double fr, double bl, double br) {
-		return internalFromArray(new double[]{fl, fr, bl, br});
+		return new MotorSetPower(fl, fr, bl, br);
 	}
 	
 	/**
@@ -129,10 +95,6 @@ public final class MotorSetPower {
 	 */
 	public static MotorSetPower fromPolar(
 			double direction, double moveSpeed, double turnRate) {
-		if (moveSpeed == 0) {
-			if (turnRate == 0) return ZERO;
-			if (turnRate == 1) return TURN;
-		}
 		double robotAngle = direction - Math.PI / 4;
 		double v1 = moveSpeed * Math.cos(robotAngle) - turnRate;
 		double v2 = moveSpeed * Math.sin(robotAngle) + turnRate;
@@ -153,21 +115,12 @@ public final class MotorSetPower {
 		                  rightRate + turnRate);
 	}
 	
-	public double[] toArray() {
-		return power.clone();
-	}
-	
-	private static MotorSetPower internalFromArray(double[] power) {
-		if (Arrays.equals(power, ZERO.power)) return ZERO;
-		if (Arrays.equals(power, TURN.power)) return TURN;
-		return new MotorSetPower(power);
-	}
-	
 	public static MotorSetPower fromArray(double[] power) {
 		if (power.length != 4) throw new IllegalArgumentException();
-		return internalFromArray(power.clone());
+		return new MotorSetPower(power.clone());
 	}
 	
+	@SuppressWarnings("unused")
 	public static MotorSetPower fromXY(double x, double y, double turnRate) {
 		x *= X_MULT;
 		double direction = Math.atan2(y, x);

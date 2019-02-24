@@ -1,14 +1,16 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.tasks;
 
 /**
- * Marker interface for our task system.<br>
- * If interrupted while running, exit return as soon as possible
+ * Marker interface for our task system, simply is an extension
+ * of {@link Runnable}<br>
+ * To ensure graceful exits, the convention is if interrupted while running, exit return as soon
+ * as possible.
  */
 @FunctionalInterface
 public interface Task extends Runnable {
 	/**
-	 * A task that can throw interruptedException
-	 * When interrupted, returns
+	 * This interface is for use for lambdas that throw InterruptedException (i.e {@code Thread
+	 * .sleep()}. This also extends Task, and will simply return if InterruptedException is caught.
 	 */
 	@FunctionalInterface
 	interface WithInterrupt extends Task {
@@ -20,6 +22,5 @@ public interface Task extends Runnable {
 				runWithInterrupt();
 			} catch (InterruptedException ignored) { }
 		}
-		
 	}
 }

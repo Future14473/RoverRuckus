@@ -45,8 +45,4 @@ public final class XYR {
 		return withNewAngle(this.angle + angle);
 	}
 	
-	public static double modAngleTowards(double currentAngle, double targetAngle) {
-		return Math.round((targetAngle - currentAngle) / (2 * Math.PI)) * 2 * Math.PI +
-		       currentAngle;
-	}
 }

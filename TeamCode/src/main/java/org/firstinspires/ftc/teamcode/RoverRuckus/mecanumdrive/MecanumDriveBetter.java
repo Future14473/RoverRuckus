@@ -22,30 +22,27 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.ENCODER_TICKS
  * previous turns.
  */
 //TODO: MAYBE RADIANS/SECOND^2 INSTEAD OF POWER LEVEL POWER PER SECOND!??!?!
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class MecanumDriveBetter extends TaskProgram {
 	private static final AngleUnit    ourAngleUnit    = AngleUnit.RADIANS;
 	private static final DistanceUnit ourDistanceUnit = DistanceUnit.INCH;
 	
 	private final Parameters         parameters;
-	private final AutoMoveController moveController;
+	private final AutoMoveController autoMoveController;
 	
 	private final CycleTime time = new CycleTime();
 	
 	public MecanumDriveBetter(IRobot robot, Parameters parameters) {
 		super("Mecanum Drive", true);
 		this.parameters = parameters.clone();
-		moveController = new AutoMoveController(robot,
-		                                        new PositionTracker(
-				                                        this.parameters.encoderTicksPerUnit),
-		                                        new RampedMoveController(
-				                                        parameters.maxAccelerations));
+		autoMoveController = new AutoMoveController(robot, new PositionTracker(
+				this.parameters.encoderTicksPerUnit), new RampedMoveController(
+				parameters.maxAccelerations));
 		
-		if (this.parameters.adjustAtEnd)
-			super.addOnDoneTask(
-					new MoveTaskBuilder().move(XY.ZERO, 0.6, DistanceUnit.INCH)
-					                     .turn(0, 0.6, AngleUnit.RADIANS)
-					                     .build(true));
+		if (this.parameters.adjustAtEnd) super.addOnDoneTask(
+				new MoveTaskBuilder().move(XY.ZERO, DistanceUnit.INCH, 0.6)
+				                     .turn(0, AngleUnit.RADIANS, 0.6)
+				                     .build(true));
 		super.addOnDoneTask(robot.getWheels()::stop);
 	}
 	
@@ -63,16 +60,16 @@ public class MecanumDriveBetter extends TaskProgram {
 		return new MoveTaskBuilder();
 	}
 	
-	public MoveTaskBuilder turn(double angle, double maxSpeed, AngleUnit unit) {
-		return new MoveTaskBuilder().turn(angle, maxSpeed, unit);
+	public MoveTaskBuilder turn(double angle, AngleUnit unit, double maxSpeed) {
+		return new MoveTaskBuilder().turn(angle, unit, maxSpeed);
 	}
 	
 	public MoveTaskBuilder turn(double angle, double maxSpeed) {
 		return new MoveTaskBuilder().turn(angle, maxSpeed);
 	}
 	
-	public MoveTaskBuilder move(XY toMove, double maxSpeed, DistanceUnit unit) {
-		return new MoveTaskBuilder().move(toMove, maxSpeed, unit);
+	public MoveTaskBuilder move(XY toMove, DistanceUnit unit, double maxSpeed) {
+		return new MoveTaskBuilder().move(toMove, unit, maxSpeed);
 	}
 	
 	public MoveTaskBuilder move(XY toMove, double maxSpeed) {
@@ -80,16 +77,16 @@ public class MecanumDriveBetter extends TaskProgram {
 	}
 	
 	//go turn
-	public MecanumDriveBetter goTurn(double angle, double maxSpeed, AngleUnit unit, boolean fine) {
-		return turn(angle, maxSpeed, unit).go(fine);
+	public MecanumDriveBetter goTurn(double angle, AngleUnit unit, double maxSpeed, boolean fine) {
+		return turn(angle, unit, maxSpeed).go(fine);
 	}
 	
 	public MecanumDriveBetter goTurn(double angle, double maxSpeed, boolean fine) {
 		return turn(angle, maxSpeed).go(fine);
 	}
 	
-	public MecanumDriveBetter goTurn(double angle, double maxSpeed, AngleUnit unit) {
-		return turn(angle, maxSpeed, unit).go();
+	public MecanumDriveBetter goTurn(double angle, AngleUnit unit, double maxSpeed) {
+		return turn(angle, unit, maxSpeed).go();
 	}
 	
 	public MecanumDriveBetter goTurn(double angle, double maxSpeed) {
@@ -97,17 +94,16 @@ public class MecanumDriveBetter extends TaskProgram {
 	}
 	
 	//go move
-	public MecanumDriveBetter goMove(XY toMove, double maxSpeed, DistanceUnit unit,
-	                                 boolean fine) {
-		return move(toMove, maxSpeed, unit).go(fine);
+	public MecanumDriveBetter goMove(XY toMove, DistanceUnit unit, double maxSpeed, boolean fine) {
+		return move(toMove, unit, maxSpeed).go(fine);
 	}
 	
 	public MecanumDriveBetter goMove(XY toMove, double maxSpeed, boolean fine) {
 		return move(toMove, maxSpeed).go(fine);
 	}
 	
-	public MecanumDriveBetter goMove(XY toMove, double maxSpeed, DistanceUnit unit) {
-		return move(toMove, maxSpeed, unit).go();
+	public MecanumDriveBetter goMove(XY toMove, DistanceUnit unit, double maxSpeed) {
+		return move(toMove, unit, maxSpeed).go();
 	}
 	
 	public MecanumDriveBetter goMove(XY toMove, double maxSpeed) {
@@ -122,7 +118,7 @@ public class MecanumDriveBetter extends TaskProgram {
 	
 	@Override
 	public void start() {
-		moveController.reset();
+		autoMoveController.resetTargetPosition();
 		super.start();
 	}
 	
@@ -134,7 +130,7 @@ public class MecanumDriveBetter extends TaskProgram {
 	
 	/**
 	 * A task that simply updates the target position and angle.
-	 * MovePositions are relative to target angle.
+	 * Moves are done relative to the current robot position1!1!!!!1!
 	 */
 	private class ChangeTargetPositionTask implements Task {
 		private final XYR toMove;
@@ -145,13 +141,12 @@ public class MecanumDriveBetter extends TaskProgram {
 		
 		@Override
 		public void run() {
-			moveController.addToTargetPosition(toMove);
+			autoMoveController.addToTargetPositionRelative(toMove);
 		}
 		
 		@Override
 		public String toString() {
-			return String.format("ChangeTargetLocation: %s",
-			                     toMove);
+			return String.format("ChangeTargetLocation: %s", toMove);
 		}
 	}
 	
@@ -180,10 +175,9 @@ public class MecanumDriveBetter extends TaskProgram {
 		 *                               indicates infinite tolerance.
 		 * @param consecutive            The number of consecutive cycles the the above two
 		 */
-		public PositionRobotTask(
-				double maxTranslationalSpeed, double translationalTolerance,
-				double maxAngularSpeed, double angularTolerance,
-				int consecutive) {
+		public PositionRobotTask(double maxTranslationalSpeed, double translationalTolerance,
+		                         double maxAngularSpeed, double angularTolerance,
+		                         int consecutive) {
 			if (maxAngularSpeed <= 0 || maxTranslationalSpeed <= 0 || consecutive <= 1)
 				throw new IllegalArgumentException();
 			this.maxVelocities = new Magnitudes(maxTranslationalSpeed, maxAngularSpeed);
@@ -194,13 +188,14 @@ public class MecanumDriveBetter extends TaskProgram {
 		@Override
 		public void start() {
 			time.reset();
+			autoMoveController.setMaxVelocities(maxVelocities);
 		}
 		
 		@Override
 		public boolean loop() {
-			moveController.updateAndMove(maxVelocities,
-			                             time.getSecondsAndReset());
-			boolean hit = moveController.isOnTarget(tolerances);
+			autoMoveController.updateLocation();
+			autoMoveController.moveToTarget(time.getSecondsAndReset());
+			boolean hit = autoMoveController.isOnTarget(tolerances);
 			if (hit) numConsecutive++;
 			else numConsecutive = 0;
 			return numConsecutive >= consecutive;
@@ -231,7 +226,7 @@ public class MecanumDriveBetter extends TaskProgram {
 		/**
 		 * Adds turning this moveTask.
 		 */
-		public MoveTaskBuilder turn(double toTurn, double maxSpeed, AngleUnit unit) {
+		public MoveTaskBuilder turn(double toTurn, AngleUnit unit, double maxSpeed) {
 			if (maxAngularSpeed < 0) throw new IllegalArgumentException();
 			toMove = toMove.addToAngle(toOurUnit(toTurn, unit));
 			this.maxAngularSpeed = maxSpeed;
@@ -242,16 +237,16 @@ public class MecanumDriveBetter extends TaskProgram {
 		 * Adds turning to this moveTask.
 		 */
 		public MoveTaskBuilder turn(double angle, double maxSpeed) {
-			return turn(angle, maxSpeed, ourAngleUnit);
+			return turn(angle, ourAngleUnit, maxSpeed);
 		}
 		
 		/**
 		 * Adds movement to this move task.
 		 */
-		public MoveTaskBuilder move(XY location, double maxSpeed, DistanceUnit unit) {
+		public MoveTaskBuilder move(XY toMove, DistanceUnit unit, double maxSpeed) {
 			if (maxTranslationSpeed < 0) throw new IllegalArgumentException();
 			//to account for previous rotations, rotate.
-			toMove = toMove.addToXY(toOurUnit(location, unit).rotate(this.toMove.angle));
+			this.toMove = this.toMove.addToXY(toOurUnit(toMove, unit).rotate(this.toMove.angle));
 			this.maxTranslationSpeed = maxSpeed;
 			return this;
 		}
@@ -260,7 +255,7 @@ public class MecanumDriveBetter extends TaskProgram {
 		 * adds movement to this move task.
 		 */
 		public MoveTaskBuilder move(XY toMove, double maxSpeed) {
-			return move(toMove, maxSpeed, ourDistanceUnit);
+			return move(toMove, ourDistanceUnit, maxSpeed);
 		}
 		
 		/**
@@ -283,21 +278,18 @@ public class MecanumDriveBetter extends TaskProgram {
 			if (maxTranslationSpeed == -1 && maxAngularSpeed == -1)
 				throw new IllegalArgumentException();
 			Magnitudes tolerance = fine ? parameters.toleranceFine : parameters.toleranceCoarse;
-			double translationalTolerance = maxTranslationSpeed != -1 ?
-			                                tolerance.translational : -1;
-			double angularTolerance = maxAngularSpeed != -1 ?
-			                          tolerance.angular : -1;
-			if (maxTranslationSpeed == -1) maxTranslationSpeed =
-					maxAngularSpeed * parameters.idleSpeedMult.translational;
-			if (maxAngularSpeed == -1) maxAngularSpeed =
-					maxTranslationSpeed * parameters.idleSpeedMult.angular;
-			int consecutive = fine ?
-			                  parameters.consecutiveFine : parameters.consecutiveCoarse;
-			return new CompositeTask(
-					new ChangeTargetPositionTask(toMove),
-					new PositionRobotTask(maxTranslationSpeed, translationalTolerance,
-					                      maxAngularSpeed, angularTolerance,
-					                      consecutive));
+			double translationalTolerance =
+					maxTranslationSpeed != -1 ? tolerance.translational : -1;
+			double angularTolerance = maxAngularSpeed != -1 ? tolerance.angular : -1;
+			if (maxTranslationSpeed == -1)
+				maxTranslationSpeed = maxAngularSpeed * parameters.idleSpeedMult.translational;
+			if (maxAngularSpeed == -1)
+				maxAngularSpeed = maxTranslationSpeed * parameters.idleSpeedMult.angular;
+			int consecutive = fine ? parameters.consecutiveFine : parameters.consecutiveCoarse;
+			return new CompositeTask(new ChangeTargetPositionTask(toMove),
+			                         new PositionRobotTask(maxTranslationSpeed,
+			                                               translationalTolerance, maxAngularSpeed,
+			                                               angularTolerance, consecutive));
 		}
 	}
 	

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.ManualMoveController;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.XY;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GamepadButton;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
@@ -30,24 +30,25 @@ public class TheTeleop extends OurLinearOpMode {
 	private CRServo angler;
 	
 	//Variables for driving
-	private boolean  reverseDrive = false;
+	private boolean       reverseDrive = false;
 	//Buttons.
-	private Button   gp1y         = new Button(() -> gamepad1.y); //toggle reverse
-	private Button   gp2a         = new Button(() -> gamepad2.a); //to next stage
-	private Button   gp2b         = new Button(() -> gamepad2.b); //to prev stage.
+	private GamepadButton gp1y         = new GamepadButton(() -> gamepad1.y); //toggle reverse
+	private GamepadButton gp2a         = new GamepadButton(() -> gamepad2.a); //to next stage
+	private GamepadButton gp2b         = new GamepadButton(() -> gamepad2.b); //to prev stage.
 	//opening/close scoreDump
-	private Button   gp2lbp       = new Button(() -> gamepad2.left_bumper);
-	private Button   gp2rbp       = new Button(() -> gamepad2.right_bumper);
+	private GamepadButton gp2lbp       = new GamepadButton(() -> gamepad2.left_bumper);
+	private GamepadButton gp2rbp       = new GamepadButton(() -> gamepad2.right_bumper);
 	//reset COLLECT encoder
-	private Button   gp2lsb       = new Button(() -> gamepad2.left_stick_button);
+	private GamepadButton gp2lsb       = new GamepadButton(() -> gamepad2.left_stick_button);
 	//reset SCORE encoder
-	private Button   gp2rsb       = new Button(() -> gamepad2.right_stick_button);
+	private GamepadButton gp2rsb       = new GamepadButton(() -> gamepad2.right_stick_button);
 	//reset HOOK encoder
-	private Button   gp1dpadlr    = new Button(() -> gamepad1.dpad_left || gamepad1.dpad_right);
+	private GamepadButton gp1dpadlr    =
+			new GamepadButton(() -> gamepad1.dpad_left || gamepad1.dpad_right);
 	//State
-	private ArmState armState     = ArmState.COLLECT;
+	private ArmState      armState     = ArmState.COLLECT;
 	//pseudo sleep
-	private long     sleepEndTime;
+	private long          sleepEndTime;
 	
 	@Override
 	protected void initialize() {
@@ -75,9 +76,8 @@ public class TheTeleop extends OurLinearOpMode {
 		while (opModeIsActive()) {
 			//FOR GAMEPAD1, CHANGED BY GAMEPAD2 2 is fast, 1 is normal, 0 is
 			// slow.
-			SpeedMode speedMode = gamepad1.right_bumper ?
-			                      SpeedMode.FAST : gamepad1.left_bumper ?
-			                                       SpeedMode.SLOW : SpeedMode.NORMAL;
+			SpeedMode speedMode = gamepad1.right_bumper ? SpeedMode.FAST :
+			                      gamepad1.left_bumper ? SpeedMode.SLOW : SpeedMode.NORMAL;
 			/*----------------*\
 		    |    GAMEPAD 2     |
 			\*----------------*/
@@ -106,8 +106,7 @@ public class TheTeleop extends OurLinearOpMode {
 				break;
 			case COLLECT:
 				scooper.setPower(triggerSum);
-				collectArm.setPowerLimited(-gamepad2.right_stick_y,
-				                           gamepad2.x);
+				collectArm.setPowerLimited(-gamepad2.right_stick_y, gamepad2.x);
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 				scoreArm.setPowerLimited(IDLE_POWER_IN);
 				scoreDump.setPosition(SCORE_DUMP_HOME);
@@ -154,9 +153,8 @@ public class TheTeleop extends OurLinearOpMode {
 				//keep out of the way
 				collectArm.setPowerLimited(IDLE_POWER_OUT, null, COLLECT_ARM_AWAY);
 				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
-				scoreArm.setPowerLimited(-gamepad2.right_stick_y,
-				                         gamepad1.x);
-				if (gp2rbp.isDown()) {
+				scoreArm.setPowerLimited(-gamepad2.right_stick_y, gamepad1.x);
+				if (gp2rbp.down()) {
 					scoreDump.setPosition(SCORE_DUMP_DOWN);
 				} else if (gp2lbp.pressed()) {
 					scoreDump.setPosition(SCORE_DUMP_HOME);
@@ -190,11 +188,10 @@ public class TheTeleop extends OurLinearOpMode {
 			
 			double direction = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
 			if (reverseDrive) direction += Math.PI;
-			double moveSpeed = Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
-			                            1.7);
-			manualMoveController.driveAt(
-					XY.fromPolar(moveSpeed, direction).scale(speedMode.mult),
-					-gamepad1.right_stick_x * speedMode.mult, 1, 1);
+			double moveSpeed =
+					Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y), 1.7);
+			manualMoveController.driveAt(XY.fromPolar(moveSpeed, direction).scale(speedMode.mult),
+			                             -gamepad1.right_stick_x * speedMode.mult);
 			//hook
 			hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0, gamepad1.dpad_down);
 			if (gp1dpadlr.pressed()) {

@@ -18,35 +18,27 @@ public class RampedMoveController {
 	}
 	
 	/**
-	 * Calculates power given target movement and max velocities.
+	 * Calculates a ramped motor powers given target movement (translational and angular), and
+	 * elapsed time (in seconds) to determine ramp level.
 	 */
-	public MotorSetPower getPower(XYR targetMovement, Magnitudes maxVelocities,
-	                              double elapsedTime) {
+	public MotorSetPower getPower(XYR targetMovement, double elapsedTime) {
 		if (elapsedTime > MAX_ELAPSED_TIME) elapsedTime = 0;
 		//do x expansion, rotate to form diagonals
-		XY targDiagonals = new XY(targetMovement.xy.x * MotorSetPower.X_MULT,
-		                          targetMovement.xy.y).rotate(-Math.PI / 4);
+		XY targDiagonals =
+				new XY(targetMovement.xy.x * MotorSetPower.X_MULT, targetMovement.xy.y).rotate(
+						-Math.PI / 4);
 		double targetAngular = targetMovement.angle;
 		double translationalRamp = maxAccelerations.translational * elapsedTime;
 		double angularRamp = maxAccelerations.angular * elapsedTime;
-		//calculated limited and ramped rates
-		this.rightRate = limitAndRamp(targDiagonals.x, maxVelocities.translational,
-		                              this.rightRate, translationalRamp);
-		this.leftRate = limitAndRamp(targDiagonals.y, maxVelocities.translational,
-		                             this.leftRate, translationalRamp);
-		this.turnRate = limitAndRamp(targetAngular, maxVelocities.angular, turnRate, angularRamp);
-		return MotorSetPower.fromDiagonals(this.rightRate, this.leftRate,
-		                                   this.turnRate);
-	}
-	
-	private double limitAndRamp(double target, double max, double current, double ramp) {
-		return ramp(current, constrain(target, -max, max), ramp);
+		//left and right are independent (wheels)
+		this.rightRate = ramp(this.rightRate, targDiagonals.x, translationalRamp);
+		this.leftRate = ramp(this.leftRate, targDiagonals.y, translationalRamp);
+		this.turnRate = ramp(turnRate, targetAngular, angularRamp);
+		return MotorSetPower.fromDiagonals(this.rightRate, this.leftRate, this.turnRate);
 	}
 	
 	private static double ramp(double current, double target, double ramp) {
-		return constrain(target,
-		                 current - ramp,
-		                 current + ramp);
+		return constrain(target, current - ramp, current + ramp);
 	}
 	
 	private static double constrain(double v, double min, double max) {

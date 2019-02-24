@@ -31,9 +31,8 @@ public class PID {
 		this(coefficients.p, coefficients.i, coefficients.d);
 	}
 	
-	public PID(
-			double p, double i, double d, double maxOutputRamp, double maxError,
-			double minOutput, double maxOutput, double maxIOutput) {
+	public PID(double p, double i, double d, double maxOutputRamp, double maxError,
+	           double minOutput, double maxOutput, double maxIOutput) {
 		this.p = p;
 		this.i = i;
 		this.d = d;
@@ -83,7 +82,7 @@ public class PID {
 	}
 	
 	public void setMaxOutputs(double v) {
-		v = Math.abs(v);
+		if (v < 0) throw new IllegalArgumentException();
 		this.minOutput = -v;
 		this.maxOutput = v;
 	}
@@ -131,8 +130,7 @@ public class PID {
 		if (minOutput != maxOutput && (output < minOutput || output > maxOutput)) {
 			iOutput = 0;
 			output = limit(output, minOutput, maxOutput);
-		} else if (ramp != 0 && (output < lastOutput - ramp ||
-		                         output > lastOutput + ramp)) {
+		} else if (ramp != 0 && (output < lastOutput - ramp || output > lastOutput + ramp)) {
 			iOutput = 0;
 			output = limit(output, lastOutput - ramp, lastOutput + ramp);
 		}

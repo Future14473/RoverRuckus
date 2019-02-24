@@ -14,7 +14,7 @@ public class ButtonTest extends OpMode {
 	
 	@Override
 	public void init() {
-		button = hardwareMap.get(TouchSensor.class, "Button");
+		button = hardwareMap.get(TouchSensor.class, "GamepadButton");
 		motor = hardwareMap.get(DcMotor.class, "Scooper");
 	}
 	

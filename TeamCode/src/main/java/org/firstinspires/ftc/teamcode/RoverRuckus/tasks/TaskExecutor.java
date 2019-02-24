@@ -132,7 +132,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 				for (Task onDoneTask : onDoneTasks) {
 					if (VERBOSE_LOG)
 						RobotLog.vv(TAG, "%s: running onDoneTask %s", name,
-						            Reflections.getInformativeName(onDoneTask));
+						            Reflections.readableName(onDoneTask));
 					onDoneTask.run();
 				}
 			}
@@ -144,7 +144,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 			if (!Thread.interrupted()) {
 				if (VERBOSE_LOG)
 					RobotLog.vv(TAG, "%s: running %s", name,
-					            Reflections.getInformativeName(curTask));
+					            Reflections.readableName(curTask));
 				curTask.run();
 			}
 			

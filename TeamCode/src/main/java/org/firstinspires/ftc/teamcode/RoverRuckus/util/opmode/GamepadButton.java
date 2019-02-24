@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode;
 import java.util.function.BooleanSupplier;
 
 /**
- * Utility for monitoring button state.
+ * Utility for gamepad button presses.
  */
 @SuppressWarnings("unused")
-public class Button implements BooleanSupplier {
+public class GamepadButton implements BooleanSupplier {
 	private final BooleanSupplier button;
 	private       boolean         past = false;
 	
-	public Button(BooleanSupplier button) {
+	public GamepadButton(BooleanSupplier button) {
 		this.button = button;
 	}
 	
@@ -22,15 +22,17 @@ public class Button implements BooleanSupplier {
 	}
 	
 	public boolean up() {
-		return getState() == State.UP;
+		State state = getState();
+		return state == State.UP || state == State.RELEASED;
 	}
 	
 	public boolean pressed() {
 		return getState() == State.PRESSED;
 	}
 	
-	public boolean held() {
-		return getState() == State.HELD;
+	public boolean down() {
+		State state = getState();
+		return state == State.HELD || state == State.PRESSED;
 	}
 	
 	public boolean released() {
@@ -39,10 +41,6 @@ public class Button implements BooleanSupplier {
 	
 	@Override
 	public boolean getAsBoolean() {
-		return button.getAsBoolean();
-	}
-	
-	public boolean isDown() {
 		return button.getAsBoolean();
 	}
 	

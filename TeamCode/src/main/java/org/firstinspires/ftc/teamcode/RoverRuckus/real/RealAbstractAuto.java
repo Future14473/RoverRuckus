@@ -18,7 +18,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 /**
  * Base autonomous.
  */
-public abstract class AbstractAuto extends OurLinearOpMode {
+public abstract class RealAbstractAuto extends OurLinearOpMode {
 	private static final int    HOOK_TURN_START_LOOK = -21000;
 	private static final int    HOOK_TURN_END        = -26000;
 	private static final double PARKER_POSITION_OUT  = 0;

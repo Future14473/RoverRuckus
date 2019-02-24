@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
+import org.jetbrains.annotations.Contract;
+
 /**
  * Represents an XY position.
  * Warning: contains math.
@@ -20,6 +22,7 @@ public final class XY {
 		return new XY(this.x + other.x, this.y + other.y);
 	}
 	
+	@Contract(value = "null -> this; !null -> new", pure = true)
 	public XY subtract(XY other) {
 		if (other == null) return this;
 		return new XY(this.x - other.x, this.y - other.y);
@@ -53,12 +56,6 @@ public final class XY {
 	public XY rampTo(XY other, double rampRate) {
 		if (other == null) return rampTo(ZERO, rampRate);
 		return other.subtract(this).limitMagnitudeTo(rampRate).add(this);
-	}
-	
-	public double angleTo(XY other) {
-		if (other == null) return angle();
-		return Math.atan2(this.x * other.y - this.y * other.x,
-		                  this.x * other.x + this.y * other.y);
 	}
 	
 	public double angle() {

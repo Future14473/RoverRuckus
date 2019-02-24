@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
 
 import java.util.List;
 import java.util.concurrent.*;
@@ -19,17 +20,6 @@ public class GoldLookDouble {
 			"Gold " + "Mineral";
 	private static final String           LABEL_SILVER_MINERAL =
 			"Silver Mineral";
-	@SuppressWarnings("SpellCheckingInspection")
-	private static final String           VUFORIA_KEY          =
-			"Aavay7//////AAABmS26wV70nE" +
-			"/XoqC91tMM/rlwbqInv/YUads4QRll085q/yT" +
-			"+qW0qdyrUwXPXbvwDkGhnffFMGIizzvfrXviNCbfAAgJzSwDJuL0MJl3LRE2FU4JMKKU2v7V" +
-			"+XGChhH91BXriKEtx4PDCq5DwSpCT1TP3XSJrouflaIEdqxTcUz" +
-			"/LaIEh4phJs35awBUu+g" +
-			"+4i3EKMJBsYWyJ0V9jdI5DLCVhXkKtBpKgJbO3XFx40Ig/HFXES1iUaOk2fj9SG" +
-			"/jRUsWLH1cs35" +
-			"/g289Xs6BTQTHnGpX9bcOvK0m4NkhogjqbT7S76O91jeheUZwazesROu848shb317YhWIclBSR/vV9/I2fT" +
-			"+485YdwnaxuS8K9";
 	private final        ExecutorService  executorService      =
 			Executors.newSingleThreadExecutor();
 	private              VuforiaLocalizer vuforia;
@@ -142,7 +132,7 @@ public class GoldLookDouble {
 	private void initVuforia() {
 		VuforiaLocalizer.Parameters parameters =
 				new VuforiaLocalizer.Parameters();
-		parameters.vuforiaLicenseKey = VUFORIA_KEY;
+		parameters.vuforiaLicenseKey = Constants.VUFORIA_KEY;
 		parameters.cameraDirection = CameraDirection.BACK;
 		parameters.useExtendedTracking = false;
 		//  Instantiate the Vuforia engine

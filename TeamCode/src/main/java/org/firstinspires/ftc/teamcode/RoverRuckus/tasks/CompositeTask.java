@@ -23,9 +23,9 @@ public class CompositeTask implements Task {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("CompositeTask [").append('\n');
+		builder.append('[').append('\n');
 		for (Task task : tasks) {
-			builder.append('\t').append(Reflections.getInformativeName(task)).append('\n');
+			builder.append('\t').append(Reflections.readableName(task)).append('\n');
 		}
 		return builder.append(']').toString();
 	}

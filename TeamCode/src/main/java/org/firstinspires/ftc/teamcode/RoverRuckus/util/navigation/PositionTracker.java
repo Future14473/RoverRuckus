@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.ENCODER_TICKS_PER_INCH;
 
 /**
- * Records the position of the robot on a field given gyroscope and motor encoder feedback.
+ * Records the position of the robot on a field given gyroscope and motor encoder readings.
  * Positive X corresponds with angle 0deg, Positive Y with angle 90deg.
  * An "up" direction is arbitrary, so only relative positions make sense.
  * Units are arbitrary, and are defined by given parameter encoderTicksPerUnit.
@@ -42,8 +42,8 @@ public class PositionTracker {
 		if (lastMotorPos != null) {
 			MotorSetPosition deltaMotorPos = currentMotorPos.subtract(lastMotorPos);
 			deltaLocation =
-					toDeltaLocation(deltaMotorPos, currentAngle - currentPosition.angle)
-							.rotate(currentPosition.angle);
+					toDeltaLocation(deltaMotorPos, currentAngle - currentPosition.angle).rotate(
+							currentPosition.angle);
 			//remember to rotate by direction robot is moving.
 		}
 		currentPosition = new XYR(currentPosition.xy.add(deltaLocation), currentAngle);
@@ -79,6 +79,7 @@ public class PositionTracker {
 		}
 		//then rotate the pos the bot actually moved along this line.
 		XY res = new XY(x, y).rotate(moveAngle);
+		//it moved less X than you think it did.? note that this needs to be tested
 		return new XY(res.x / MotorSetPower.X_MULT, res.y);
 	}
 	
@@ -86,7 +87,6 @@ public class PositionTracker {
 	 * Updates location given, given a robot to read gyro and encoder info from.
 	 */
 	public void updateLocation(IRobot robot) {
-		updateLocation(robot.getAngle(),
-		               robot.getWheels().getCurrentPosition());
+		updateLocation(robot.getAngle(), robot.getWheels().getCurrentPosition());
 	}
 }

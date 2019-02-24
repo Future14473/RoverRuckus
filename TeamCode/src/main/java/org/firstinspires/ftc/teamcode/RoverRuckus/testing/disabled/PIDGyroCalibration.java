@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
+import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDriveAdapter;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GamepadButton;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 
@@ -12,25 +12,23 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @TeleOp(group = "test")
 @Disabled
 public class PIDGyroCalibration extends OurLinearOpMode {
-	private static boolean      shouldComplete = true;
-	private        double       p              = 0.35;
-	private        double       d              = 0.13;
-	private        MecanumDrive drive;
+	private static boolean             shouldComplete = true;
+	private        double              p              = 0.35;
+	private        double              d              = 0.13;
+	private        MecanumDriveAdapter drive;
 	
-	private Button a     = new Button(() -> gamepad1.a);
-	private Button b     = new Button(() -> gamepad1.b);
-	private Button up    = new Button(() -> gamepad1.dpad_up);
-	private Button down  = new Button(() -> gamepad1.dpad_down);
-	private Button left  = new Button(() -> gamepad1.dpad_left);
-	private Button right = new Button(() -> gamepad1.dpad_right);
+	private GamepadButton a     = new GamepadButton(() -> gamepad1.a);
+	private GamepadButton b     = new GamepadButton(() -> gamepad1.b);
+	private GamepadButton up    = new GamepadButton(() -> gamepad1.dpad_up);
+	private GamepadButton down  = new GamepadButton(() -> gamepad1.dpad_down);
+	private GamepadButton left  = new GamepadButton(() -> gamepad1.dpad_left);
+	private GamepadButton right = new GamepadButton(() -> gamepad1.dpad_right);
 	
 	@Override
 	protected void initialize() throws InterruptedException {
 		CurRobot robot = new CurRobot(hardwareMap);
 		robot.initIMU();
-		MecanumDrive.Parameters parameters = new MecanumDrive.Parameters();
-		parameters.useGyro = true;
-		drive = new MecanumDrive(robot, parameters);
+		drive = new MecanumDriveAdapter(robot);
 		waitUntil(robot::imuIsGyroCalibrated, 3, SECONDS);
 	}
 	
@@ -40,16 +38,15 @@ public class PIDGyroCalibration extends OurLinearOpMode {
 			if (a.pressed()) {
 				drive.rotate(45, 1);
 			}
-			if (b.pressed())
-				shouldComplete = !shouldComplete;
-			if (up.held()) {
+			if (b.pressed()) shouldComplete = !shouldComplete;
+			if (up.down()) {
 				p += 0.0001;
-			} else if (down.held()) {
+			} else if (down.down()) {
 				p -= 0.0001;
 			}
-			if (right.held()) {
+			if (right.down()) {
 				d += 0.0003;
-			} else if (left.held()) {
+			} else if (left.down()) {
 				d -= 0.0003;
 			}
 //			GyroRotateTask.pid.setP(p);

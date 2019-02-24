@@ -18,13 +18,6 @@ public final class MotorSetPosition {
 		this.position = new int[4];
 	}
 	
-	public MotorSetPosition(MotorSetPower power, double mult) {
-		this.position = new int[4];
-		for (int i = 0; i < 4; i++) {
-			position[i] = (int) Math.round(power.getPower(i) * mult);
-		}
-	}
-	
 	private MotorSetPosition(int[] o) {
 		this.position = o.clone();
 	}
@@ -56,7 +49,4 @@ public final class MotorSetPosition {
 		return new MotorSetPosition(array);
 	}
 	
-	public int[] toArray() {
-		return position.clone();
-	}
 }
