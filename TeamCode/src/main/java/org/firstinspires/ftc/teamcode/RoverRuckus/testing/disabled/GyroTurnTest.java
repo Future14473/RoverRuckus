@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDriveAdapter;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GamepadButton;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 
@@ -13,7 +13,7 @@ public class GyroTurnTest extends OurLinearOpMode {
 	private CurRobot            robot;
 	private MecanumDriveAdapter drive;
 	
-	private GamepadButton gp1a = new GamepadButton(() -> gamepad1.a);
+	private Button gp1a = new Button(() -> gamepad1.a);
 	
 	@Override
 	protected void initialize() {

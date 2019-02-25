@@ -13,10 +13,9 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 
 public abstract class BaseRobot implements IRobot {
-	private static final int                 TARGET_POSITION_TOLERANCE = 25;
-	public final         MotorSet            wheels;
-	protected final      CumulativeDirection direction;
-	private final        BNO055IMU           imu;
+	public final    MotorSet            wheels;
+	protected final CumulativeDirection direction;
+	private final   BNO055IMU           imu;
 	
 	public BaseRobot(HardwareMap hardwareMap) {
 		imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -28,7 +27,6 @@ public abstract class BaseRobot implements IRobot {
 		bl.setDirection(REVERSE);
 		wheels = new MotorSet(fl, fr, bl, br);
 		wheels.setZeroPowerBehavior(BRAKE);
-		wheels.setTargetPositionTolerance(TARGET_POSITION_TOLERANCE);
 		direction = new CumulativeDirection(() -> this.getOrientation().firstAngle);
 	}
 	

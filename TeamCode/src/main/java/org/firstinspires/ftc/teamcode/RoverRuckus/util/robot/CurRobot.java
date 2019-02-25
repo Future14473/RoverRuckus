@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.robot;
 
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.*;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
@@ -12,27 +9,30 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
 public class CurRobot extends BaseRobot {
 	
-	public DcMotor hook, scooper, collectArm, scoreArm;
-	public Servo flicker, markerDoor, collectDoor, scoreDump, parker;
+	public DcMotorEx hook;
+	public DcMotorEx collectArm;
+	public DcMotorEx scoreArm;
+	public DcMotor   scooper;
+	public Servo     flicker, markerDoor, collectDoor, scoreDump, parker;
 	public CRServo angler;
 	
 	public CurRobot(HardwareMap hardwareMap) {
 		super(hardwareMap);
 		
-		hook = hardwareMap.get(DcMotor.class, "Hook");
+		hook = hardwareMap.get(DcMotorEx.class, "Hook");
 		hook.setMode(RUN_USING_ENCODER);
 		hook.setZeroPowerBehavior(BRAKE);
 		
 		scooper = hardwareMap.get(DcMotor.class, "Scooper");
-		scooper.setMode(RUN_WITHOUT_ENCODER);
+		scooper.setMode(RUN_WITHOUT_ENCODER); //no encoder
 		scooper.setZeroPowerBehavior(BRAKE);
 		
-		collectArm = hardwareMap.get(DcMotor.class, "CollectArm");
+		collectArm = hardwareMap.get(DcMotorEx.class, "CollectArm");
 		collectArm.setMode(RUN_USING_ENCODER);
 		collectArm.setZeroPowerBehavior(BRAKE);
 		collectArm.setDirection(REVERSE);
 		
-		scoreArm = hardwareMap.get(DcMotor.class, "ScoreArm");
+		scoreArm = hardwareMap.get(DcMotorEx.class, "ScoreArm");
 		scoreArm.setMode(RUN_USING_ENCODER);
 		scoreArm.setZeroPowerBehavior(BRAKE);
 		scoreArm.setDirection(REVERSE);

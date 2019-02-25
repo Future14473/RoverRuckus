@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.CycleTime;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.*;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GamepadButton;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 
@@ -16,12 +16,12 @@ public class AutoMoveControllerTest extends OurLinearOpMode {
 	private static final XY         FORWARD        = new XY(0, 12);
 	private static final XY         BACKWARD       = new XY(0, -12);
 	
-	private final GamepadButton        a           = new GamepadButton(() -> gamepad1.a);
-	private final GamepadButton        b           = new GamepadButton(() -> gamepad1.b);
-	private final GamepadButton        x           = new GamepadButton(() -> gamepad1.x);
-	private final GamepadButton        y           = new GamepadButton(() -> gamepad1.y);
-	private final GamepadButton        rb          =
-			new GamepadButton(() -> gamepad1.right_bumper);
+	private final Button               a           = new Button(() -> gamepad1.a);
+	private final Button               b           = new Button(() -> gamepad1.b);
+	private final Button               x           = new Button(() -> gamepad1.x);
+	private final Button               y           = new Button(() -> gamepad1.y);
+	private final Button               rb          =
+			new Button(() -> gamepad1.right_bumper);
 	private       CurRobot             robot;
 	private       boolean              manualDrive = false;
 	private       AutoMoveController   autoMoveController;

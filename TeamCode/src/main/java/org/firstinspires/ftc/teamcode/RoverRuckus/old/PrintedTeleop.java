@@ -4,7 +4,7 @@
 //import com.qualcomm.robotcore.hardware.CRServo;
 //import com.qualcomm.robotcore.hardware.DcMotor;
 //import com.qualcomm.robotcore.hardware.Servo;
-//import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GamepadButton;
+//import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
 //import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor;
 //import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 //import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.PrintedRobot;
@@ -13,7 +13,7 @@
 //import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 //import static java.util.concurrent.TimeUnit.MILLISECONDS;
 //import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.*;
-//import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GamepadButton.State.*;
+//import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button.State.*;
 //import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor.State.LOWER;
 //import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor.State.UPPER;
 //
@@ -34,28 +34,28 @@
 //	private CRServo angler;
 //	//Buttons.
 //
-//	private GamepadButton gp1y = new GamepadButton(() -> gamepad1.y); //toggle direction /
+//	private Button gp1y = new Button(() -> gamepad1.y); //toggle direction /
 //	// reset gyro
 //
-//	private GamepadButton gp1b = new GamepadButton(() -> gamepad1.b); //toggle gyro drive
+//	private Button gp1b = new Button(() -> gamepad1.b); //toggle gyro drive
 //
-//	private GamepadButton gp1dpadlr = new GamepadButton(() -> gamepad1.dpad_left || gamepad1
+//	private Button gp1dpadlr = new Button(() -> gamepad1.dpad_left || gamepad1
 //	.dpad_right);
 //	//reset HOOK encoder
 //
-//	private GamepadButton gp2a = new GamepadButton(() -> gamepad2.a); //to next stage
+//	private Button gp2a = new Button(() -> gamepad2.a); //to next stage
 //
-//	private GamepadButton gp2b = new GamepadButton(() -> gamepad2.b); //to prev stage.
+//	private Button gp2b = new Button(() -> gamepad2.b); //to prev stage.
 //
-//	private GamepadButton gp2lbp = new GamepadButton(() -> gamepad2.left_bumper);//opening
+//	private Button gp2lbp = new Button(() -> gamepad2.left_bumper);//opening
 //	// scoreDoor
 //
-//	private GamepadButton gp2rbp = new GamepadButton(() -> gamepad2.right_bumper);
+//	private Button gp2rbp = new Button(() -> gamepad2.right_bumper);
 //
-//	private GamepadButton gp2lsb = new GamepadButton(() -> gamepad2.left_stick_button);
+//	private Button gp2lsb = new Button(() -> gamepad2.left_stick_button);
 //	//reset COLLECT encoder
 //
-//	private GamepadButton   gp2rsb         = new GamepadButton(() -> gamepad2.right_stick_button);
+//	private Button   gp2rsb         = new Button(() -> gamepad2.right_stick_button);
 //	//reset SCORE encoder
 //	//State
 //	private int      scoreDoorState = 0;
@@ -199,7 +199,7 @@
 //			double direction = Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y);
 //
 //			if (gp1b.pressed()) gyroDrive = !gyroDrive;
-//			GamepadButton.State gp1yState = gp1y.getState();
+//			Button.State gp1yState = gp1y.getState();
 //			if (gyroDrive) {
 //				if (gp1yState == HELD) {
 //					speedMult = 0;

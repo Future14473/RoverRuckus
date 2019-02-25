@@ -6,11 +6,11 @@ import java.util.function.BooleanSupplier;
  * Utility for gamepad button presses.
  */
 @SuppressWarnings("unused")
-public class GamepadButton implements BooleanSupplier {
+public class Button implements BooleanSupplier {
 	private final BooleanSupplier button;
 	private       boolean         past = false;
 	
-	public GamepadButton(BooleanSupplier button) {
+	public Button(BooleanSupplier button) {
 		this.button = button;
 	}
 	

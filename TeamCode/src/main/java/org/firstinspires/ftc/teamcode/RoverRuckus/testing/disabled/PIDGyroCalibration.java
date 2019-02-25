@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDriveAdapter;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GamepadButton;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 
@@ -17,12 +17,12 @@ public class PIDGyroCalibration extends OurLinearOpMode {
 	private        double              d              = 0.13;
 	private        MecanumDriveAdapter drive;
 	
-	private GamepadButton a     = new GamepadButton(() -> gamepad1.a);
-	private GamepadButton b     = new GamepadButton(() -> gamepad1.b);
-	private GamepadButton up    = new GamepadButton(() -> gamepad1.dpad_up);
-	private GamepadButton down  = new GamepadButton(() -> gamepad1.dpad_down);
-	private GamepadButton left  = new GamepadButton(() -> gamepad1.dpad_left);
-	private GamepadButton right = new GamepadButton(() -> gamepad1.dpad_right);
+	private Button a     = new Button(() -> gamepad1.a);
+	private Button b     = new Button(() -> gamepad1.b);
+	private Button up    = new Button(() -> gamepad1.dpad_up);
+	private Button down  = new Button(() -> gamepad1.dpad_down);
+	private Button left  = new Button(() -> gamepad1.dpad_left);
+	private Button right = new Button(() -> gamepad1.dpad_right);
 	
 	@Override
 	protected void initialize() throws InterruptedException {

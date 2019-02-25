@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 
@@ -10,9 +11,9 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
  */
 public class LimitedMotor {
 	
-	private final DcMotor motor;
-	private final Integer lowerLimit;
-	private final Integer upperLimit;
+	private final DcMotorEx motor;
+	private final Integer   lowerLimit;
+	private final Integer   upperLimit;
 	
 	private State   lastState = State.NONE;
 	private boolean encoderReverse;
@@ -27,14 +28,22 @@ public class LimitedMotor {
 	 *                       hardware issues).
 	 */
 	public LimitedMotor(
-			DcMotor motor, Integer lowerLimit, Integer upperLimit,
+			DcMotorEx motor, Integer lowerLimit, Integer upperLimit,
 			boolean encoderReverse) {
 		if (upperLimit < lowerLimit) throw new IllegalArgumentException();
 		this.motor = motor;
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 		this.encoderReverse = encoderReverse;
-		motor.setMode(encoderReverse ? RUN_WITHOUT_ENCODER : RUN_USING_ENCODER);
+		if (encoderReverse) {//note that this is a test and it might fail
+			PIDFCoefficients coefficients = motor.getPIDFCoefficients(RUN_USING_ENCODER);
+			coefficients.p *= -1;
+			coefficients.i *= -1;
+			coefficients.d *= -1;
+			coefficients.f *= -1;
+			motor.setPIDFCoefficients(RUN_USING_ENCODER, coefficients);
+		}
+		motor.setMode(RUN_USING_ENCODER);
 	}
 	
 	public void resetEncoder() {
