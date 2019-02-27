@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.*;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
 public class CurRobot extends BaseRobot {
 	
@@ -30,12 +29,12 @@ public class CurRobot extends BaseRobot {
 		collectArm = hardwareMap.get(DcMotorEx.class, "CollectArm");
 		collectArm.setMode(RUN_USING_ENCODER);
 		collectArm.setZeroPowerBehavior(BRAKE);
-		collectArm.setDirection(REVERSE);
+		//collectArm.setDirection(REVERSE);
 		
 		scoreArm = hardwareMap.get(DcMotorEx.class, "ScoreArm");
 		scoreArm.setMode(RUN_USING_ENCODER);
 		scoreArm.setZeroPowerBehavior(BRAKE);
-		scoreArm.setDirection(REVERSE);
+		//scoreArm.setDirection(REVERSE);
 		
 		flicker = hardwareMap.get(Servo.class, "Flicker");
 		markerDoor = hardwareMap.get(Servo.class, "MarkerDoor");

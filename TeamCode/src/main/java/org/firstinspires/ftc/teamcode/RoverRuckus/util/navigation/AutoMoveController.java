@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.SimpleTimer;
 
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.USE_XY_PID;
 
@@ -15,15 +16,17 @@ public class AutoMoveController {
 	private final AutoMoveCalculator   autoMoveCalculator;
 	private final PositionTracker      positionTracker;
 	private final RampedMoveController rampedMoveController;
-	
-	private XYR        targetPosition = XYR.ZERO;
-	private Magnitudes maxVelocities  = Magnitudes.ZERO;
+	private final SimpleTimer          timer;
+	private       XYR                  targetPosition = XYR.ZERO;
+	private       Magnitudes           maxVelocities  = Magnitudes.ZERO;
 	
 	public AutoMoveController(IRobot robot, PositionTracker positionTracker,
-	                          RampedMoveController rampedMoveController) {
+	                          RampedMoveController rampedMoveController,
+	                          SimpleTimer timer) {
 		this.robot = robot;
 		this.positionTracker = positionTracker;
 		this.rampedMoveController = rampedMoveController;
+		this.timer = timer;
 		//todo: maybe change.
 		autoMoveCalculator =
 				USE_XY_PID ? new WorldAxesXYPIDMoveCalc() : new WorldAxesDualPIDMoveCalc();
@@ -32,8 +35,9 @@ public class AutoMoveController {
 	/**
 	 * Sets the target position to the current recorded position.
 	 */
-	public void resetTargetPosition() {
+	public void setTargetPositionHere() {
 		targetPosition = positionTracker.getCurrentPosition();
+		updateTargetPosition();
 	}
 	
 	/** Updates robot location. */
@@ -53,7 +57,8 @@ public class AutoMoveController {
 	 * Sets motor power to move robot towards target, using the current autoMoveCalculator
 	 * with rampedMoveController.
 	 */
-	public void moveToTarget(double elapsedTime) {
+	public void moveToTarget() {
+		double elapsedTime = timer.getSecondsAndReset();
 		XYR targetMovement =
 				autoMoveCalculator.getMovement(positionTracker.getCurrentPosition(), elapsedTime);
 		MotorSetPower power = rampedMoveController.getPower(targetMovement, elapsedTime);
@@ -137,6 +142,10 @@ public class AutoMoveController {
 	
 	private void updateMaxVelocities() {
 		autoMoveCalculator.setMaxVelocities(maxVelocities);
+	}
+	
+	public void resetInternalTimer() {
+		timer.reset();
 	}
 	
 	private static double modAngleTowards(double currentAngle, double targetAngle) {

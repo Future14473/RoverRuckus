@@ -111,4 +111,9 @@ public class TaskProgram implements OpModeLifetimeRegistrar.Stoppable {
 	public void thenStop() {
 		add(this::stop);
 	}
+	
+	@Override
+	public String toString() {
+		return "Unspecific TaskProgram";
+	}
 }

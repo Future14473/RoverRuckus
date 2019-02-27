@@ -14,8 +14,8 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.ENCODER_TICKS
  */
 public class PositionTracker {
 	private final double           encoderTicksPerUnit;
-	private       XYR              currentPosition;
-	private       MotorSetPosition lastMotorPos = null;
+	private       XYR              currentPosition = XYR.ZERO;
+	private       MotorSetPosition lastMotorPos    = null;
 	
 	public PositionTracker(double encoderTicksPerUnit) {
 		this.encoderTicksPerUnit = encoderTicksPerUnit;

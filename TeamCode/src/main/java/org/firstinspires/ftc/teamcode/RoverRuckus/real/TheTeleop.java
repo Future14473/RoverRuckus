@@ -4,16 +4,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.CycleTime;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.*;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.SimpleTimer;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.UnifiedTimers;
+import org.jetbrains.annotations.NotNull;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.*;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor.State.LOWER;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor.State.UPPER;
@@ -24,18 +26,19 @@ public class TheTeleop extends OurLinearOpMode {
 	private CurRobot             robot;
 	private ManualMoveController manualMoveController;
 	private AutoMoveController   autoMoveController;
-	private CycleTime            cycleTime = new CycleTime();
 	private LimitedMotor         collectArm, scoreArm, hook;
-	private DcMotor scooper;
-	private Servo   collectDoor;
-	private Servo   scoreDump;
-	private CRServo angler;
-	
+	private DcMotor       scooper;
+	private Servo         collectDoor;
+	private Servo         scoreDump;
+	private CRServo       angler;
+	//timers
+	private UnifiedTimers timers       = new UnifiedTimers();
+	private SimpleTimer   sleepEndTime = timers.newTimer(), cycleTime = timers.newTimer();
 	//Variables for driving
 	private boolean  reverseDrive = false;
 	//Buttons.
 	private Button   gp1y         = new Button(() -> gamepad1.y); //toggle reverse
-	private Button   gp1b         = new Button(() -> gamepad1.b);
+	private Button   gp1b         = new Button(() -> gamepad1.b); //to set target pos.
 	private Button   gp2a         = new Button(() -> gamepad2.a); //to next stage
 	private Button   gp2b         = new Button(() -> gamepad2.b); //to prev stage.
 	//opening/close scoreDump
@@ -50,19 +53,20 @@ public class TheTeleop extends OurLinearOpMode {
 			new Button(() -> gamepad1.dpad_left || gamepad1.dpad_right);
 	//State
 	private ArmState armState     = ArmState.COLLECT;
-	//pseudo sleep
-	private long     sleepEndTime;
 	
 	@Override
-	protected void initialize() {
+	protected void initialize() throws InterruptedException {
 		robot = new CurRobot(hardwareMap);
+		robot.initIMU();
 		robot.wheels.setMode(RUN_USING_ENCODER);
 		robot.wheels.setZeroPowerBehavior(FLOAT);
 		RampedMoveController rampedMoveController =
 				new RampedMoveController(DEFAULT_MAX_ACCELERATIONS);
-		manualMoveController = new ManualMoveController(robot, rampedMoveController);
+		SimpleTimer moveTimer = timers.newTimer();
+		manualMoveController = new ManualMoveController(robot, rampedMoveController, moveTimer);
 		autoMoveController =
-				new AutoMoveController(robot, new PositionTracker(), rampedMoveController);
+				new AutoMoveController(robot, new PositionTracker(), rampedMoveController,
+				                       moveTimer);
 		scoreArm = new LimitedMotor(robot.scoreArm, MOTOR_MIN, SCORE_ARM_MAX, true);
 		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, COLLECT_ARM_MAX, true);
 		hook = new LimitedMotor(robot.hook, MOTOR_MIN, HOOK_MAX, true);
@@ -70,161 +74,162 @@ public class TheTeleop extends OurLinearOpMode {
 		collectDoor = robot.collectDoor;
 		scoreDump = robot.scoreDump;
 		angler = robot.angler;
-		sleepEndTime = System.nanoTime();
+		waitUntil(robot::imuIsGyroCalibrated, 2, SECONDS);
 	}
 	
 	@Override
 	protected void run() {
 		robot.parker.setPosition(PARKER_HOME);
 		//cycle count
-		long countEndTime = System.nanoTime() + 500000000;
 		int cycles = 0;
-		double cyclesPerSec = 0;
 		cycleTime.reset();
-		autoMoveController.resetTargetPosition();
+		autoMoveController.setTargetPositionHere();
 		while (opModeIsActive()) {
-			//FOR GAMEPAD1, CHANGED BY GAMEPAD2 2 is fast, 1 is normal, 0 is
-			// slow.
-			SpeedMode speedMode = gamepad1.left_bumper ? SpeedMode.SLOW : SpeedMode.NORMAL;
+			timers.update();
+			autoMoveController.updateLocation();
+			doGamepad1();
+			doGamepad2();
+			//record time
+			if (cycleTime.getSeconds() > 0.5) {
+				cycleTime.reset();
+				cycles = 0;
+				
+				telemetry.addData("Cycles per second:", cycles * 2);
+				telemetry.update(); //here is when we update
+			}
+			cycles++;
+		}
+	}
+	
+	private void doGamepad1() {
+		//now default slow?
+		SpeedMode speedMode = gamepad1.left_bumper ? SpeedMode.NORMAL : SpeedMode.SLOW;
+	/*-----------------*\
+    |     GAMEPAD 1     |
+	\* ----------------*/
+		//auto move.
+		if (gp1b.pressed()) autoMoveController.setTargetPositionHere();
+		if (gamepad1.right_bumper) { //auto move
+			autoMoveController.moveToTarget();
+			telemetry.addData("DRIVE MODE:", "AUTO");
+		} else { //manual move
+			if (gp1y.pressed()) reverseDrive = !reverseDrive;
+			double direction = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
+			if (reverseDrive) direction += Math.PI;
+			double moveSpeed =
+					Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y), 1.7);
+			manualMoveController.driveAt(
+					XY.fromPolar(moveSpeed, direction).scale(speedMode.mult),
+					-gamepad1.right_stick_x * speedMode.mult);
+			telemetry.addData("DRIVE MODE:", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
+		}
+		//hook
+		hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0, gamepad1.dpad_down);
+		if (gp1dpadlr.pressed()) hook.resetEncoder();
+	}
+	
+	@NotNull
+	private void doGamepad2() {
 			/*----------------*\
 		    |    GAMEPAD 2     |
 			\*----------------*/
-			boolean userAdvance = true;
-			boolean autoAdvance = false;
-			double triggerSum = gamepad2.right_trigger - gamepad2.left_trigger;
-			if (gamepad2.right_bumper) triggerSum = 1;
-			else if (gamepad2.left_bumper) triggerSum = -1;
-			if (Math.abs(robot.hook.getCurrentPosition()) > HOOK_NULLIFY) {
-				//close everything.
-				telemetry.addLine("HOOKING!!!!");
-				scooper.setPower(0); //idle
-				collectArm.setPowerLimited(IDLE_POWER_IN); //extend to initial
-				collectDoor.setPosition(COLLECT_DOOR_CLOSED); //close door
-				scoreArm.setPowerLimited(IDLE_POWER_IN); //keep in
-				scoreDump.setPosition(SCORE_DUMP_HOME); //close door.
-			} else switch (armState) {
-			case TO_COLLECT:
-				scooper.setPower(0); //idle
-				collectArm.setPowerLimited(1, null, COLLECT_ARM_INITIAL_EXTENSION);
-				//extend to initial
-				collectDoor.setPosition(COLLECT_DOOR_CLOSED); //close door
-				scoreArm.setPowerLimited(IDLE_POWER_IN); //keep in
-				scoreDump.setPosition(SCORE_DUMP_HOME); //close door.
-				autoAdvance = collectArm.getLastState() == UPPER;
-				break;
-			case COLLECT:
-				scooper.setPower(triggerSum);
-				collectArm.setPowerLimited(-gamepad2.right_stick_y, gamepad2.x);
-				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
-				scoreArm.setPowerLimited(IDLE_POWER_IN);
+		boolean userAdvance = true;
+		boolean autoAdvance = false;
+		double triggerSum = gamepad2.right_bumper ? 1 :
+		                    gamepad2.left_bumper ? -1 :
+		                    gamepad2.right_trigger - gamepad2.left_trigger;
+		if (Math.abs(robot.hook.getCurrentPosition()) > HOOK_NULLIFY) {
+			//bring everything in.
+			telemetry.addLine("HOOKING");
+			scooper.setPower(0); //idle
+			collectArm.setPowerLimited(COLLECT_ARM_IN_POWER);
+			collectDoor.setPosition(COLLECT_DOOR_CLOSED); //close door
+			scoreArm.setPowerLimited(SCORE_ARM_IN_POWER); //keep in
+			scoreDump.setPosition(SCORE_DUMP_HOME); //close door.
+		} else switch (armState) {
+		case TO_COLLECT:
+			scooper.setPower(0); //idle
+			collectArm.setPowerLimited(1, null, COLLECT_ARM_INITIAL_EXTENSION);
+			//extend to initial
+			collectDoor.setPosition(COLLECT_DOOR_CLOSED); //close door
+			scoreArm.setPowerLimited(SCORE_ARM_IN_POWER); //keep in
+			scoreDump.setPosition(SCORE_DUMP_HOME); //close door.
+			autoAdvance = collectArm.getLastState() == UPPER;
+			break;
+		case COLLECT:
+			scooper.setPower(triggerSum);
+			collectArm.setPowerLimited(-gamepad2.right_stick_y +
+			                           (double) collectArm.getLastPosition() / COLLECT_ARM_MAX *
+			                           COLLECT_ARM_MAX_IDLE_POWER,
+			                           gamepad2.x);
+			collectDoor.setPosition(COLLECT_DOOR_CLOSED);
+			scoreArm.setPowerLimited(SCORE_ARM_IN_POWER);
+			scoreDump.setPosition(SCORE_DUMP_HOME);
+			break;
+		case TO_TRANSFER:
+			scooper.setPower(SCOOPER_IDLE_POWER);
+			collectArm.setPowerLimited(COLLECT_ARM_IN_POWER); //bring IN!!
+			//keep door closed;
+			collectDoor.setPosition(COLLECT_DOOR_CLOSED);
+			scoreArm.setPowerLimited(SCORE_ARM_IN_POWER); //keep in
+			scoreDump.setPosition(SCORE_DUMP_HOME);
+			collectDoor.setPosition(COLLECT_DOOR_OPEN);//CHANGED: moved outside
+			autoAdvance =
+					collectArm.getLastState() == LOWER && scoreArm.getLastState() == LOWER;
+			if (autoAdvance) {
+				sleepEndTime.reset();
+				//sloppy yet working pseudo sleep.
+			}
+			userAdvance = false;
+			break;
+		case TRANSFER:
+			if (sleepEndTime.getMillis() < TRANSFER_SLEEP_TIME) break;
+			scooper.setPower(1 + triggerSum); //PUSH THINGS UP!
+			collectArm.setPowerLimited(COLLECT_ARM_IN_POWER); //keep in
+			collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
+			scoreArm.setPowerLimited(SCORE_ARM_IN_POWER); //keep in
+			scoreDump.setPosition(SCORE_DUMP_HOME);
+			break;
+		case TO_SCORE:
+			scooper.setPower(0); //idle
+			//keep out of the way
+			collectArm.setPowerLimited(1, null, COLLECT_ARM_AWAY);
+			collectDoor.setPosition(COLLECT_DOOR_OPEN); //keep open
+			scoreArm.setPowerLimited(collectArm.getLastState() == UPPER ? 1 : 0.1,
+			                         null,
+			                         SCORE_ARM_INITIAL_EXTENSION);
+			scoreDump.setPosition(SCORE_DUMP_HOME);
+			autoAdvance = scoreArm.getLastState() == UPPER;
+			break;
+		case SCORE:
+			scooper.setPower(0); //idle
+			//keep out of the way
+			collectArm.setPowerLimited((double) 1, null, COLLECT_ARM_AWAY);
+			collectDoor.setPosition(COLLECT_DOOR_CLOSED);
+			scoreArm.setPowerLimited(-gamepad2.right_stick_y * 1, gamepad1.x);
+			if (gp2rbp.down()) { //or also is in position
+				scoreDump.setPosition(SCORE_DUMP_DOWN);
+			} else if (gp2lbp.pressed()) {
 				scoreDump.setPosition(SCORE_DUMP_HOME);
-				break;
-			case TO_TRANSFER:
-				scooper.setPower(IDLE_POWER_SCOOPER); //keep balls from falling
-				collectArm.setPowerLimited(-1); //bring IN!!
-				//keep door closed;
-				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
-				scoreArm.setPowerLimited(IDLE_POWER_IN); //keep in
-				scoreDump.setPosition(SCORE_DUMP_HOME);
-				autoAdvance =
-						collectArm.getLastState() == LOWER && scoreArm.getLastState() == LOWER;
-				if (autoAdvance) {
-					collectDoor.setPosition(COLLECT_DOOR_OPEN);
-					sleepEndTime = System.nanoTime() + MILLISECONDS.toNanos(TRANSFER_SLEEP_TIME);
-					//sloppy yet working pseudo sleep.
-				}
-				userAdvance = false;
-				break;
-			case TRANSFER:
-				if (System.nanoTime() - sleepEndTime < 0) break;
-				scooper.setPower(1 + triggerSum); //PUSH THINGS UP!
-				collectArm.setPowerLimited(IDLE_POWER_IN); //keep in
-				collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
-				scoreArm.setPowerLimited(IDLE_POWER_IN); //keep in
-				scoreDump.setPosition(SCORE_DUMP_HOME);
-				break;
-			case TO_SCORE:
-				scooper.setPower(0); //idle
-				//keep out of the way
-				collectArm.setPowerLimited(1, null, COLLECT_ARM_AWAY);
-				collectDoor.setPosition(COLLECT_DOOR_OPEN); //keep open
-				//TODO: MAKE BETTER
-				scoreArm.setPowerLimited(collectArm.getLastState() == UPPER ? 1 : 0.1, null,
-				                         SCORE_ARM_INITIAL_EXTENSION);
-				scoreDump.setPosition(SCORE_DUMP_HOME);
-				speedMode = SpeedMode.SLOW; //GO SLOW
-				autoAdvance = scoreArm.getLastState() == UPPER;
-				break;
-			case SCORE:
-				scooper.setPower(0); //idle
-				//keep out of the way
-				collectArm.setPowerLimited(IDLE_POWER_OUT, null, COLLECT_ARM_AWAY);
-				collectDoor.setPosition(COLLECT_DOOR_CLOSED);
-				scoreArm.setPowerLimited(-gamepad2.right_stick_y, gamepad1.x);
-				if (gp2rbp.down()) { //or also is in position
-					scoreDump.setPosition(SCORE_DUMP_DOWN);
-				} else if (gp2lbp.pressed()) {
-					scoreDump.setPosition(SCORE_DUMP_HOME);
-				}
-				speedMode = SpeedMode.SLOW; // GO SLOW
-				userAdvance = true;
-				break;
 			}
-			if (userAdvance && gp2a.pressed() || autoAdvance) {
-				armState = armState.next();
-			} else if (gp2b.pressed()) {
-				armState = armState.prev();
-			}
-			//angler always userControlled.
-			angler.setPower(-gamepad2.left_stick_y);
-			//encoder reset
-			if (gp2lsb.pressed()) {
-				collectArm.resetEncoder();
-			}
-			if (gp2rsb.pressed()) {
-				scoreArm.resetEncoder();
-			}
-			telemetry.addData("Prev state: (press B)", armState.prev());
-			telemetry.addData("            ARM STATE", armState);
-			telemetry.addData("Next state  (press A)", armState.next());
-			/*-----------------*\
-		    |     GAMEPAD 1     |
-			\* ----------------*/
-			//movement!!
-			autoMoveController.updateLocation();
-			if (gp1b.pressed()) {
-				autoMoveController.resetTargetPosition();
-			}
-			if (gamepad1.right_bumper) {
-				telemetry.addData("DRIVE MODE:", "AUTO");
-				autoMoveController.moveToTarget(cycleTime.getSecondsAndReset());
-			} else {
-				if (gp1y.pressed()) reverseDrive = !reverseDrive;
-				telemetry.addData("DRIVE MODE:", reverseDrive ? "HOOK FRONT" : "ARM FRONT");
-				double direction = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-				if (reverseDrive) direction += Math.PI;
-				double moveSpeed =
-						Math.pow(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y), 1.7);
-				manualMoveController.driveAt(
-						XY.fromPolar(moveSpeed, direction).scale(speedMode.mult),
-						-gamepad1.right_stick_x * speedMode.mult);
-			}
-			//hook
-			hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0, gamepad1.dpad_down);
-			if (gp1dpadlr.pressed()) {
-				hook.resetEncoder();
-			}
-			//
-			//record time
-			if (System.nanoTime() > countEndTime) {
-				cyclesPerSec = (cyclesPerSec + cycles * 2) / 2;
-				countEndTime += 5e8;
-				cycles = 0;
-			}
-			cycles++;
-			telemetry.addData("Cycles per second:", cyclesPerSec);
-			telemetry.update();
+			userAdvance = true;
+			break;
 		}
+		
+		if (userAdvance && gp2a.pressed() || autoAdvance) { //advance to next stage
+			armState = armState.next();
+		} else if (gp2b.pressed()) { //go back.
+			armState = armState.prev();
+		}
+		//angler always user controlled
+		angler.setPower(-gamepad2.left_stick_y);
+		//encoder reset
+		if (gp2lsb.pressed()) collectArm.resetEncoder();
+		if (gp2rsb.pressed()) scoreArm.resetEncoder();
+		
+		telemetry.addData("Prev state", armState.prev());
+		telemetry.addData(" ARM STATE", armState);
+		telemetry.addData("Next state", armState.next());
 	}
 	
 	private enum ArmState {

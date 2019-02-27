@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 
@@ -17,6 +16,7 @@ public class LimitedMotor {
 	
 	private State   lastState = State.NONE;
 	private boolean encoderReverse;
+	private int     lastPosition;
 	
 	/**
 	 * Creates a new LimitedMotor.
@@ -35,15 +35,8 @@ public class LimitedMotor {
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 		this.encoderReverse = encoderReverse;
-		if (encoderReverse) {//note that this is a test and it might fail
-			PIDFCoefficients coefficients = motor.getPIDFCoefficients(RUN_USING_ENCODER);
-			coefficients.p *= -1;
-			coefficients.i *= -1;
-			coefficients.d *= -1;
-			coefficients.f *= -1;
-			motor.setPIDFCoefficients(RUN_USING_ENCODER, coefficients);
-		}
-		motor.setMode(RUN_USING_ENCODER);
+		
+		motor.setMode(encoderReverse ? RUN_WITHOUT_ENCODER : RUN_USING_ENCODER);
 	}
 	
 	public void resetEncoder() {
@@ -88,7 +81,11 @@ public class LimitedMotor {
 	}
 	
 	private int getCurrentPositionAdjusted() {
-		return motor.getCurrentPosition() * (encoderReverse ? -1 : 1);
+		return lastPosition = motor.getCurrentPosition() * (encoderReverse ? -1 : 1);
+	}
+	
+	public int getLastPosition() {
+		return lastPosition;
 	}
 	
 	public enum State {

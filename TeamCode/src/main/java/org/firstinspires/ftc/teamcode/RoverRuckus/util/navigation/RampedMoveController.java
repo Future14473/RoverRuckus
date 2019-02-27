@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.Range;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
 
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.MAX_ELAPSED_TIME;
@@ -19,7 +20,7 @@ public class RampedMoveController {
 	
 	/**
 	 * Calculates a ramped motor powers given target movement (translational and angular), and
-	 * elapsed time (in seconds) to determine ramp level.
+	 * elapsed time (in getSeconds) to determine ramp level.
 	 */
 	public MotorSetPower getPower(XYR targetMovement, double elapsedTime) {
 		if (elapsedTime > MAX_ELAPSED_TIME) elapsedTime = 0;
@@ -31,17 +32,10 @@ public class RampedMoveController {
 		double translationalRamp = maxAccelerations.translational * elapsedTime;
 		double angularRamp = maxAccelerations.angular * elapsedTime;
 		//left and right are independent (wheels)
-		this.rightRate = ramp(this.rightRate, targDiagonals.x, translationalRamp);
-		this.leftRate = ramp(this.leftRate, targDiagonals.y, translationalRamp);
-		this.turnRate = ramp(turnRate, targetAngular, angularRamp);
+		this.rightRate = Range.ramp(this.rightRate, targDiagonals.x, translationalRamp);
+		this.leftRate = Range.ramp(this.leftRate, targDiagonals.y, translationalRamp);
+		this.turnRate = Range.ramp(turnRate, targetAngular, angularRamp);
 		return MotorSetPower.fromDiagonals(this.rightRate, this.leftRate, this.turnRate);
 	}
 	
-	private static double ramp(double current, double target, double ramp) {
-		return constrain(target, current - ramp, current + ramp);
-	}
-	
-	private static double constrain(double v, double min, double max) {
-		return v < min ? min : v > max ? max : v;
-	}
 }

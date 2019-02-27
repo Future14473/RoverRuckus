@@ -138,7 +138,7 @@
 ////					autoMoveCalculator.getMovement(new XYR(XY.ZERO, targetAngle),
 ////					                                 new XYR(XY.ZERO, curAngle),
 ////					                                 new Magnitudes(speed),
-////					                                 elapsedTime.seconds());
+////					                                 elapsedTime.getSeconds());
 ////			elapsedTime.reset();
 ////			//wheels.setPower(output);
 ////			boolean hit = Math.abs(curAngle - targetAngle) < ANGLE_TOLERANCE;

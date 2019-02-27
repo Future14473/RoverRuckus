@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.CycleTime;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.ManualMoveController;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.PositionTracker;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.XY;
@@ -19,7 +18,6 @@ public class LocationTrackerAndRampedMoveTest extends OurLinearOpMode {
 	private CurRobot             robot;
 	private PositionTracker      positionTracker;
 	private ManualMoveController manualMoveController;
-	private CycleTime            time = new CycleTime();
 	
 	@Override
 	protected void initialize() throws InterruptedException {
@@ -35,7 +33,6 @@ public class LocationTrackerAndRampedMoveTest extends OurLinearOpMode {
 		robot.wheels.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		robot.wheels.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		positionTracker.reset();
-		time.reset();
 		while (opModeIsActive()) {
 			manualMoveController.driveAt(
 					new XY(gamepad1.left_stick_x, -gamepad1.left_stick_y).scale(2),
