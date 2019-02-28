@@ -7,14 +7,18 @@ public class UnifiedTimers {
 		curTime = System.nanoTime();
 	}
 	
-	public SimpleTimer newTimer() {
-		return new Timer();
+	public Timer newTimer() {
+		return new TiedTimer();
 	}
 	
-	private class Timer implements SimpleTimer {
+	public DeadlineTimer newDeadlineTimer() {
+		return new TiedDeadlineTimer();
+	}
+	
+	private class TiedTimer implements Timer {
 		private long pastTime = curTime;
 		
-		private Timer() {
+		private TiedTimer() {
 		}
 		
 		@Override
@@ -25,6 +29,28 @@ public class UnifiedTimers {
 		@Override
 		public void reset() {
 			pastTime = curTime;
+		}
+	}
+	
+	private class TiedDeadlineTimer implements DeadlineTimer {
+		private long deadLine = curTime;
+		
+		private TiedDeadlineTimer() {
+		}
+		
+		@Override
+		public long nanosToDeadline() {
+			return deadLine - curTime;
+		}
+		
+		@Override
+		public void addToDeadline(long nanos) {
+			deadLine += nanos;
+		}
+		
+		@Override
+		public void resetDeadline() {
+			deadLine = curTime;
 		}
 	}
 }

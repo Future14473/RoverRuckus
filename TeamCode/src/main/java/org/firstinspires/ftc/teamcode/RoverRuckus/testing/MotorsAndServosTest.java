@@ -37,6 +37,7 @@ public class MotorsAndServosTest extends OpMode {
 		telemetry.addData("Motor pos:", motor.getCurrentPosition());
 		
 		telemetry.update();
+		telemetry.clear();
 		//*/
 		/*
 		if    (gamepad1.dpad_up) {

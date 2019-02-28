@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.MotorSetPower;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.SimpleTimer;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.Timer;
 
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.USE_XY_PID;
 
@@ -16,13 +16,13 @@ public class AutoMoveController {
 	private final AutoMoveCalculator   autoMoveCalculator;
 	private final PositionTracker      positionTracker;
 	private final RampedMoveController rampedMoveController;
-	private final SimpleTimer          timer;
+	private final Timer                timer;
 	private       XYR                  targetPosition = XYR.ZERO;
 	private       Magnitudes           maxVelocities  = Magnitudes.ZERO;
 	
 	public AutoMoveController(IRobot robot, PositionTracker positionTracker,
 	                          RampedMoveController rampedMoveController,
-	                          SimpleTimer timer) {
+	                          Timer timer) {
 		this.robot = robot;
 		this.positionTracker = positionTracker;
 		this.rampedMoveController = rampedMoveController;

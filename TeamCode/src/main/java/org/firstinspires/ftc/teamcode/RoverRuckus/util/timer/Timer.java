@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.timer;
 
-public interface SimpleTimer {
+public interface Timer {
 	long getNanos();
 	
 	default double getMillis() {
-		return getNanos() / 1000d;
+		return getNanos() / 1e6;
 	}
 	
 	void reset();

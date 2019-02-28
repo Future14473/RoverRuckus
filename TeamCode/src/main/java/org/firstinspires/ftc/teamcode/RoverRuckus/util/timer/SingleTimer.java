@@ -1,21 +1,25 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.util.timer;
 
-public class SingleSimpleTimer implements SimpleTimer {
-	private long pastTime = System.nanoTime();
+public class SingleTimer implements Timer {
+	private long pastTime = getCurTime();
 	
 	@Override
 	public long getNanos() {
-		return System.nanoTime() - pastTime;
+		return getCurTime() - pastTime;
+	}
+	
+	private long getCurTime() {
+		return System.nanoTime();
 	}
 	
 	@Override
 	public void reset() {
-		pastTime = System.nanoTime();
+		pastTime = getCurTime();
 	}
 	
 	@Override
 	public double getSecondsAndReset() {
-		long curTime = System.nanoTime();
+		long curTime = getCurTime();
 		double o = (curTime - pastTime) / 1e9;
 		pastTime = curTime;
 		return o;

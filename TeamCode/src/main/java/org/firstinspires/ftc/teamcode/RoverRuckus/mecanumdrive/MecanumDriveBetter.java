@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskAdapter;
 import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.*;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.SingleSimpleTimer;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.SingleTimer;
 
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.DEFAULT_MAX_ACCELERATIONS;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.ENCODER_TICKS_PER_INCH;
@@ -36,7 +36,7 @@ public class MecanumDriveBetter extends TaskProgram {
 				robot,
 				new PositionTracker(this.parameters.encoderTicksPerUnit),
 				new RampedMoveController(parameters.maxAccelerations),
-				new SingleSimpleTimer());
+				new SingleTimer());
 		
 		if (this.parameters.adjustAtEnd) super.addOnDoneTask(
 				new MoveTaskBuilder().move(0, 0, DistanceUnit.INCH, 1)

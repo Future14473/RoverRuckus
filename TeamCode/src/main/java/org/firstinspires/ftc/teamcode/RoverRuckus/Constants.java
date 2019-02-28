@@ -8,15 +8,24 @@ public class Constants {
 	//"at home" position for all encoders
 	public static final int        MOTOR_MIN                     = 20;
 	//maximum arm extension
-	public static final int        SCORE_ARM_MAX                 = 1850;
 	public static final int        COLLECT_ARM_MAX               = 1200; //changed
-	//maximum hook extension
+	public static final int        COLLECT_ARM_INITIAL_EXTENSION = 600; //changed
+	public static final Integer    COLLECT_ARM_AWAY              = 30;
+	public static final int        SCORE_ARM_MAX                 = 1800;
+	public static final int        SCORE_ARM_INITIAL_EXTENSION   = SCORE_ARM_MAX;
+	public static final int        DUMP_ALLOW_POSITION           = SCORE_ARM_MAX / 2;
+	public static final int        AUTO_DUMP_MIN_POSITION        = SCORE_ARM_MAX * 4 / 5;
 	public static final int        HOOK_MAX                      = 26000;
 	public static final int        HOOK_NULLIFY                  = 1000;
-	//initial extensions during auto extensions
-	public static final int        COLLECT_ARM_INITIAL_EXTENSION = 600; //changed
-	public static final int        SCORE_ARM_INITIAL_EXTENSION   = SCORE_ARM_MAX;
-	public static final Integer    COLLECT_ARM_AWAY              = 30;
+	//Powers -----------------------
+	public static final double     SCOOPER_IDLE_POWER            = 0.2;
+	public static final double     SCORE_ARM_IN_POWER            = -0.6;
+	public static final double     COLLECT_ARM_IN_POWER          = -0.35;
+	public static final double     COLLECT_ARM_MAX_IDLE_POWER    = 0.6;
+	//Auto dump
+	public static final Magnitudes AUTO_DUMP_TOLERANCE           =
+			new Magnitudes(6,
+			               Math.toRadians(6));
 	// Servo positions -----------------------
 	//Collect door positions
 	public static final double     COLLECT_DOOR_CLOSED           = 0.71;
@@ -30,13 +39,10 @@ public class Constants {
 	public static final double     SPEED_MULT_FAST               = 100;
 	public static final double     SPEED_MULT_NORM               = 1.3;
 	public static final double     SPEED_MULT_SLOW               = 0.4;
-	//Powers -----------------------
-	public static final double     SCOOPER_IDLE_POWER            = 0.1;
-	public static final double     SCORE_ARM_IN_POWER            = -0.6;
-	public static final double     COLLECT_ARM_IN_POWER          = -0.2;
-	public static final double     COLLECT_ARM_MAX_IDLE_POWER    = 0.6;
 	//Other constants -----------------------
 	public static final int        TRANSFER_SLEEP_TIME           = 0;
+	//after being down for so long, how long to wait before auto transfer
+	public static final double     AUTO_DUMP_TRANSFER_TIME       = 1500;
 	//For movement tracking -----------------------
 	public static final double     ENCODER_TICKS_PER_INCH        = 125;
 	public static final double     DEFAULT_MAX_ACCELERATION      = 4;
@@ -45,12 +51,12 @@ public class Constants {
 	
 	//For PIDs -----------------------
 	public static final PIDCoefficients PID_COEFFICIENTS_TRANSLATIONAL =
-			new PIDCoefficients(0.15, 0, 1.2);
+			new PIDCoefficients(0.18, 0, 1.3);
 	public static final PIDCoefficients PID_COEFFICIENTS_ANGULAR       =
 			new PIDCoefficients(1.3, 0, 3);
 	
-	public static final double  MAX_ANGULAR_ERROR       = Math.PI / 4;
-	public static final double  MAX_TRANSLATIONAL_ERROR = 12;
+	public static final double  MAX_ANGULAR_ERROR       = Math.PI / 2;
+	public static final double  MAX_TRANSLATIONAL_ERROR = 16;
 	public static final double  MAX_ELAPSED_TIME        = 0.1;
 	public static final boolean USE_XY_PID              = true;
 	//Debug info

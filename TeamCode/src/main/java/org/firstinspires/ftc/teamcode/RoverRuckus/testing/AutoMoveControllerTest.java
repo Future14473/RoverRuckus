@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.*;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.SingleSimpleTimer;
+import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.SingleTimer;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.UnifiedTimers;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -34,7 +34,7 @@ public class AutoMoveControllerTest extends OurLinearOpMode {
 		robot = new CurRobot(hardwareMap);
 		RampedMoveController rampedMoveController =
 				new RampedMoveController(DEFAULT_MAX_ACCELERATIONS);
-		SingleSimpleTimer timer = new SingleSimpleTimer();
+		SingleTimer timer = new SingleTimer();
 		autoMoveController =
 				new AutoMoveController(robot, new PositionTracker(), rampedMoveController, timer);
 		manualMoveController = new ManualMoveController(robot, rampedMoveController, timer);
