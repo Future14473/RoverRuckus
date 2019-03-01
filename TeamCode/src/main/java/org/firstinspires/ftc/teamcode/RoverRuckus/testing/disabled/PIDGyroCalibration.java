@@ -2,20 +2,22 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDriveAdapter;
+import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.Task;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 
 @TeleOp(group = "test")
 @Disabled
 public class PIDGyroCalibration extends OurLinearOpMode {
-	private static boolean             shouldComplete = true;
-	private        double              p              = 0.35;
-	private        double              d              = 0.13;
-	private        MecanumDriveAdapter drive;
+	private static boolean      shouldComplete = true;
+	private        double       p              = 0.35;
+	private        double       d              = 0.13;
+	private        MecanumDrive drive;
 	
 	private Button a     = new Button(() -> gamepad1.a);
 	private Button b     = new Button(() -> gamepad1.b);
@@ -28,7 +30,17 @@ public class PIDGyroCalibration extends OurLinearOpMode {
 	protected void initialize() throws InterruptedException {
 		CurRobot robot = new CurRobot(hardwareMap);
 		robot.initIMU();
-		drive = new MecanumDriveAdapter(robot);
+		org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot robot1 = robot;
+		drive = new MecanumDrive(robot1, new MecanumDrive.Parameters()) {
+			public MecanumDrive moveXY(double x, double y, double speed) {
+				return (MecanumDrive) goMove(x * 36, y * 36, speed);
+			}
+			
+			@Override
+			public MecanumDrive then(Task task) {
+				return (MecanumDrive) super.then(task);
+			}
+		};
 		waitUntil(robot::imuIsGyroCalibrated, 3, SECONDS);
 	}
 	
@@ -36,7 +48,7 @@ public class PIDGyroCalibration extends OurLinearOpMode {
 	protected void run() {
 		while (opModeIsActive()) {
 			if (a.pressed()) {
-				drive.rotate(45, 1);
+				drive.goTurn((double) 45, DEGREES, (double) 1);
 			}
 			if (b.pressed()) shouldComplete = !shouldComplete;
 			if (up.down()) {

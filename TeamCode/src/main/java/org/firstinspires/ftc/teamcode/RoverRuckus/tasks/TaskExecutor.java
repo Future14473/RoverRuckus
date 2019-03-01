@@ -32,10 +32,6 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 		theThread.setDaemon(true);
 	}
 	
-	public TaskExecutor() {
-		this(TAG);
-	}
-	
 	/**
 	 * Adds a Task to the queue
 	 */
@@ -59,7 +55,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	}
 	
 	/**
-	 * waits until all current tasks are finished.
+	 * Waits until all current tasks are finished.
 	 *
 	 * @throws InterruptedException if the thread is interrupted while waiting
 	 */
@@ -88,6 +84,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 	/**
 	 * Removes an on done task.
 	 */
+	@SuppressWarnings("unused")
 	public void removeOnDoneTask(Task task) {
 		onDoneTasks.remove(task);
 	}
@@ -132,7 +129,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 				for (Task onDoneTask : onDoneTasks) {
 					if (VERBOSE_LOG)
 						RobotLog.vv(TAG, "%s: running onDoneTask %s", name,
-						            Reflections.readableName(onDoneTask));
+						            Reflections.betterName(onDoneTask));
 					onDoneTask.run();
 				}
 			}
@@ -144,7 +141,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 			if (!Thread.interrupted()) {
 				if (VERBOSE_LOG)
 					RobotLog.vv(TAG, "%s: running %s", name,
-					            Reflections.readableName(curTask));
+					            Reflections.betterName(curTask));
 				curTask.run();
 			}
 			

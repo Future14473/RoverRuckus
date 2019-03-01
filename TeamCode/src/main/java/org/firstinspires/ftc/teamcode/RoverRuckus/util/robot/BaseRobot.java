@@ -5,15 +5,17 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
 
 import static com.qualcomm.hardware.bosch.BNO055IMU.AngleUnit.RADIANS;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.ZYX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 
 public abstract class BaseRobot implements IRobot {
-	public final    MotorSet            wheels;
+	public final MotorSet wheels;
 	protected final CumulativeDirection direction;
 	private final   BNO055IMU           imu;
 	
@@ -27,6 +29,7 @@ public abstract class BaseRobot implements IRobot {
 		bl.setDirection(REVERSE);
 		wheels = new MotorSet(fl, fr, bl, br);
 		wheels.setZeroPowerBehavior(BRAKE);
+		wheels.setPIDFCoefficients(RUN_USING_ENCODER, Constants.RUN_USING_ENCODER_PIDF);
 		direction = new CumulativeDirection(() -> this.getOrientation().firstAngle);
 	}
 	

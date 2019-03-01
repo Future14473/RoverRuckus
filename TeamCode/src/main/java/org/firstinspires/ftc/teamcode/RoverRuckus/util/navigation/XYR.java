@@ -16,8 +16,8 @@ public final class XYR {
 		this.angle = angle;
 	}
 	
-	public XYR withNewXY(XY XY) {
-		return new XYR(XY, angle);
+	public XYR withNewXY(XY xy) {
+		return new XYR(xy, angle);
 	}
 	
 	public XYR withNewAngle(double angle) {

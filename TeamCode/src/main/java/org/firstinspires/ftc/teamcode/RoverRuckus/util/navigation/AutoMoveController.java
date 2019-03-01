@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.USE_XY_PID;
  * Puts AutoMoveCalculator and RobotLocationTracker together.
  * Records robot position and allows the robot to automatically move to a specified target position
  */
+@SuppressWarnings("unused")
 public class AutoMoveController {
 	
 	private final IRobot               robot;
@@ -92,11 +93,11 @@ public class AutoMoveController {
 //		this.targetLocation = targetLocation;
 //	}
 //
-	public XY getLocationError() {
+	private XY getLocationError() {
 		return targetPosition.xy.subtract(positionTracker.getCurrentPosition().xy);
 	}
 	
-	public double getAngularError() {
+	private double getAngularError() {
 		return targetPosition.angle - positionTracker.getCurrentPosition().angle;
 	}
 	
@@ -146,6 +147,10 @@ public class AutoMoveController {
 	
 	public void resetInternalTimer() {
 		timer.reset();
+	}
+	
+	public void setTargetPosition(XYR pos) {
+		targetPosition = pos;
 	}
 	
 	private static double modAngleTowards(double currentAngle, double targetAngle) {

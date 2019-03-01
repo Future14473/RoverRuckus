@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util.robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -148,5 +149,9 @@ public final class MotorSet implements Iterable<DcMotorEx> {
 	 */
 	public void setPower(double[] power) {
 		setPower(MotorSetPower.fromArray(power));
+	}
+	
+	public void setPIDFCoefficients(DcMotor.RunMode mode, PIDFCoefficients pidfCoefficients) {
+		for(DcMotorEx m: this)m.setPIDFCoefficients(mode, pidfCoefficients);
 	}
 }

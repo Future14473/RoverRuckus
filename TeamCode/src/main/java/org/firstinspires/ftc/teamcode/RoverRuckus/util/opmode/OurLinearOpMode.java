@@ -4,6 +4,7 @@ import android.support.annotation.CallSuper;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.Reflections;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -77,9 +78,9 @@ public abstract class OurLinearOpMode extends LinearOpMode {
 	 */
 	protected void waitUntil(BooleanSupplier condition)
 			throws InterruptedException {
-		RobotLog.d("WaitUntil started: " + Reflections.readableName(condition));
+		RobotLog.d("WaitUntil started: " + Reflections.betterName(condition));
 		this.condition.waitFor(condition);
-		RobotLog.d("WaitUntil ended " + Reflections.readableName(condition));
+		RobotLog.d("WaitUntil ended " + Reflections.betterName(condition));
 	}
 	
 	/**
@@ -101,11 +102,21 @@ public abstract class OurLinearOpMode extends LinearOpMode {
 				       System.nanoTime() >= stopTime;
 			}
 			
+			@NotNull
 			@Override
 			public String toString() {
 				return waitCondition.toString();
 			}
 		});
+	}
+	
+	protected static boolean sleep(int millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			return true;
+		}
+		return false;
 	}
 	
 	private static class SingleCondition {

@@ -1,11 +1,13 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
+package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(group = "test")
+@Disabled
 public class ReportPIDF_Test extends OpMode {
 	
 	private DcMotorEx motorEx;

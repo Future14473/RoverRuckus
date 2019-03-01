@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.*;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.SingleTimer;
+import org.jetbrains.annotations.NotNull;
 
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.DEFAULT_MAX_ACCELERATIONS;
 import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.ENCODER_TICKS_PER_INCH;
@@ -21,26 +22,25 @@ import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.ENCODER_TICKS
  * Orientation is always relative to the current robot position, AFTER any simultaneous or
  * previous turns.
  */
-@SuppressWarnings({"unused", "UnusedReturnValue"})
-public class MecanumDriveBetter extends TaskProgram {
-	private static final AngleUnit    ourAngleUnit    = AngleUnit.RADIANS;
-	private static final DistanceUnit ourDistanceUnit = DistanceUnit.INCH;
+@SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
+public class MecanumDrive extends TaskProgram {
+	public static final AngleUnit          ourAngleUnit    = AngleUnit.RADIANS;
+	public static final DistanceUnit       ourDistanceUnit = DistanceUnit.INCH;
+	private final       Parameters         parameters;
+	private final       AutoMoveController autoMoveController;
 	
-	private final Parameters         parameters;
-	private final AutoMoveController autoMoveController;
-	
-	public MecanumDriveBetter(IRobot robot, Parameters parameters) {
+	public MecanumDrive(IRobot robot, Parameters parameters) {
 		super("Mecanum Drive", true);
 		this.parameters = parameters.clone();
 		autoMoveController = new AutoMoveController(
 				robot,
 				new PositionTracker(this.parameters.encoderTicksPerUnit),
-				new RampedMoveController(parameters.maxAccelerations),
+				new RampedMoveController(this.parameters.maxAccelerations),
 				new SingleTimer());
 		
 		if (this.parameters.adjustAtEnd) super.addOnDoneTask(
-				new MoveTaskBuilder().move(0, 0, DistanceUnit.INCH, 1)
-				                     .turn(0, AngleUnit.RADIANS, 1)
+				new MoveTaskBuilder().considerMove(1)
+				                     .considerTurn(1)
 				                     .build(true));
 		super.addOnDoneTask(robot.getWheels()::stop);
 	}
@@ -75,60 +75,66 @@ public class MecanumDriveBetter extends TaskProgram {
 		return new MoveTaskBuilder().move(x, y, maxSpeed);
 	}
 	
-	public MecanumDriveBetter goMove(double x, double y, DistanceUnit unit, double maxSpeed,
-	                                 boolean fine) {
+	public MecanumDrive goMove(double x, double y, DistanceUnit unit, double maxSpeed,
+	                           boolean fine) {
 		return move(x, y, unit, maxSpeed).go(fine);
 	}
 	
-	public MecanumDriveBetter goTurn(double angle, AngleUnit unit, double maxSpeed, boolean fine) {
+	public MecanumDrive goTurn(double angle, AngleUnit unit, double maxSpeed, boolean fine) {
 		return turn(angle, unit, maxSpeed).go(fine);
 	}
 	
-	public MecanumDriveBetter goTurn(double angle, double maxSpeed, boolean fine) {
+	public MecanumDrive goTurn(double angle, double maxSpeed, boolean fine) {
 		return turn(angle, maxSpeed).go(fine);
 	}
 	
-	public MecanumDriveBetter goTurn(double angle, AngleUnit unit, double maxSpeed) {
+	public MecanumDrive goTurn(double angle, AngleUnit unit, double maxSpeed) {
 		return turn(angle, unit, maxSpeed).go();
 	}
 	
-	public MecanumDriveBetter goTurn(double angle, double maxSpeed) {
+	public MecanumDrive goTurn(double angle, double maxSpeed) {
 		return turn(angle, maxSpeed).go();
 	}
 	
-	public MecanumDriveBetter goMove(double x, double y, double maxSpeed, boolean fine) {
+	public MecanumDrive goMove(double x, double y, double maxSpeed, boolean fine) {
 		return move(x, y, maxSpeed).go(fine);
 	}
 	
-	public MecanumDriveBetter goMove(double x, double y, DistanceUnit unit, double maxSpeed) {
+	public MecanumDrive goMove(double x, double y, DistanceUnit unit, double maxSpeed) {
 		return move(x, y, unit, maxSpeed).go();
 	}
 	
-	public MecanumDriveBetter goMove(double x, double y, double maxSpeed) {
+	public MecanumDrive goMove(double x, double y, double maxSpeed) {
 		return move(x, y, maxSpeed).go();
 	}
 	
-	@Override
-	public void start() {
-		autoMoveController.setTargetPositionHere();
-		super.start();
+	public MecanumDrive adjust() {
+		return new MoveTaskBuilder().considerMove(1).considerTurn(1).go(true);
 	}
 	
 	@Override
-	public MecanumDriveBetter then(Task task) {
+	public MecanumDrive then(Task task) {
 		add(task);
 		return this;
 	}
 	
 	@Override
-	public String toString() {
-		return "MecanumDriveBetter";
+	public void start() {
+		autoMoveController.updateLocation();
+		autoMoveController.setTargetPositionHere();
+		super.start();
 	}
 	
 	@Override
-	public MecanumDriveBetter sleep(long millis) {
+	public MecanumDrive sleep(long millis) {
 		super.sleep(millis);
 		return this;
+	}
+	
+	@NotNull
+	@Override
+	public String toString() {
+		return "MecanumDrive";
 	}
 	
 	/**
@@ -147,6 +153,7 @@ public class MecanumDriveBetter extends TaskProgram {
 			autoMoveController.addToTargetPositionRelative(toMove);
 		}
 		
+		@NotNull
 		@Override
 		public String toString() {
 			return String.format("ChangeTargetLocation: %s", toMove);
@@ -158,7 +165,7 @@ public class MecanumDriveBetter extends TaskProgram {
 	 * specified tolerances and maximum speeds for both translation and
 	 * rotation.
 	 */
-	class PositionRobotTask extends TaskAdapter {
+	private class PositionRobotTask extends TaskAdapter {
 		private final Magnitudes maxVelocities;
 		private final Magnitudes tolerances;
 		private final int        consecutive;
@@ -181,7 +188,7 @@ public class MecanumDriveBetter extends TaskProgram {
 		public PositionRobotTask(double maxTranslationalSpeed, double translationalTolerance,
 		                         double maxAngularSpeed, double angularTolerance,
 		                         int consecutive) {
-			if (maxAngularSpeed <= 0 || maxTranslationalSpeed <= 0 || consecutive <= 1)
+			if (maxAngularSpeed < 0 || maxTranslationalSpeed < 0 || consecutive <= 0)
 				throw new IllegalArgumentException();
 			this.maxVelocities = new Magnitudes(maxTranslationalSpeed, maxAngularSpeed);
 			this.tolerances = new Magnitudes(translationalTolerance, angularTolerance);
@@ -204,6 +211,7 @@ public class MecanumDriveBetter extends TaskProgram {
 			return numConsecutive >= consecutive;
 		}
 		
+		@NotNull
 		@SuppressLint("DefaultLocale")
 		@Override
 		public String toString() {
@@ -226,11 +234,16 @@ public class MecanumDriveBetter extends TaskProgram {
 		private MoveTaskBuilder() { //only can build from within here.
 		}
 		
+		public MoveTaskBuilder phantomTurn(double toTurn, AngleUnit unit) {
+			toMove = toMove.addToAngle(toOurUnit(toTurn, unit));
+			return this;
+		}
+		
 		/**
 		 * Adds turning this moveTask.
 		 */
 		public MoveTaskBuilder turn(double toTurn, AngleUnit unit, double maxSpeed) {
-			if (maxAngularSpeed < 0) throw new IllegalArgumentException();
+			if (maxSpeed < 0) throw new IllegalArgumentException();
 			toMove = toMove.addToAngle(toOurUnit(toTurn, unit));
 			this.maxAngularSpeed = maxSpeed;
 			return this;
@@ -247,10 +260,20 @@ public class MecanumDriveBetter extends TaskProgram {
 		 * Adds movement to this move task.
 		 */
 		public MoveTaskBuilder move(double x, double y, DistanceUnit unit, double maxSpeed) {
-			if (maxTranslationSpeed < 0) throw new IllegalArgumentException();
+			if (maxSpeed < 0) throw new IllegalArgumentException();
 			//to account for previous rotations, rotate.
 			this.toMove = this.toMove.addToXY(toOurUnit(x, y, unit).rotate(this.toMove.angle));
 			this.maxTranslationSpeed = maxSpeed;
+			return this;
+		}
+		
+		public MoveTaskBuilder considerMove(double maxTranslationalSpeed) {
+			this.maxTranslationSpeed = maxTranslationalSpeed;
+			return this;
+		}
+		
+		public MoveTaskBuilder considerTurn(double maxAngularSpeed) {
+			this.maxAngularSpeed = maxAngularSpeed;
 			return this;
 		}
 		
@@ -264,7 +287,7 @@ public class MecanumDriveBetter extends TaskProgram {
 		/**
 		 * Adds the being built move task to the {@link TaskProgram}
 		 */
-		public MecanumDriveBetter go() {
+		public MecanumDrive go() {
 			return go(false);
 		}
 		
@@ -273,7 +296,7 @@ public class MecanumDriveBetter extends TaskProgram {
 		 *
 		 * @param fine if true, less tolerant on target position
 		 */
-		public MecanumDriveBetter go(boolean fine) {
+		public MecanumDrive go(boolean fine) {
 			return then(build(fine));
 		}
 		
@@ -297,19 +320,15 @@ public class MecanumDriveBetter extends TaskProgram {
 	}
 	
 	public static class Parameters implements Cloneable {
-		public static final DistanceUnit distanceUnit = ourDistanceUnit;
-		public static final AngleUnit    angleUnit    = ourAngleUnit;
 		
-		public  double     encoderTicksPerUnit        = ENCODER_TICKS_PER_INCH;
-		public  Magnitudes maxAccelerations           = DEFAULT_MAX_ACCELERATIONS;
-		public  Magnitudes toleranceCoarse            = new Magnitudes(10, Math.toRadians(15));
-		public  Magnitudes toleranceFine              = new Magnitudes(1.5, Math.toRadians(1));
-		public  Magnitudes idleSpeedMult              = new Magnitudes(0.3);
-		public  int        consecutiveCoarse          = 2;
-		public  int        consecutiveFine            = 5;
-		public  boolean    adjustAtEnd                = false;
-		private double     idleAngularSpeedMult       = 0.3;
-		private double     idleTranslationalSpeedMult = 0.3;
+		public double     encoderTicksPerUnit = ENCODER_TICKS_PER_INCH;
+		public Magnitudes maxAccelerations    = DEFAULT_MAX_ACCELERATIONS;
+		public Magnitudes toleranceCoarse     = new Magnitudes(10, Math.toRadians(10));
+		public Magnitudes toleranceFine       = new Magnitudes(2, Math.toRadians(3));
+		public Magnitudes idleSpeedMult       = new Magnitudes(0.3);
+		public int        consecutiveCoarse   = 1;
+		public int        consecutiveFine     = 3;
+		public boolean    adjustAtEnd         = false;
 		
 		@Override
 		public Parameters clone() {

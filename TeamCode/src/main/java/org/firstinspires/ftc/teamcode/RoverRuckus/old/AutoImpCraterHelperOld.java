@@ -7,7 +7,7 @@
 //@Disabled
 //public class AutoImpCraterHelperOld extends AbstractAutoOld {
 //	@Override
-//	protected void positionForDepot() throws InterruptedException {
+//	protected void putMarkerInDepot() throws InterruptedException {
 //		robot.drive.turn(50, 10);
 //		robot.drive.moveXY(-0.7, 0, 10);
 //		robot.drive.moveXY(0.05, 0, 10);

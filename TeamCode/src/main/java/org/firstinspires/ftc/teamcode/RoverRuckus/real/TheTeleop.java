@@ -32,31 +32,34 @@ public class TheTeleop extends OurLinearOpMode {
 	private Servo         scoreDump;
 	private CRServo       angler;
 	//timers
-	private UnifiedTimers timers        = new UnifiedTimers();
-	private Timer         transferTimer = timers.newTimer();
-	private DeadlineTimer cycleTime     = timers.newDeadlineTimer();
+	private UnifiedTimers timers              = new UnifiedTimers();
+	private Timer         transferTimer       = timers.newTimer();
+	private DeadlineTimer updateLocationTimer = timers.newDeadlineTimer();
+	private DeadlineTimer cycleTime           = timers.newDeadlineTimer();
+	
 	//Variables for driving
-	private boolean       reverseDrive  = false;
+	private boolean reverseDrive        = false;
 	//Buttons.
-	private Button        gp1y          = new Button(() -> gamepad1.y); //toggle reverse
-	private Button        gp1b          = new Button(() -> gamepad1.b); //to set target pos.
-	private Button        gp2a          = new Button(() -> gamepad2.a); //to next stage
-	private Button        gp2b          = new Button(() -> gamepad2.b); //to prev stage.
+	private Button  toggleReverse       = new Button(() -> gamepad1.y); //toggle reverse
+	private Button  setTargPos          = new Button(() -> gamepad1.b); //to set target pos.
+	private Button  toNextStage         = new Button(() -> gamepad2.a); //to next stage
+	private Button  toPrevStage         = new Button(() -> gamepad2.b); //to prev stage.
 	//opening/close scoreDump
-	private Button        gp2lbp        = new Button(() -> gamepad2.left_bumper);
-	private Button        gp2rbp        = new Button(() -> gamepad2.right_bumper);
+	private Button  unDump              = new Button(() -> gamepad2.left_bumper);
+	private Button  doDump              = new Button(() -> gamepad2.right_bumper);
 	//reset COLLECT encoder
-	private Button        gp2lsb        = new Button(() -> gamepad2.left_stick_button);
+	private Button  resetCollectEncoder = new Button(() -> gamepad2.left_stick_button);
 	//reset SCORE encoder
-	private Button        gp2rsb        = new Button(() -> gamepad2.right_stick_button);
+	private Button  resetScoreEncoder   = new Button(() -> gamepad2.right_stick_button);
 	//reset HOOK encoder
-	private Button        gp1dpadlr     =
+	private Button  resetHookEncoder    =
 			new Button(() -> gamepad1.dpad_left || gamepad1.dpad_right);
+	
 	//State
-	private ArmState      armState      = ArmState.COLLECT;
-	private boolean       dumpDown      = false;
-	private boolean       targPosSet    = false;
-	private boolean       onInterval    = false;
+	private ArmState armState   = ArmState.COLLECT;
+	private boolean  dumpDown   = false;
+	private boolean  targPosSet = false;
+	private boolean  onInterval = false;
 	
 	@Override
 	protected void initialize() throws InterruptedException {
@@ -92,14 +95,17 @@ public class TheTeleop extends OurLinearOpMode {
 		while (opModeIsActive()) {
 			timers.update();
 			if (cycleTime.deadlineHit()) {
-				cycleTime.addToDeadline(500000000);
+				cycleTime.addToDeadlineMillis(INTERVAL_TIME);
 				onInterval = true;
 			} else onInterval = false;
-			autoMoveController.updateLocation();
+			if (updateLocationTimer.deadlineHit()) {
+				autoMoveController.updateLocation();
+				updateLocationTimer.addToDeadlineMillis(UPDATE_LOCATION_TIME);
+			}
 			doGamepad1();
 			doGamepad2();
 			if (onInterval) {
-				telemetry.addData("Cycles per second:", cycles * 2);
+				telemetry.addData("Cycles per second:", cycles * 1000d / INTERVAL_TIME);
 				cycles = 0;
 			}
 			cycles++;
@@ -113,7 +119,7 @@ public class TheTeleop extends OurLinearOpMode {
     |     GAMEPAD 1     |
 	\* ----------------*/
 		//auto move.
-		if (gp1b.pressed()) {
+		if (setTargPos.pressed()) {
 			autoMoveController.setTargetPositionHere();
 			targPosSet = true;
 		}
@@ -121,7 +127,7 @@ public class TheTeleop extends OurLinearOpMode {
 			autoMoveController.moveToTarget();
 			if (onInterval) telemetry.addData("DRIVE MODE:", "AUTO");
 		} else { //manual move
-			if (gp1y.pressed()) reverseDrive = !reverseDrive;
+			if (toggleReverse.pressed()) reverseDrive = !reverseDrive;
 			double direction = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
 			if (reverseDrive) direction += Math.PI;
 			double moveSpeed =
@@ -134,7 +140,7 @@ public class TheTeleop extends OurLinearOpMode {
 		}
 		//hook
 		hook.setPowerLimited(gamepad1.x ? 1 : gamepad1.a ? -1 : 0, gamepad1.dpad_down);
-		if (gp1dpadlr.pressed()) hook.resetEncoder();
+		if (resetHookEncoder.pressed()) hook.resetEncoder();
 	}
 	
 	private void doGamepad2() {
@@ -166,16 +172,16 @@ public class TheTeleop extends OurLinearOpMode {
 			autoAdvance = onScore();
 			break;
 		}
-		if (userAdvance && gp2a.pressed() || autoAdvance) { //advance to next stage
+		if (userAdvance && toNextStage.pressed() || autoAdvance) { //advance to next stage
 			armState = armState.next();
-		} else if (gp2b.pressed()) { //go back.
+		} else if (toPrevStage.pressed()) { //go back.
 			armState = armState.prev();
 		}
 		//angler always user controlled
 		angler.setPower(-gamepad2.left_stick_y);
 		//encoder reset
-		if (gp2lsb.pressed()) collectArm.resetEncoder();
-		if (gp2rsb.pressed()) scoreArm.resetEncoder();
+		if (resetCollectEncoder.pressed()) collectArm.resetEncoder();
+		if (resetScoreEncoder.pressed()) scoreArm.resetEncoder();
 		
 		if (onInterval) {
 			telemetry.addData("Prev state", armState.prev());
@@ -190,17 +196,18 @@ public class TheTeleop extends OurLinearOpMode {
 		collectArm.setPowerLimited((double) 1, null, COLLECT_ARM_AWAY);
 		collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 		scoreArm.setPowerLimited(-gamepad2.right_stick_y * 1, gamepad1.x);
-		if (gp2lbp.down() || scoreArm.getLastPosition() < DUMP_ALLOW_POSITION) {
+		if (unDump.down() || scoreArm.getLastPosition() < DUMP_ALLOW_POSITION) {
 			scoreDump.setPosition(SCORE_DUMP_HOME);
 			dumpDown = false;
-		} else if (gp2rbp.down() ||
+		} else if (doDump.down() ||
 		           targPosSet &&
 		           scoreArm.getLastPosition() > AUTO_DUMP_MIN_POSITION &&
 		           autoMoveController.isOnTarget(AUTO_DUMP_TOLERANCE)) {
-			scoreDump.setPosition(SCORE_DUMP_DOWN);
 			dumpDown = true;
+			scoreDump.setPosition(SCORE_DUMP_DOWN);
 			transferTimer.reset();
 		}
+		telemetry.addData("TransferTimer:", transferTimer.getMillis());
 		return dumpDown && transferTimer.getMillis() > AUTO_DUMP_TRANSFER_TIME;
 	}
 	

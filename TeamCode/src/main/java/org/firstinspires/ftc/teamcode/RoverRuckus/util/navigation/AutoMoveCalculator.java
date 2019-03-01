@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation;
 import org.jetbrains.annotations.NotNull;
 
 /**
- *
+ * A calculator to move the robot towards a target position.
  */
 public interface AutoMoveCalculator {
 	/**

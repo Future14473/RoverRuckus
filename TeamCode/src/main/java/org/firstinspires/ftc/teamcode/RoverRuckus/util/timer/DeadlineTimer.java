@@ -10,7 +10,9 @@ public interface DeadlineTimer{
 	default boolean deadlineHit() {
 		return nanosToDeadline() <= 0;
 	}
-	
+	default void addToDeadlineMillis(double millis){
+		addToDeadline((long) (millis * 1_000_000));
+	}
 	default double millisToDeadline() {
 		return nanosToDeadline() / 1e6;
 	}

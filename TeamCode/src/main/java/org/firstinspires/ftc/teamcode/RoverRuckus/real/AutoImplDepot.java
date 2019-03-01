@@ -2,18 +2,20 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Auto next to Depot", group = "Autonomous")
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+
+@Autonomous(name = "Auto Next to Depot", group = "Autonomous")
 public class AutoImplDepot extends AbstractAuto {
 	@Override
-	protected void positionForDepot() throws InterruptedException {
-		drive.rotate(-125, 10)
-		     .moveXY(0.45, 0, 10)
-		     .moveXY(-0.07, 0, 10)
-		     .moveXY(0, -1.3, 10);
+	protected void putMarkerInDepot() throws InterruptedException {
+		drive.turn(135, DEGREES, 10).move(8, 12, 10).go()
+		     .then(this::openMarkerDoor)
+		     .goMove(0, -36, 10, true)
+		     .then(this::flickMarkerOut);
 	}
 	
 	@Override
 	protected void parkInCrater() {
-		drive.moveXY(0.1, 2, 10);
+		drive.goMove(1, 50, 10);
 	}
 }

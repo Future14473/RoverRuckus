@@ -7,11 +7,13 @@
       <w>interruptable</w>
       <w>mecanum</w>
       <w>mult</w>
+      <w>mults</w>
       <w>overriden</w>
       <w>pidf</w>
       <w>pidxy</w>
       <w>rotater</w>
       <w>setpoint</w>
+      <w>squashness</w>
       <w>targ</w>
       <w>tele</w>
       <w>teleop</w>

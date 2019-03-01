@@ -15,9 +15,11 @@ public class Button implements BooleanSupplier {
 	}
 	
 	public State getState() {
-		State o = button.getAsBoolean() ? (past ? State.HELD : State.PRESSED) :
+		boolean cur = button.getAsBoolean();
+		State o = cur ?
+		          (past ? State.HELD : State.PRESSED) :
 		          (past ? State.RELEASED : State.UP);
-		past = button.getAsBoolean();
+		past = cur;
 		return o;
 	}
 	

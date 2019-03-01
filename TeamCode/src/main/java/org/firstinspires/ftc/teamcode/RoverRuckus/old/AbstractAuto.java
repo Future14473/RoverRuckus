@@ -23,7 +23,7 @@
 //	private       CurRobot       robot      = new CurRobot(hardwareMap);
 //	private       ElapsedTime    timer      = new ElapsedTime();
 //
-//	protected abstract void positionForDepot() throws InterruptedException;
+//	protected abstract void putMarkerInDepot() throws InterruptedException;
 //
 //	protected abstract void parkInCrater();
 //
@@ -46,7 +46,7 @@
 //		unHook();
 //		knockOffGold();
 //
-//		positionForDepot();
+//		putMarkerInDepot();
 //		drive.waitUntilDone();
 //
 //		robot.hook.setPower(0);

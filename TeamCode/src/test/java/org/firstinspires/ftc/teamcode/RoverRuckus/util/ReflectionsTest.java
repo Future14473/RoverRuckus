@@ -18,9 +18,9 @@ public class ReflectionsTest {
 	
 	@Test
 	public void getName() {
-		System.out.println(Reflections.readableName(testFace));
-		System.out.println(Reflections.readableName(new Inner()));
-		//System.out.println(Reflections.readableName((TestFace) () -> {}));
+		System.out.println(Reflections.betterName(testFace));
+		System.out.println(Reflections.betterName(new Inner()));
+		//System.out.println(Reflections.betterName((TestFace) () -> {}));
 		
 	}
 	

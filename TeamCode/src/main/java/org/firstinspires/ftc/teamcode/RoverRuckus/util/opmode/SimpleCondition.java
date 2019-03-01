@@ -22,7 +22,7 @@ public class SimpleCondition {
 	 * @throws InterruptedException if interrupted while waiting.
 	 */
 	public synchronized void awaitInterruptibility() throws InterruptedException {
-		while (condition) this.wait();
+		while (!condition) this.wait();
 	}
 	
 	public synchronized void signal() {
@@ -30,6 +30,9 @@ public class SimpleCondition {
 		this.notifyAll();
 	}
 	
+	public boolean signaled() {
+		return condition;
+	}
 }
 
 

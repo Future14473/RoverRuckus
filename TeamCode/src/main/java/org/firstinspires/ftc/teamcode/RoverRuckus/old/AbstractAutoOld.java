@@ -15,7 +15,7 @@
 //	private              GoldLookDouble goldLooker = new GoldLookDouble();
 //	private              int            look       = -1;
 //
-//	protected abstract void positionForDepot() throws InterruptedException;
+//	protected abstract void putMarkerInDepot() throws InterruptedException;
 //
 //	@Override
 //	public final void runOpMode() throws InterruptedException {
@@ -25,7 +25,7 @@
 //		unHook();
 //		knockOffGold();
 //
-//		positionForDepot();
+//		putMarkerInDepot();
 //		putMarkerInDepot();
 //
 //		extra();

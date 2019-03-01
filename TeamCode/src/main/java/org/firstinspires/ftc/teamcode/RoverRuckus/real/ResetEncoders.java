@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
 
-@TeleOp(name = "Reset Encoders", group = "real")
+@TeleOp(name = "Reset Encoders", group = "reset")
 public class ResetEncoders extends OpMode {
 	
 	@Override

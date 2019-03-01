@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.*;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
 public class CurRobot extends BaseRobot {
 	
@@ -21,6 +22,7 @@ public class CurRobot extends BaseRobot {
 		hook = hardwareMap.get(DcMotorEx.class, "Hook");
 		hook.setMode(RUN_USING_ENCODER);
 		hook.setZeroPowerBehavior(BRAKE);
+		hook.setDirection(REVERSE);
 		
 		scooper = hardwareMap.get(DcMotor.class, "Scooper");
 		scooper.setMode(RUN_WITHOUT_ENCODER); //no encoder
