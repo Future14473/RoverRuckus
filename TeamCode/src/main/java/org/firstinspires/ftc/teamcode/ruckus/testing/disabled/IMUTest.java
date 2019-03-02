@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
+package org.firstinspires.ftc.teamcode.ruckus.testing.disabled;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;

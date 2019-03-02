@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
+package org.firstinspires.ftc.teamcode.ruckus.testing;
 
 import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.RoverRuckus.goldlook.GoldLookBase;
+import org.firstinspires.ftc.teamcode.ruckus.goldlook.GoldLookBase;
 import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
 
 import java.util.List;

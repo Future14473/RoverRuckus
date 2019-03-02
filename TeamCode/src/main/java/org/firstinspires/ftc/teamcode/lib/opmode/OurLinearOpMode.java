@@ -78,9 +78,9 @@ public abstract class OurLinearOpMode extends LinearOpMode {
 	 */
 	protected void waitUntil(BooleanSupplier condition)
 			throws InterruptedException {
-		RobotLog.d("WaitUntil started: " + Reflections.betterName(condition));
+		RobotLog.d("WaitUntil started: " + Reflections.nameFor(condition));
 		this.condition.waitFor(condition);
-		RobotLog.d("WaitUntil ended " + Reflections.betterName(condition));
+		RobotLog.d("WaitUntil ended " + Reflections.nameFor(condition));
 	}
 	
 	/**

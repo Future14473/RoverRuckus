@@ -29,7 +29,7 @@ public class CompositeTask implements Task {
 		StringBuilder builder = new StringBuilder();
 		builder.append('[').append('\n');
 		for (Task task : tasks)
-			builder.append('\t').append(Reflections.betterName(task)).append('\n');
+			builder.append('\t').append(Reflections.nameFor(task)).append('\n');
 		return name = builder.append(']').toString();
 	}
 }

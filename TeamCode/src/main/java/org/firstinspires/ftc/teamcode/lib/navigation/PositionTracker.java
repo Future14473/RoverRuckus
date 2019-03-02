@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.lib.navigation;
 
-import org.firstinspires.ftc.teamcode.config.HardwareConstants;
 import org.firstinspires.ftc.teamcode.lib.robot.IRobot;
 import org.firstinspires.ftc.teamcode.lib.robot.MotorSetPosition;
 import org.firstinspires.ftc.teamcode.lib.robot.MotorSetPower;
 
-import static org.firstinspires.ftc.teamcode.config.HardwareConstants.*;
+import static org.firstinspires.ftc.teamcode.config.HardwareConstants.X_MULT;
 import static org.firstinspires.ftc.teamcode.config.NavigationConstants.ENCODER_TICKS_PER_INCH;
 
 /**
@@ -36,7 +35,7 @@ public class PositionTracker {
 	}
 	
 	/**
-	 * Updates the stored position of the robot based on current angle (gyro) and current motorSet
+	 * Updates the stored position of the robot based on current angle (gyro) and current motor
 	 * position (encoders).
 	 */
 	public void updateLocation(double currentAngle, MotorSetPosition currentMotorPos) {
@@ -44,8 +43,8 @@ public class PositionTracker {
 		if (lastMotorPos != null) {
 			MotorSetPosition deltaMotorPos = currentMotorPos.subtract(lastMotorPos);
 			deltaLocation =
-					toDeltaLocation(deltaMotorPos, currentAngle - currentPosition.angle).rotate(
-							currentPosition.angle);
+					toDeltaLocation(deltaMotorPos, currentAngle - currentPosition.angle)
+							.rotate(currentPosition.angle);
 			//remember to rotate by direction robot is moving.
 		}
 		currentPosition = new XYR(currentPosition.xy.add(deltaLocation), currentAngle);
@@ -53,35 +52,35 @@ public class PositionTracker {
 	}
 	
 	/**
-	 * converts a difference in MotorSetPosition and gyroscope angles to a difference in XY
+	 * Converts a difference in MotorSetPosition and gyroscope angles to a difference in XY
 	 * relative to robot.
 	 * Warning: contains math
+	 *
+	 * @param deltaMotor the difference in motor position (encoders)
+	 * @param deltaAngle the difference in robot angle (gyro)
 	 */
 	private XY toDeltaLocation(MotorSetPosition deltaMotor, double deltaAngle) {
 		/** see {@link MotorSetPower#fromPolar(double, double, double)}*/
-		//inverse approx. of above
-		//                                                   p is dist, a is moveAngle
+		//inverse approx. of above                            p is dist, a is moveAngle
 		double d14 = deltaMotor.get(0) + deltaMotor.get(3); // = 2p cos a
 		double d23 = deltaMotor.get(1) + deltaMotor.get(2);//  = 2p sin a;
 		double moveAngle = Math.atan2(d23, d14) + Math.PI / 4;
 		double dist = Math.hypot(d23, d14) / 2 / encoderTicksPerUnit;
-		//double turnRate = deltaAngle;
-		//I forgot to divide by 2 one day, leading to bugs
 		double x, y;
 		//the following assumes that we moved and turned at the same rate, and hence is modeled by:
 		// going [deltaAngle] radians on a circle of radius r ( = [dist]/[targAngle]),
 		// starting at (0,0).
 		// negative radii/angle make sense. (curve other way/backwards)
-		if (Math.abs(deltaAngle) > 1e-8) {
+		if (Math.abs(deltaAngle) > 1e-9) {
 			x = dist * (Math.sin(deltaAngle) / deltaAngle);
 			y = dist * (1 - Math.cos(deltaAngle)) / deltaAngle;
 		} else { //limit as deltaAngle -> 0 (straight line). Divide by zero errors are not nice
 			x = dist;
 			y = 0;
 		}
-		//then rotate the pos the bot actually moved along this line.
+		//then rotate this curved point in the direction the robot actually moved
 		XY res = new XY(x, y).rotate(moveAngle);
-		//it moved less X than you think it did.? note that this needs to be tested
+		//moving sideways is less than moving forwards/backwards.
 		return new XY(res.x / X_MULT, res.y);
 	}
 	

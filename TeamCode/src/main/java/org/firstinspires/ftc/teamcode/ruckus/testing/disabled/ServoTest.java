@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
+package org.firstinspires.ftc.teamcode.ruckus.testing.disabled;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

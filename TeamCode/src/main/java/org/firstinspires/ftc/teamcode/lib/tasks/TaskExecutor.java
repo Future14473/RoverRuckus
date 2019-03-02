@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.lib.tasks;
 
 import com.qualcomm.robotcore.util.RobotLog;
-import org.firstinspires.ftc.teamcode.lib.util.Reflections;
 import org.firstinspires.ftc.teamcode.lib.opmode.OpModeLifetimeRegistrar;
+import org.firstinspires.ftc.teamcode.lib.util.Reflections;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -118,6 +118,9 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 		}
 	}
 	
+	/**
+	 * Part of the thread's running code
+	 */
 	private void doTasks() {
 		while (running.get()) try {
 			if (tasksQueue.isEmpty()) {
@@ -129,7 +132,7 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 				for (Task onDoneTask : onDoneTasks) {
 					if (VERBOSE_LOG)
 						RobotLog.vv(TAG, "%s: running onDoneTask %s", name,
-						            Reflections.betterName(onDoneTask));
+						            Reflections.nameFor(onDoneTask));
 					onDoneTask.run();
 				}
 			}
@@ -141,10 +144,10 @@ class TaskExecutor implements OpModeLifetimeRegistrar.Stoppable {
 			if (!Thread.interrupted()) {
 				if (VERBOSE_LOG)
 					RobotLog.vv(TAG, "%s: running %s", name,
-					            Reflections.betterName(curTask));
+					            Reflections.nameFor(curTask));
 				curTask.run();
 			}
-			
+			curTask = null;
 		} catch (InterruptedException ignored) {}
 	}
 }

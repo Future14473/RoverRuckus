@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.config;
 
 import org.firstinspires.ftc.teamcode.lib.navigation.Magnitudes;
 
-public final class TeleopAndAutoConfig {
+public final class TeleopAndAutoConstants {
 	// Encoder limits ------------------------------------------------------------
 	public static final int MOTOR_MIN                     = 20;
-	public static final int COLLECT_ARM_MAX               = 1200;
+	public static final int COLLECT_ARM_MAX               = 1300;
 	public static final int COLLECT_ARM_INITIAL_EXTENSION = 600;
 	public static final int COLLECT_ARM_AWAY              = 30;
 	public static final int SCORE_ARM_MAX                 = 1800;
@@ -23,7 +23,7 @@ public final class TeleopAndAutoConfig {
 	public static final double SCOOPER_IDLE_POWER         = 0.2;
 	public static final double SCORE_ARM_IN_POWER         = -0.6;
 	public static final double COLLECT_ARM_IN_POWER       = -0.35;
-	public static final double COLLECT_ARM_MAX_IDLE_POWER = 0.6;
+	public static final double COLLECT_ARM_MAX_IDLE_POWER = 0;
 	
 	// Servo positions --------------------------------------------------------
 	public static final double PARKER_POSITION_OUT = 0;
@@ -49,6 +49,6 @@ public final class TeleopAndAutoConfig {
 	public static final Magnitudes AUTO_DUMP_TOLERANCE =
 			new Magnitudes(6, Math.toRadians(6));
 	
-	private TeleopAndAutoConfig() {
+	private TeleopAndAutoConstants() {
 	}
 }

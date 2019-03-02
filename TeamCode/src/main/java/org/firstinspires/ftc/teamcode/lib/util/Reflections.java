@@ -7,7 +7,7 @@ public class Reflections {
 	/**
 	 * Better than toString!
 	 */
-	public static String betterName(Object o) {
+	public static String nameFor(Object o) {
 		Class<?> clazz = o.getClass();
 		//lambdas
 		String rawName = clazz.getName();

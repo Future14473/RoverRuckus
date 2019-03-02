@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.real;
+package org.firstinspires.ftc.teamcode.ruckus.real;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.config.NavigationConstants;
-import org.firstinspires.ftc.teamcode.config.TeleopAndAutoConfig;
 import org.firstinspires.ftc.teamcode.lib.navigation.*;
 import org.firstinspires.ftc.teamcode.lib.opmode.Button;
 import org.firstinspires.ftc.teamcode.lib.opmode.LimitedMotor;
@@ -18,7 +17,7 @@ import org.firstinspires.ftc.teamcode.lib.timer.UnifiedTimers;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConfig.*;
+import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants.*;
 import static org.firstinspires.ftc.teamcode.lib.opmode.LimitedMotor.State.LOWER;
 import static org.firstinspires.ftc.teamcode.lib.opmode.LimitedMotor.State.UPPER;
 
@@ -107,7 +106,8 @@ public class TheTeleop extends OurLinearOpMode {
 			doGamepad1();
 			doGamepad2();
 			if (onInterval) {
-				telemetry.addData("Cycles per second:", cycles * 1000d / INTERVAL_TIME);
+				telemetry.addData("Cycles per second:", cycles / INTERVAL_TIME);
+				telemetry.update();
 				cycles = 0;
 			}
 			cycles++;
@@ -201,15 +201,16 @@ public class TheTeleop extends OurLinearOpMode {
 		if (unDump.down() || scoreArm.getLastPosition() < DUMP_ALLOW_POSITION) {
 			scoreDump.setPosition(SCORE_DUMP_HOME);
 			dumpDown = false;
-		} else if (doDump.down() ||
-		           targPosSet &&
-		           scoreArm.getLastPosition() > AUTO_DUMP_MIN_POSITION &&
-		           autoMoveController.isOnTarget(AUTO_DUMP_TOLERANCE)) {
+		} else if (
+				!dumpDown &&
+				(doDump.down() ||
+				 targPosSet &&
+				 scoreArm.getLastPosition() > AUTO_DUMP_MIN_POSITION &&
+				 autoMoveController.isOnTarget(AUTO_DUMP_TOLERANCE))) {
 			dumpDown = true;
 			scoreDump.setPosition(SCORE_DUMP_DOWN);
 			transferTimer.reset();
 		}
-		telemetry.addData("TransferTimer:", transferTimer.getMillis());
 		return dumpDown && transferTimer.getSeconds() > AUTO_DUMP_TRANSFER_TIME;
 	}
 	
@@ -236,10 +237,10 @@ public class TheTeleop extends OurLinearOpMode {
 		scooper.setPower(1 + triggerSum); //PUSH THINGS UP!
 		//keep in, allow wiggle
 		collectArm.setPowerLimited(
-				COLLECT_ARM_IN_POWER + -gamepad2.right_stick_x);
+				COLLECT_ARM_IN_POWER * (1 + 2 * gamepad2.right_stick_x));
 		collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
 		//keep in, allow wiggle
-		scoreArm.setPowerLimited(SCORE_ARM_IN_POWER + -gamepad2.right_stick_y);
+		scoreArm.setPowerLimited(SCORE_ARM_IN_POWER * (1 + 2 * gamepad2.right_stick_y));
 		scoreDump.setPosition(SCORE_DUMP_HOME);
 		return false;
 	}
@@ -251,7 +252,7 @@ public class TheTeleop extends OurLinearOpMode {
 		//keep door closed;
 		collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 		//keep in, allow wiggle
-		scoreArm.setPowerLimited(SCORE_ARM_IN_POWER + -gamepad2.right_stick_y);
+		scoreArm.setPowerLimited(SCORE_ARM_IN_POWER);
 		scoreDump.setPosition(SCORE_DUMP_HOME);
 		collectDoor.setPosition(collectArm.getLastPosition() < COLLECT_ARM_INITIAL_EXTENSION ?
 		                        COLLECT_DOOR_OPEN : COLLECT_DOOR_CLOSED);

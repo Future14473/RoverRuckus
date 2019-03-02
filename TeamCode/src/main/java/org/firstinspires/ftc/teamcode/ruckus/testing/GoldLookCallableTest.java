@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
+package org.firstinspires.ftc.teamcode.ruckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.lib.opmode.Button;
-import org.firstinspires.ftc.teamcode.RoverRuckus.goldlook.GoldLookDoubleCallable;
+import org.firstinspires.ftc.teamcode.ruckus.goldlook.GoldLookDoubleCallable;
 import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
 @TeleOp(group = "test")
 public class GoldLookCallableTest extends OurLinearOpMode {

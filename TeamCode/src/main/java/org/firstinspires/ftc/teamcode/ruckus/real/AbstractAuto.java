@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.real;
+package org.firstinspires.ftc.teamcode.ruckus.real;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.goldlook.GoldLookDoubleCallable;
-import org.firstinspires.ftc.teamcode.config.TeleopAndAutoConfig;
+import org.firstinspires.ftc.teamcode.ruckus.goldlook.GoldLookDoubleCallable;
+import org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants;
 import org.firstinspires.ftc.teamcode.lib.navigation.MecanumDrive;
 import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.lib.opmode.SimpleCondition;
@@ -17,8 +17,8 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODE
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConfig.FLICKER_OUT;
-import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConfig.MARKER_DOOR_OPEN;
+import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants.FLICKER_OUT;
+import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants.MARKER_DOOR_OPEN;
 
 /**
  * Base autonomous.
@@ -77,7 +77,7 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	}
 	
 	protected void putDownParker() {
-		robot.parker.setPosition(TeleopAndAutoConfig.PARKER_POSITION_OUT);
+		robot.parker.setPosition(TeleopAndAutoConstants.PARKER_POSITION_OUT);
 	}
 	
 	private void loadLookAndHook() {
@@ -114,9 +114,9 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		robot.hook.setPower(1);
 		//decreasing
 		waitUntil(
-				() -> robot.hook.getCurrentPosition() <= TeleopAndAutoConfig.HOOK_TURN_START_LOOK);
+				() -> robot.hook.getCurrentPosition() <= TeleopAndAutoConstants.HOOK_TURN_START_LOOK);
 		telemetry.update();
-		waitUntil(() -> robot.hook.getCurrentPosition() <= TeleopAndAutoConfig.HOOK_TURN_END);
+		waitUntil(() -> robot.hook.getCurrentPosition() <= TeleopAndAutoConstants.HOOK_TURN_END);
 		robot.hook.setPower(0);
 		drive.move(-6, 6, 10).phantomTurn(-5, DEGREES).go(true)
 		     .then(unHooked::signal)

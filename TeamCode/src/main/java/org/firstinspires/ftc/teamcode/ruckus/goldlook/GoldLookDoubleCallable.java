@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.goldlook;
+package org.firstinspires.ftc.teamcode.ruckus.goldlook;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
