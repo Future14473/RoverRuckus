@@ -4,21 +4,23 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.*;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.DeadlineTimer;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.Timer;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.UnifiedTimers;
+import org.firstinspires.ftc.teamcode.config.NavigationConstants;
+import org.firstinspires.ftc.teamcode.config.TeleopAndAutoConfig;
+import org.firstinspires.ftc.teamcode.lib.navigation.*;
+import org.firstinspires.ftc.teamcode.lib.opmode.Button;
+import org.firstinspires.ftc.teamcode.lib.opmode.LimitedMotor;
+import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.lib.robot.CurRobot;
+import org.firstinspires.ftc.teamcode.lib.timer.DeadlineTimer;
+import org.firstinspires.ftc.teamcode.lib.timer.Timer;
+import org.firstinspires.ftc.teamcode.lib.timer.UnifiedTimers;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.*;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor.State.LOWER;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor.State.UPPER;
+import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConfig.*;
+import static org.firstinspires.ftc.teamcode.lib.opmode.LimitedMotor.State.LOWER;
+import static org.firstinspires.ftc.teamcode.lib.opmode.LimitedMotor.State.UPPER;
 
 @TeleOp(group = "1real", name = "Teleop")
 public class TheTeleop extends OurLinearOpMode {
@@ -68,7 +70,7 @@ public class TheTeleop extends OurLinearOpMode {
 		robot.wheels.setMode(RUN_USING_ENCODER);
 		robot.wheels.setZeroPowerBehavior(FLOAT);
 		RampedMoveController rampedMoveController =
-				new RampedMoveController(DEFAULT_MAX_ACCELERATIONS);
+				new RampedMoveController(NavigationConstants.DEFAULT_MAX_ACCELERATIONS);
 		Timer moveTimer = timers.newTimer();
 		manualMoveController = new ManualMoveController(robot, rampedMoveController, moveTimer);
 		autoMoveController =
@@ -95,12 +97,12 @@ public class TheTeleop extends OurLinearOpMode {
 		while (opModeIsActive()) {
 			timers.update();
 			if (cycleTime.deadlineHit()) {
-				cycleTime.addToDeadlineMillis(INTERVAL_TIME);
+				cycleTime.addToDeadlineSeconds(INTERVAL_TIME);
 				onInterval = true;
 			} else onInterval = false;
 			if (updateLocationTimer.deadlineHit()) {
 				autoMoveController.updateLocation();
-				updateLocationTimer.addToDeadlineMillis(UPDATE_LOCATION_TIME);
+				updateLocationTimer.addToDeadlineSeconds(UPDATE_LOCATION_TIME);
 			}
 			doGamepad1();
 			doGamepad2();
@@ -208,7 +210,7 @@ public class TheTeleop extends OurLinearOpMode {
 			transferTimer.reset();
 		}
 		telemetry.addData("TransferTimer:", transferTimer.getMillis());
-		return dumpDown && transferTimer.getMillis() > AUTO_DUMP_TRANSFER_TIME;
+		return dumpDown && transferTimer.getSeconds() > AUTO_DUMP_TRANSFER_TIME;
 	}
 	
 	private boolean onToScore() {
@@ -233,7 +235,8 @@ public class TheTeleop extends OurLinearOpMode {
 		                    gamepad2.right_trigger - gamepad2.left_trigger;
 		scooper.setPower(1 + triggerSum); //PUSH THINGS UP!
 		//keep in, allow wiggle
-		collectArm.setPowerLimited(COLLECT_ARM_IN_POWER + -gamepad2.right_stick_x);
+		collectArm.setPowerLimited(
+				COLLECT_ARM_IN_POWER + -gamepad2.right_stick_x);
 		collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
 		//keep in, allow wiggle
 		scoreArm.setPowerLimited(SCORE_ARM_IN_POWER + -gamepad2.right_stick_y);

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
+import org.firstinspires.ftc.teamcode.lib.robot.CurRobot;
 
 @TeleOp(group = "test")
 @Disabled

@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.*;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.SingleTimer;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.timer.UnifiedTimers;
+import org.firstinspires.ftc.teamcode.lib.navigation.*;
+import org.firstinspires.ftc.teamcode.lib.opmode.Button;
+import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.lib.robot.CurRobot;
+import org.firstinspires.ftc.teamcode.lib.timer.SingleTimer;
+import org.firstinspires.ftc.teamcode.lib.timer.UnifiedTimers;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.DEFAULT_MAX_ACCELERATIONS;
+import static org.firstinspires.ftc.teamcode.config.NavigationConstants.DEFAULT_MAX_ACCELERATIONS;
 
 @TeleOp(group = "test")
 public class AutoMoveControllerTest extends OurLinearOpMode {
@@ -23,7 +23,6 @@ public class AutoMoveControllerTest extends OurLinearOpMode {
 	private final Button               y           = new Button(() -> gamepad1.y);
 	private final Button               rb          =
 			new Button(() -> gamepad1.right_bumper);
-	private       CurRobot             robot;
 	private       boolean              manualDrive = false;
 	private       AutoMoveController   autoMoveController;
 	private       ManualMoveController manualMoveController;
@@ -31,7 +30,7 @@ public class AutoMoveControllerTest extends OurLinearOpMode {
 	
 	@Override
 	protected void initialize() throws InterruptedException {
-		robot = new CurRobot(hardwareMap);
+		CurRobot robot = new CurRobot(hardwareMap);
 		RampedMoveController rampedMoveController =
 				new RampedMoveController(DEFAULT_MAX_ACCELERATIONS);
 		SingleTimer timer = new SingleTimer();

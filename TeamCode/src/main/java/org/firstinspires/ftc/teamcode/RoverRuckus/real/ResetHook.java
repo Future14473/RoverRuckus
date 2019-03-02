@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.LimitedMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
+import org.firstinspires.ftc.teamcode.config.TeleopAndAutoConfig;
+import org.firstinspires.ftc.teamcode.lib.opmode.Button;
+import org.firstinspires.ftc.teamcode.lib.opmode.LimitedMotor;
+import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.lib.robot.CurRobot;
 
 @TeleOp(name = "Reset Hook", group = "reset")
 public class ResetHook extends OurLinearOpMode {
@@ -19,7 +19,7 @@ public class ResetHook extends OurLinearOpMode {
 	public void initialize() {
 		CurRobot robot = new CurRobot(hardwareMap);
 		hook = new LimitedMotor(robot.hook,
-		                        0, Constants.HOOK_INITIAL, true);
+		                        0, TeleopAndAutoConfig.HOOK_INITIAL, true);
 	}
 	
 	@Override

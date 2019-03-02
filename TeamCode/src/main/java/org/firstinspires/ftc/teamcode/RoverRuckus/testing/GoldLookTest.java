@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GoldLookBase;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.RoverRuckus.goldlook.GoldLookBase;
+import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
 
 import java.util.List;
 
@@ -13,13 +13,13 @@ public class GoldLookTest extends OurLinearOpMode {
 	private GoldLookBase look;
 	
 	@Override
-	protected void initialize() throws InterruptedException {
+	protected void initialize() {
 		look = new GoldLookBase(hardwareMap);
 	}
 	
 	@SuppressLint("DefaultLocale")
 	@Override
-	protected void run() throws InterruptedException {
+	protected void run() {
 		look.activate();
 		while (opModeIsActive()) {
 			List<Recognition> updatedRecognitions = look.getFilteredRecognitions();

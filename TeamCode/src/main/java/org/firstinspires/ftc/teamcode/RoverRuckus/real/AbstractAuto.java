@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 
-import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
-import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
-import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.TaskProgram;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GoldLookDoubleCallable;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.SimpleCondition;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
+import org.firstinspires.ftc.teamcode.RoverRuckus.goldlook.GoldLookDoubleCallable;
+import org.firstinspires.ftc.teamcode.config.TeleopAndAutoConfig;
+import org.firstinspires.ftc.teamcode.lib.navigation.MecanumDrive;
+import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.lib.opmode.SimpleCondition;
+import org.firstinspires.ftc.teamcode.lib.robot.CurRobot;
+import org.firstinspires.ftc.teamcode.lib.tasks.TaskProgram;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -17,23 +17,22 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODE
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.FLICKER_OUT;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.MARKER_DOOR_OPEN;
+import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConfig.FLICKER_OUT;
+import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConfig.MARKER_DOOR_OPEN;
 
 /**
  * Base autonomous.
  */
 public abstract class AbstractAuto extends OurLinearOpMode {
-	private static final int             HOOK_TURN_END = -11000;
-	private final        AtomicLong      detectTime    = new AtomicLong();
-	protected            MecanumDrive    drive;
-	protected            TaskProgram     lookAndHook;
+	private final AtomicLong      detectTime    = new AtomicLong();
+	protected     MecanumDrive    drive;
 	//Moves bot
-	protected            CurRobot        robot;
+	protected     CurRobot        robot;
+	private       TaskProgram     lookAndHook;
 	//runs goldLooking and hook retraction
-	private              Future<Integer> goldLook;
-	private              SimpleCondition startGoldLook = new SimpleCondition();
-	private              SimpleCondition unHooked      = new SimpleCondition();
+	private       Future<Integer> goldLook;
+	private       SimpleCondition startGoldLook = new SimpleCondition();
+	private       SimpleCondition unHooked      = new SimpleCondition();
 	
 	protected abstract void putMarkerInDepot() throws InterruptedException;
 	
@@ -78,7 +77,7 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	}
 	
 	protected void putDownParker() {
-		robot.parker.setPosition(Constants.PARKER_POSITION_OUT);
+		robot.parker.setPosition(TeleopAndAutoConfig.PARKER_POSITION_OUT);
 	}
 	
 	private void loadLookAndHook() {
@@ -114,9 +113,10 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		telemetry.addLine("GOLD LOOK STARTED");
 		robot.hook.setPower(1);
 		//decreasing
-		waitUntil(() -> robot.hook.getCurrentPosition() <= Constants.HOOK_TURN_START_LOOK);
+		waitUntil(
+				() -> robot.hook.getCurrentPosition() <= TeleopAndAutoConfig.HOOK_TURN_START_LOOK);
 		telemetry.update();
-		waitUntil(() -> robot.hook.getCurrentPosition() <= HOOK_TURN_END);
+		waitUntil(() -> robot.hook.getCurrentPosition() <= TeleopAndAutoConfig.HOOK_TURN_END);
 		robot.hook.setPower(0);
 		drive.move(-6, 6, 10).phantomTurn(-5, DEGREES).go(true)
 		     .then(unHooked::signal)

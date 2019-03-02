@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.GoldLookDoubleCallable;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.lib.opmode.Button;
+import org.firstinspires.ftc.teamcode.RoverRuckus.goldlook.GoldLookDoubleCallable;
+import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
 @TeleOp(group = "test")
 public class GoldLookCallableTest extends OurLinearOpMode {
-	int v = -1;
+	private int                    v = -1;
 	private GoldLookDoubleCallable goldLookDoubleCallable;
 	private Button                 a = new Button(() -> gamepad1.a);
 	

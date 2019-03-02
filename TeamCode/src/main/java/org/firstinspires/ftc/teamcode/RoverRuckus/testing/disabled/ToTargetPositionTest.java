@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
+import org.firstinspires.ftc.teamcode.lib.opmode.Button;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.RUN_TO_POSITION_PIDF;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.RUN_USING_ENCODER_PIDF;
+import static org.firstinspires.ftc.teamcode.config.HardwareConstants.RUN_TO_POSITION_PIDF;
+import static org.firstinspires.ftc.teamcode.config.HardwareConstants.RUN_USING_ENCODER_PIDF;
 
 @TeleOp(group = "test")
 @Disabled

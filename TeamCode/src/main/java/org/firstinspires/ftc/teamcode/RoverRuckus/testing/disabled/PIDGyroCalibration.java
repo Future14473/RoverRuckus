@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.RoverRuckus.mecanumdrive.MecanumDrive;
-import org.firstinspires.ftc.teamcode.RoverRuckus.tasks.Task;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.Button;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
+import org.firstinspires.ftc.teamcode.lib.navigation.MecanumDrive;
+import org.firstinspires.ftc.teamcode.lib.tasks.Task;
+import org.firstinspires.ftc.teamcode.lib.opmode.Button;
+import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.lib.robot.CurRobot;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
@@ -30,7 +30,7 @@ public class PIDGyroCalibration extends OurLinearOpMode {
 	protected void initialize() throws InterruptedException {
 		CurRobot robot = new CurRobot(hardwareMap);
 		robot.initIMU();
-		org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.IRobot robot1 = robot;
+		org.firstinspires.ftc.teamcode.lib.robot.IRobot robot1 = robot;
 		drive = new MecanumDrive(robot1, new MecanumDrive.Parameters()) {
 			public MecanumDrive moveXY(double x, double y, double speed) {
 				return (MecanumDrive) goMove(x * 36, y * 36, speed);

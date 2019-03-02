@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.real;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
+import org.firstinspires.ftc.teamcode.lib.robot.CurRobot;
 
 @TeleOp(name = "Reset Encoders", group = "reset")
 public class ResetEncoders extends OpMode {

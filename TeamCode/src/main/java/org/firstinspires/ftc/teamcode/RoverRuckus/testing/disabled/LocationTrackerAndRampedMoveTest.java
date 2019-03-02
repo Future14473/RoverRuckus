@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.testing.disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.ManualMoveController;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.PositionTracker;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.navigation.XY;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.opmode.OurLinearOpMode;
-import org.firstinspires.ftc.teamcode.RoverRuckus.util.robot.CurRobot;
+import org.firstinspires.ftc.teamcode.lib.navigation.ManualMoveController;
+import org.firstinspires.ftc.teamcode.lib.navigation.PositionTracker;
+import org.firstinspires.ftc.teamcode.lib.navigation.XY;
+import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.lib.robot.CurRobot;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.firstinspires.ftc.teamcode.RoverRuckus.Constants.ENCODER_TICKS_PER_INCH;
+import static org.firstinspires.ftc.teamcode.config.NavigationConstants.ENCODER_TICKS_PER_INCH;
 
 @TeleOp(group = "test")
 @Disabled
