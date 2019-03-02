@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class CompositeTask implements Task {
 	private List<Task> tasks;
-	private String name = null;
+	private String     name = null;
 	
 	public CompositeTask(Task... tasks) {
 		this.tasks = Arrays.asList(tasks);
@@ -28,8 +28,9 @@ public class CompositeTask implements Task {
 		if (name != null) return name;
 		StringBuilder builder = new StringBuilder();
 		builder.append('[').append('\n');
-		for (Task task : tasks)
+		for (Task task : tasks) {
 			builder.append('\t').append(Reflections.nameFor(task)).append('\n');
+		}
 		return name = builder.append(']').toString();
 	}
 }

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.lib.navigation;
 
 import org.firstinspires.ftc.teamcode.lib.robot.IRobot;
-import org.firstinspires.ftc.teamcode.lib.timer.Timer;
 import org.firstinspires.ftc.teamcode.lib.timer.SingleTimer;
+import org.firstinspires.ftc.teamcode.lib.timer.Timer;
 
 import static org.firstinspires.ftc.teamcode.config.NavigationConstants.DEFAULT_MAX_ACCELERATIONS;
 

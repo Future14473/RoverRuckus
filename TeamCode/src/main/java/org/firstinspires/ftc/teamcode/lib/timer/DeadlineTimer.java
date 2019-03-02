@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.lib.timer;
 
-public interface DeadlineTimer{
+public interface DeadlineTimer {
 	long nanosToDeadline();
 	
 	void addToDeadline(long nanos);
@@ -10,9 +10,11 @@ public interface DeadlineTimer{
 	default boolean deadlineHit() {
 		return nanosToDeadline() <= 0;
 	}
-	default void addToDeadlineMillis(double millis){
+	
+	default void addToDeadlineMillis(double millis) {
 		addToDeadline((long) (millis * 1_000_000));
 	}
+	
 	default double millisToDeadline() {
 		return nanosToDeadline() / 1e6;
 	}
@@ -21,7 +23,7 @@ public interface DeadlineTimer{
 		return nanosToDeadline() / 1e9;
 	}
 	
-	default void addToDeadlineSeconds(double seconds){
+	default void addToDeadlineSeconds(double seconds) {
 		addToDeadline((long) (seconds * 1e9));
 	}
 }

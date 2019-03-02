@@ -13,7 +13,7 @@ public class CurRobot extends BaseRobot {
 	public DcMotorEx collectArm;
 	public DcMotorEx scoreArm;
 	public DcMotor   scooper;
-	public Servo     flicker, markerDoor, collectDoor, scoreDump, parker;
+	public Servo     flicker, markerDoor, collectDoor, scoreDump;//, parker;
 	public CRServo angler;
 	
 	public CurRobot(HardwareMap hardwareMap) {
@@ -42,7 +42,7 @@ public class CurRobot extends BaseRobot {
 		markerDoor = hardwareMap.get(Servo.class, "MarkerDoor");
 		collectDoor = hardwareMap.get(Servo.class, "CollectDoor");
 		scoreDump = hardwareMap.get(Servo.class, "ScoreDump");
-		parker = hardwareMap.get(Servo.class, "Parker");
+		//parker = hardwareMap.get(Servo.class, "Parker");
 		
 		angler = hardwareMap.get(CRServo.class, "Angler");
 		

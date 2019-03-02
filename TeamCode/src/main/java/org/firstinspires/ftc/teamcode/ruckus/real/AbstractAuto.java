@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.ruckus.real;
 
-import org.firstinspires.ftc.teamcode.ruckus.goldlook.GoldLookDoubleCallable;
 import org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants;
 import org.firstinspires.ftc.teamcode.lib.navigation.MecanumDrive;
+import org.firstinspires.ftc.teamcode.lib.opmode.LimitedMotor;
 import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.lib.opmode.SimpleCondition;
 import org.firstinspires.ftc.teamcode.lib.robot.CurRobot;
 import org.firstinspires.ftc.teamcode.lib.tasks.TaskProgram;
+import org.firstinspires.ftc.teamcode.ruckus.goldlook.GoldLookDoubleCallable;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -17,8 +18,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODE
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants.FLICKER_OUT;
-import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants.MARKER_DOOR_OPEN;
+import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants.*;
 
 /**
  * Base autonomous.
@@ -28,6 +28,7 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	protected     MecanumDrive    drive;
 	//Moves bot
 	protected     CurRobot        robot;
+	private       LimitedMotor    collectArm;
 	private       TaskProgram     lookAndHook;
 	//runs goldLooking and hook retraction
 	private       Future<Integer> goldLook;
@@ -51,6 +52,8 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	protected void initialize() throws InterruptedException {
 		robot = new CurRobot(hardwareMap);
 		robot.initIMU();
+		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, COLLECT_ARM_INITIAL_EXTENSION,
+		                              true);
 		lookAndHook = new TaskProgram();
 		drive = new MecanumDrive(robot, new MecanumDrive.Parameters());
 		loadLookAndHook();
@@ -64,8 +67,9 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		knockOffGold();
 		putMarkerInDepot();
 		parkInCrater();
-		drive.then(this::putDownParker)
-		     .adjust();
+		drive.then(this::extendArm)
+		     .adjust()
+		     .thenStop();
 		drive.waitUntilDone();
 		lookAndHook.waitUntilDone();
 	}
@@ -76,8 +80,11 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		lookAndHook.stop();
 	}
 	
-	protected void putDownParker() {
-		robot.parker.setPosition(TeleopAndAutoConstants.PARKER_POSITION_OUT);
+	private void extendArm() {
+		while (collectArm.getLastState() != LimitedMotor.State.UPPER) {
+			collectArm.setPowerLimited(1);
+			if (sleep(20)) return;
+		}
 	}
 	
 	private void loadLookAndHook() {
@@ -103,7 +110,7 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		robot.hook.setPower(-0.7);
 		while (Math.abs(robot.hook.getCurrentPosition()/* - 0 */) > 100) {
 			Thread.yield();
-			if (sleep(20)) break;
+			if (sleep(40)) break;
 		}
 		robot.hook.setPower(0);
 	}
@@ -114,7 +121,8 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		robot.hook.setPower(1);
 		//decreasing
 		waitUntil(
-				() -> robot.hook.getCurrentPosition() <= TeleopAndAutoConstants.HOOK_TURN_START_LOOK);
+				() -> robot.hook.getCurrentPosition() <=
+				      TeleopAndAutoConstants.HOOK_TURN_START_LOOK);
 		telemetry.update();
 		waitUntil(() -> robot.hook.getCurrentPosition() <= TeleopAndAutoConstants.HOOK_TURN_END);
 		robot.hook.setPower(0);

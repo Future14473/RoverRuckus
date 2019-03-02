@@ -1,14 +1,16 @@
-package org.firstinspires.ftc.teamcode.ruckus.testing;
+package org.firstinspires.ftc.teamcode.ruckus.testing.disabled;
 
 import android.annotation.SuppressLint;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.ruckus.goldlook.GoldLookBase;
 import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
+import org.firstinspires.ftc.teamcode.ruckus.goldlook.GoldLookBase;
 
 import java.util.List;
 
 @TeleOp(group = "test")
+@Disabled
 public class GoldLookTest extends OurLinearOpMode {
 	private GoldLookBase look;
 	

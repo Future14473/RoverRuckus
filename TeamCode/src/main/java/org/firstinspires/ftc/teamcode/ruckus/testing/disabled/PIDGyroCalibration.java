@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.ruckus.testing.disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.lib.navigation.MecanumDrive;
-import org.firstinspires.ftc.teamcode.lib.tasks.Task;
 import org.firstinspires.ftc.teamcode.lib.opmode.Button;
 import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.lib.robot.CurRobot;
+import org.firstinspires.ftc.teamcode.lib.tasks.Task;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
@@ -33,12 +33,12 @@ public class PIDGyroCalibration extends OurLinearOpMode {
 		org.firstinspires.ftc.teamcode.lib.robot.IRobot robot1 = robot;
 		drive = new MecanumDrive(robot1, new MecanumDrive.Parameters()) {
 			public MecanumDrive moveXY(double x, double y, double speed) {
-				return (MecanumDrive) goMove(x * 36, y * 36, speed);
+				return goMove(x * 36, y * 36, speed);
 			}
 			
 			@Override
 			public MecanumDrive then(Task task) {
-				return (MecanumDrive) super.then(task);
+				return super.then(task);
 			}
 		};
 		waitUntil(robot::imuIsGyroCalibrated, 3, SECONDS);

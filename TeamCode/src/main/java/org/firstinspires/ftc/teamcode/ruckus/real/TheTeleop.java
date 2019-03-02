@@ -39,7 +39,7 @@ public class TheTeleop extends OurLinearOpMode {
 	private DeadlineTimer cycleTime           = timers.newDeadlineTimer();
 	
 	//Variables for driving
-	private boolean reverseDrive        = false;
+	private boolean reverseDrive        = true;
 	//Buttons.
 	private Button  toggleReverse       = new Button(() -> gamepad1.y); //toggle reverse
 	private Button  setTargPos          = new Button(() -> gamepad1.b); //to set target pos.
@@ -57,10 +57,11 @@ public class TheTeleop extends OurLinearOpMode {
 			new Button(() -> gamepad1.dpad_left || gamepad1.dpad_right);
 	
 	//State
-	private ArmState armState   = ArmState.COLLECT;
-	private boolean  dumpDown   = false;
-	private boolean  targPosSet = false;
-	private boolean  onInterval = false;
+	private ArmState  armState   = ArmState.COLLECT;
+	private boolean   dumpDown   = false;
+	private boolean   targPosSet = false;
+	private boolean   onInterval = false;
+	private SpeedMode speedMode  = SpeedMode.NORMAL;
 	
 	@Override
 	protected void initialize() throws InterruptedException {
@@ -91,7 +92,7 @@ public class TheTeleop extends OurLinearOpMode {
 		int cycles = 0;
 		timers.update();
 		cycleTime.resetDeadline();
-		robot.parker.setPosition(PARKER_HOME);
+		//robot.parker.setPosition(PARKER_HOME);
 		autoMoveController.setTargetPositionHere();
 		while (opModeIsActive()) {
 			timers.update();
@@ -103,8 +104,8 @@ public class TheTeleop extends OurLinearOpMode {
 				autoMoveController.updateLocation();
 				updateLocationTimer.addToDeadlineSeconds(UPDATE_LOCATION_TIME);
 			}
-			doGamepad1();
 			doGamepad2();
+			doGamepad1();
 			if (onInterval) {
 				telemetry.addData("Cycles per second:", cycles / INTERVAL_TIME);
 				telemetry.update();
@@ -115,8 +116,6 @@ public class TheTeleop extends OurLinearOpMode {
 	}
 	
 	private void doGamepad1() {
-		//now default slow?
-		SpeedMode speedMode = gamepad1.left_bumper ? SpeedMode.SLOW : SpeedMode.NORMAL;
 	/*-----------------*\
     |     GAMEPAD 1     |
 	\* ----------------*/
@@ -146,10 +145,10 @@ public class TheTeleop extends OurLinearOpMode {
 	}
 	
 	private void doGamepad2() {
+		speedMode = gamepad1.left_bumper ? SpeedMode.SLOW : SpeedMode.NORMAL;
 			/*----------------*\
 		    |    GAMEPAD 2     |
 			\*----------------*/
-		boolean userAdvance = true;
 		boolean autoAdvance = false;
 		if (Math.abs(robot.hook.getCurrentPosition()) > HOOK_NULLIFY) {
 			onHooking();
@@ -162,7 +161,6 @@ public class TheTeleop extends OurLinearOpMode {
 			break;
 		case TO_TRANSFER:
 			autoAdvance = onToTransfer();
-			userAdvance = false;
 			break;
 		case TRANSFER:
 			autoAdvance = onTransfer();
@@ -174,7 +172,7 @@ public class TheTeleop extends OurLinearOpMode {
 			autoAdvance = onScore();
 			break;
 		}
-		if (userAdvance && toNextStage.pressed() || autoAdvance) { //advance to next stage
+		if (toNextStage.pressed() || autoAdvance) { //advance to next stage
 			armState = armState.next();
 		} else if (toPrevStage.pressed()) { //go back.
 			armState = armState.prev();
@@ -195,88 +193,90 @@ public class TheTeleop extends OurLinearOpMode {
 	private boolean onScore() {
 		scooper.setPower(0); //idle
 		//keep out of the way
-		collectArm.setPowerLimited((double) 1, null, COLLECT_ARM_AWAY);
+		collectArm.setPowerLimited(1, null, COLLECT_ARM_AWAY);
 		collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 		scoreArm.setPowerLimited(-gamepad2.right_stick_y * 1, gamepad1.x);
-		if (unDump.down() || scoreArm.getLastPosition() < DUMP_ALLOW_POSITION) {
+		boolean scoreDumpUp = scoreArm.getLastPosition() > DUMP_ALLOW_POSITION;
+		if (unDump.down() || !scoreDumpUp) {
 			scoreDump.setPosition(SCORE_DUMP_HOME);
 			dumpDown = false;
-		} else if (
-				!dumpDown &&
-				(doDump.down() ||
-				 targPosSet &&
-				 scoreArm.getLastPosition() > AUTO_DUMP_MIN_POSITION &&
-				 autoMoveController.isOnTarget(AUTO_DUMP_TOLERANCE))) {
+		} else if (!dumpDown &&
+		           (doDump.down() ||
+		            targPosSet &&
+		            scoreArm.getLastPosition() > AUTO_DUMP_MIN_POSITION &&
+		            autoMoveController.isOnTarget(AUTO_DUMP_TOLERANCE))) {
 			dumpDown = true;
 			scoreDump.setPosition(SCORE_DUMP_DOWN);
 			transferTimer.reset();
 		}
+		if (scoreDumpUp) speedMode = SpeedMode.SLOW;
 		return dumpDown && transferTimer.getSeconds() > AUTO_DUMP_TRANSFER_TIME;
 	}
 	
 	private boolean onToScore() {
-		boolean autoAdvance;
 		scooper.setPower(0); //idle
 		//keep out of the way
 		collectArm.setPowerLimited(1, null, COLLECT_ARM_AWAY);
 		collectDoor.setPosition(COLLECT_DOOR_OPEN); //keep open
-		scoreArm.setPowerLimited(1,
-		                         null,
-		                         SCORE_ARM_INITIAL_EXTENSION);
+		scoreArm.setPowerLimited(1, null, SCORE_ARM_INITIAL_EXTENSION);
 		scoreDump.setPosition(SCORE_DUMP_HOME);
-		autoAdvance = scoreArm.getLastState() == UPPER;
+		if (scoreArm.getLastPosition() > DUMP_ALLOW_POSITION) speedMode = SpeedMode.SLOW;
 		dumpDown = false;
-		return autoAdvance;
+		return scoreArm.getLastState() == UPPER;
 	}
 	
 	private boolean onTransfer() {
 		if (transferTimer.getMillis() < TRANSFER_SLEEP_TIME) return false;
-		double triggerSum = gamepad2.right_bumper ? 1 :
-		                    gamepad2.left_bumper ? -1 :
-		                    gamepad2.right_trigger - gamepad2.left_trigger;
+		double triggerSum = getTriggerSum();
 		scooper.setPower(1 + triggerSum); //PUSH THINGS UP!
 		//keep in, allow wiggle
 		collectArm.setPowerLimited(
-				COLLECT_ARM_IN_POWER * (1 + 2 * gamepad2.right_stick_x));
+				COLLECT_ARM_IN_POWER - gamepad2.right_stick_x);
 		collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
 		//keep in, allow wiggle
 		scoreArm.setPowerLimited(SCORE_ARM_IN_POWER * (1 + 2 * gamepad2.right_stick_y));
-		scoreDump.setPosition(SCORE_DUMP_HOME);
+		scoreDump.setPosition(SCORE_DUMP_HOME + (unDump.down() ? 0 :
+		                                         (Math.random() - 0.5) * SCORE_DUMP_WIGGLE));
 		return false;
 	}
 	
 	private boolean onToTransfer() {
-		boolean autoAdvance;
 		scooper.setPower(SCOOPER_IDLE_POWER);
-		collectArm.setPowerLimited(COLLECT_ARM_IN_POWER); //bring IN!!
+		collectArm.setPowerLimited(
+				COLLECT_ARM_IN_POWER - gamepad2.right_stick_x); //bring IN!!
 		//keep door closed;
 		collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 		//keep in, allow wiggle
-		scoreArm.setPowerLimited(SCORE_ARM_IN_POWER);
+		scoreArm.setPowerLimited(SCORE_ARM_IN_POWER * (1 + 2 * gamepad2.right_stick_y));
 		scoreDump.setPosition(SCORE_DUMP_HOME);
-		collectDoor.setPosition(collectArm.getLastPosition() < COLLECT_ARM_INITIAL_EXTENSION ?
+		collectDoor.setPosition(collectArm.getLastPosition() < COLLECT_ARM_INITIAL_EXTENSION &&
+		                        scoreArm.getLastState() == LOWER ?
 		                        COLLECT_DOOR_OPEN : COLLECT_DOOR_CLOSED);
 		//CHANGED:
 		// moved outside
-		autoAdvance =
+		boolean autoAdvance =
 				collectArm.getLastState() == LOWER && scoreArm.getLastState() == LOWER;
 		if (autoAdvance) transferTimer.reset();
 		return autoAdvance;
 	}
 	
 	private boolean onCollect() {
-		double triggerSum = gamepad2.right_bumper ? 1 :
-		                    gamepad2.left_bumper ? -1 :
-		                    gamepad2.right_trigger - gamepad2.left_trigger;
+		double triggerSum = getTriggerSum();
 		scooper.setPower(triggerSum);
-		collectArm.setPowerLimited(-gamepad2.right_stick_y +
+		collectArm.setPowerLimited(Math.max(-gamepad2.right_stick_y, -0.5) /*+
 		                           (double) collectArm.getLastPosition() / COLLECT_ARM_MAX *
-		                           COLLECT_ARM_MAX_IDLE_POWER,
+		                           COLLECT_ARM_MAX_IDLE_POWER*/,
 		                           gamepad2.x);
 		collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 		scoreArm.setPowerLimited(SCORE_ARM_IN_POWER);
 		scoreDump.setPosition(SCORE_DUMP_HOME);
 		return false;
+	}
+	
+	private double getTriggerSum() {
+		return gamepad2.right_bumper ? BUMPER_POWER :
+		       gamepad2.left_bumper ? -BUMPER_POWER :
+		       gamepad2.right_trigger - gamepad2.left_trigger;
 	}
 	
 	private boolean onToCollect() {

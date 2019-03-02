@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.lib.tasks;
 
 import android.support.annotation.CallSuper;
 import org.firstinspires.ftc.teamcode.lib.opmode.OpModeLifetimeRegistrar;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -30,7 +31,6 @@ public class TaskProgram implements OpModeLifetimeRegistrar.Stoppable {
 //			futures.forEach(future -> future.cancel(false));
 //			futures.clear();
 //		});
-		OpModeLifetimeRegistrar.register(this);
 	}
 	
 	public TaskProgram() {
@@ -93,12 +93,14 @@ public class TaskProgram implements OpModeLifetimeRegistrar.Stoppable {
 	@Override
 	public void stop() {
 		taskExecutor.stop();
+		OpModeLifetimeRegistrar.unRegister(this);
 	}
 	
 	/** Starts task running thread */
 	@CallSuper
 	public void start() {
 		taskExecutor.start();
+		OpModeLifetimeRegistrar.register(this);
 	}
 	
 	/** Adds a task that sleeps some number of millis. */
@@ -112,6 +114,7 @@ public class TaskProgram implements OpModeLifetimeRegistrar.Stoppable {
 		add(this::stop);
 	}
 	
+	@NotNull
 	@Override
 	public String toString() {
 		return "Unspecific TaskProgram";

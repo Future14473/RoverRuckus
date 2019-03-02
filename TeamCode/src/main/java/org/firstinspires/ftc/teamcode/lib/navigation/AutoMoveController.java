@@ -80,6 +80,10 @@ public class AutoMoveController {
 		return targetPosition;
 	}
 	
+	public void setTargetPosition(XYR pos) {
+		targetPosition = pos;
+	}
+	
 	//
 //	public void setTargetAngle(double setAngle) {
 //		setAngle = Math.toRadians(setAngle);
@@ -101,10 +105,6 @@ public class AutoMoveController {
 		return targetPosition.angle - positionTracker.getCurrentPosition().angle;
 	}
 	
-	public XYR getCurrentPosition() {
-		return positionTracker.getCurrentPosition();
-	}
-	
 	//
 //	public void setTranslationPIDCoefficients(PIDCoefficients coefficients) {
 //		autoMoveCalculator.setTranslationPIDCoefficients(coefficients);
@@ -113,6 +113,10 @@ public class AutoMoveController {
 //	public void setAngularPIDCoefficients(PIDCoefficients coefficients) {
 //		autoMoveCalculator.setAngularPIDCoefficients(coefficients);
 //	}
+	
+	public XYR getCurrentPosition() {
+		return positionTracker.getCurrentPosition();
+	}
 	
 	public void addToTargetPosition(XYR toAdd) {
 		targetPosition = targetPosition.add(toAdd);
@@ -147,10 +151,6 @@ public class AutoMoveController {
 	
 	public void resetInternalTimer() {
 		timer.reset();
-	}
-	
-	public void setTargetPosition(XYR pos) {
-		targetPosition = pos;
 	}
 	
 	private static double modAngleTowards(double currentAngle, double targetAngle) {

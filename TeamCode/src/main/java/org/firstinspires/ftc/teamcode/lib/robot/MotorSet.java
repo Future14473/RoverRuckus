@@ -152,6 +152,6 @@ public final class MotorSet implements Iterable<DcMotorEx> {
 	}
 	
 	public void setPIDFCoefficients(DcMotor.RunMode mode, PIDFCoefficients pidfCoefficients) {
-		for(DcMotorEx m: this)m.setPIDFCoefficients(mode, pidfCoefficients);
+		for (DcMotorEx m : this) m.setPIDFCoefficients(mode, pidfCoefficients);
 	}
 }

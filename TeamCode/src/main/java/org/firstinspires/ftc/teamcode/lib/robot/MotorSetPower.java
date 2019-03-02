@@ -11,7 +11,7 @@ import java.util.Arrays;
  */
 @SuppressWarnings("WeakerAccess")
 public final class MotorSetPower {
-	public static final MotorSetPower ZERO   = new MotorSetPower();
+	public static final MotorSetPower ZERO = new MotorSetPower();
 	
 	private final double[] power;
 	
@@ -118,7 +118,7 @@ public final class MotorSetPower {
 		if (power.length != 4) throw new IllegalArgumentException();
 		return new MotorSetPower(power.clone());
 	}
-	
+
 //	public static MotorSetPower fromXY(double x, double y, double turnRate) {
 //		x *= X_MULT;
 //		double direction = Math.atan2(y, x);

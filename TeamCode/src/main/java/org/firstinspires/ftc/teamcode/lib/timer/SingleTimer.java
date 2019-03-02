@@ -8,10 +8,6 @@ public class SingleTimer implements Timer {
 		return getCurTime() - pastTime;
 	}
 	
-	private long getCurTime() {
-		return System.nanoTime();
-	}
-	
 	@Override
 	public void reset() {
 		pastTime = getCurTime();
@@ -23,5 +19,9 @@ public class SingleTimer implements Timer {
 		double o = (curTime - pastTime) / 1e9;
 		pastTime = curTime;
 		return o;
+	}
+	
+	private long getCurTime() {
+		return System.nanoTime();
 	}
 }
