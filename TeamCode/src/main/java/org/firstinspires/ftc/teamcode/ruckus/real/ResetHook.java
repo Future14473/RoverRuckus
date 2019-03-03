@@ -7,6 +7,8 @@ import org.firstinspires.ftc.teamcode.lib.opmode.LimitedMotor;
 import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
 import org.firstinspires.ftc.teamcode.lib.robot.CurRobot;
 
+import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants.*;
+
 @TeleOp(name = "Reset Hook", group = "reset")
 public class ResetHook extends OurLinearOpMode {
 	private Button       a    = new Button(() -> gamepad1.a);
@@ -19,7 +21,7 @@ public class ResetHook extends OurLinearOpMode {
 	public void initialize() {
 		CurRobot robot = new CurRobot(hardwareMap);
 		hook = new LimitedMotor(robot.hook,
-		                        0, TeleopAndAutoConstants.HOOK_INITIAL, true);
+		                        0, HOOK_INITIAL, true);
 	}
 	
 	@Override

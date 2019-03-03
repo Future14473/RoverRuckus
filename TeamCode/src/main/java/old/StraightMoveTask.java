@@ -68,7 +68,7 @@
 //		motors.setTargetPosition(targPos);
 //	}
 //
-//	//read motor positions and adjust them as necessary if they go off track
+//	//read motor positions and thenAdjust them as necessary if they go off track
 //	// relative to everyone else.
 //	@Override
 //	public boolean loop() {

@@ -14,13 +14,13 @@ public class GoldLookBase {
 	public static final  String           LABEL_GOLD_MINERAL   = "Gold Mineral";
 	private static final String           TFOD_MODEL_ASSET     = "RoverRuckus.tflite";
 	private static final String           LABEL_SILVER_MINERAL = "Silver Mineral";
-	private static final double           MIN_CONFIDENCE       = 0.5;
+	private static final double           MIN_CONFIDENCE       = 0.6;
 	private static final double           SQUASHNESS_MULT      = -10;
 	private static final double           CONFIDENCE_MULT      = 1;
 	private static final double           SIZE_MULT            = 1d / 150;
 	private static final double           LEFT_MULT            = -1d / 200;
 	private static final double           SILVER_BIAS          = 0.2;
-	private static final double           MIN_SCORE            = 0.5;
+	private static final double           MIN_SCORE            = 1.0;
 	protected            TFObjectDetector tfod;
 	private              VuforiaLocalizer vuforia;
 	

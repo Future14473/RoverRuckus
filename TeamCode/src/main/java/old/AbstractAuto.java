@@ -13,7 +13,7 @@
 ///**
 // * For autonomous
 // */
-//public abstract class AbstractAuto extends OurLinearOpMode {
+//public abstract class NormalAuto extends OurLinearOpMode {
 //	private static final int    HOOK_TURN_START_LOOK = -22000;
 //	private static final int    HOOK_TURN_END        = -26000;
 //	private static final double PARKER_POSITION_OUT  = 0;
@@ -25,7 +25,7 @@
 //
 //	protected abstract void putMarkerInDepot() throws InterruptedException;
 //
-//	protected abstract void parkInCrater();
+//	protected abstract void goToCrater();
 //
 //	@Override
 //	protected void initialize() {
@@ -53,7 +53,7 @@
 //		putMarkerInDepot();
 //
 //		robot.parker.setPosition(PARKER_POSITION_OUT);
-//		parkInCrater();
+//		goToCrater();
 //		finishHook();
 //		drive.waitUntilDone();
 //	}

@@ -157,7 +157,7 @@
 //			//OR no longer running, notify waiting.
 //			doneLock.notifyAll();
 //		}
-//		stopRobot();
+//		thenStopRobot();
 //	}
 //
 //	/**
@@ -181,7 +181,7 @@
 //	/**
 //	 * Stops robot, i.e., set motor power levels to zero.
 //	 */
-//	private void stopRobot() {
+//	private void thenStopRobot() {
 //		setPower(ZERO);
 //	}
 //
@@ -225,7 +225,7 @@
 //			setPower(targetPower);
 //		}
 //
-//		//read motor positions and adjust them as necessary if they go off
+//		//read motor positions and thenAdjust them as necessary if they go off
 //		// track.
 //		//supposed to make all the motors turn in unison.
 //		boolean process() {
@@ -244,7 +244,7 @@
 //				avgProgress += progress[i];
 //			}
 //			avgProgress /= 4;
-//			//adjust power as necessary..
+//			//thenAdjust power as necessary..
 //			for (int i = 0; i < 4; i++) {
 //				actualPower.power[i] = targetPower.power[i] *
 //				                       (1 - 3 * (progress[i] - avgProgress));
@@ -272,7 +272,7 @@
 //						MoveTask curTask = moveTasks.element();
 //						if (curTask.process()) {
 //							moveTasks.remove();
-//							stopRobot();
+//							thenStopRobot();
 //						}
 //					}
 //					if (moveTasks.isEmpty()) {
@@ -280,7 +280,7 @@
 //							//no tasks left, can continue.
 //							doneLock.notifyAll();
 //						}
-//						stopRobot();
+//						thenStopRobot();
 //					}
 //					while (moveTasks.isEmpty()) {
 //						moveLock.wait(1000);

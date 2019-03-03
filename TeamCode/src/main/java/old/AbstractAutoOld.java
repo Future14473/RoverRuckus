@@ -30,7 +30,7 @@
 //
 //		extra();
 //
-//		parkInCrater();
+//		goToCrater();
 //		finish();
 //	}
 //
@@ -96,7 +96,7 @@
 //	public void extra() throws InterruptedException {
 //	}
 //
-//	private void parkInCrater() throws InterruptedException {
+//	private void goToCrater() throws InterruptedException {
 //		robot.drive.moveXY(0, 1.7, 10);
 //		robot.rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //		robot.rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

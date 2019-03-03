@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.ruckus.real;
+package org.firstinspires.ftc.teamcode.ruckus.real.auto;
 
-import org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants;
+import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.lib.navigation.MecanumDrive;
 import org.firstinspires.ftc.teamcode.lib.opmode.LimitedMotor;
 import org.firstinspires.ftc.teamcode.lib.opmode.OurLinearOpMode;
@@ -23,25 +24,24 @@ import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants.*;
 /**
  * Base autonomous.
  */
-public abstract class AbstractAuto extends OurLinearOpMode {
+public abstract class BaseAuto extends OurLinearOpMode {
+	/** for looks */
 	private final AtomicLong      detectTime    = new AtomicLong();
-	protected     MecanumDrive    drive;
-	//Moves bot
 	protected     CurRobot        robot;
+	/** Moves bot, does most of the auto */
+	protected     MecanumDrive    driveAndStuff;
+	/** Does look and hook retraction */
+	protected     TaskProgram     lookAndHook;
 	private       LimitedMotor    collectArm;
-	private       TaskProgram     lookAndHook;
-	//runs goldLooking and hook retraction
 	private       Future<Integer> goldLook;
 	private       SimpleCondition startGoldLook = new SimpleCondition();
 	private       SimpleCondition unHooked      = new SimpleCondition();
 	
-	protected abstract void putMarkerInDepot() throws InterruptedException;
-	
-	protected abstract void parkInCrater();
+	protected abstract void putMarkerInDepot();
 	
 	protected void flickMarkerOut() {
 		robot.flicker.setPosition(FLICKER_OUT);
-		sleep(500);
+		sleep(400);
 	}
 	
 	protected void openMarkerDoor() {
@@ -52,39 +52,19 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	protected void initialize() throws InterruptedException {
 		robot = new CurRobot(hardwareMap);
 		robot.initIMU();
-		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, COLLECT_ARM_INITIAL_EXTENSION,
+		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, COLLECT_ARM_MAX - 100,
 		                              true);
 		lookAndHook = new TaskProgram();
-		drive = new MecanumDrive(robot, new MecanumDrive.Parameters());
+		driveAndStuff = new MecanumDrive(robot, new MecanumDrive.Parameters());
 		loadLookAndHook();
 		resetEncoders();
-		waitUntil(robot::imuIsGyroCalibrated, 3, SECONDS);
-	}
-	
-	@Override
-	public void run() throws InterruptedException {
-		unHook();
-		knockOffGold();
-		putMarkerInDepot();
-		parkInCrater();
-		drive.then(this::extendArm)
-		     .adjust()
-		     .thenStop();
-		drive.waitUntilDone();
-		lookAndHook.waitUntilDone();
+		waitUntil(robot::imuIsGyroCalibrated, 5, SECONDS);
 	}
 	
 	@Override
 	protected void cleanup() {
-		drive.stop();
+		driveAndStuff.stop();
 		lookAndHook.stop();
-	}
-	
-	private void extendArm() {
-		while (collectArm.getLastState() != LimitedMotor.State.UPPER) {
-			collectArm.setPowerLimited(1);
-			if (sleep(20)) return;
-		}
 	}
 	
 	private void loadLookAndHook() {
@@ -117,27 +97,40 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 	
 	protected void unHook() throws InterruptedException {
 		startGoldLook.signal();
-		telemetry.addLine("GOLD LOOK STARTED");
 		robot.hook.setPower(1);
-		//decreasing
-		waitUntil(
-				() -> robot.hook.getCurrentPosition() <=
-				      TeleopAndAutoConstants.HOOK_TURN_START_LOOK);
+		telemetry.addLine("GOLD LOOK STARTED");
 		telemetry.update();
-		waitUntil(() -> robot.hook.getCurrentPosition() <= TeleopAndAutoConstants.HOOK_TURN_END);
+		waitUntil(() -> robot.hook.getCurrentPosition() <= HOOK_TURN_END);
 		robot.hook.setPower(0);
-		drive.move(-6, 6, 10).phantomTurn(-5, DEGREES).go(true)
-		     .then(unHooked::signal)
-		     .goTurn(10, DEGREES, 10, true);
+		//position for things.
+		driveAndStuff.move(-6, 6, 10).phantomTurn(-5, DEGREES).go(true)
+		             .then(unHooked::signal)
+		             .thenTurn(10, DEGREES, 10, true);
 	}
 	
-	private void knockOffGold() throws InterruptedException {
+	private void waitFor25() {
+		int millis = (int) ((25 - time) * 1000);
+		if (millis > 0)
+			sleep(millis);
+	}
+	
+	private void extendArm() {
+		while (collectArm.getLastState() != LimitedMotor.State.UPPER) {
+			collectArm.setPowerLimited(1);
+			if (sleep(20)) return;
+		}
+	}
+	
+	protected int getGoldLook() throws InterruptedException {
 		int look = 0;
 		try {
 			look = goldLook.get(4, SECONDS);
 		} catch (ExecutionException e) {
 			e.getCause().printStackTrace();
-		} catch (TimeoutException ignored) {
+			RobotLog.setGlobalWarningMsg(
+					new RobotCoreException("Error in getting gold looking", e.getCause()),
+					"Error in getting gold look");
+		} catch (TimeoutException e) {
 			telemetry.addLine("FAIL-SAFE HAPPENED");
 			detectTime.set(System.nanoTime());
 			look = (int) (Math.random() * 3);
@@ -149,9 +142,12 @@ public abstract class AbstractAuto extends OurLinearOpMode {
 		telemetry.addData("Gold is at:", (look == 0) ? "left" : ((look == 1) ?
 		                                                         "middle" : "right"));
 		telemetry.update();
-		drive.turn(-5, DEGREES, 10).move(-16 + 18 * look, 16, 10).go()
-		     .goMove(0, 4.5, 10, true)
-		     .goMove(0, -7, 0.8, true)
-		     .goMove(-18 - 18 * look, 0, 10);
+		return look;
+	}
+	
+	protected void parkInCrater() {
+		driveAndStuff.thenAdjust()
+		             .then(this::waitFor25)
+		             .then(this::extendArm);
 	}
 }

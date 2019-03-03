@@ -33,7 +33,7 @@ public class PIDGyroCalibration extends OurLinearOpMode {
 		org.firstinspires.ftc.teamcode.lib.robot.IRobot robot1 = robot;
 		drive = new MecanumDrive(robot1, new MecanumDrive.Parameters()) {
 			public MecanumDrive moveXY(double x, double y, double speed) {
-				return goMove(x * 36, y * 36, speed);
+				return thenMove(x * 36, y * 36, speed);
 			}
 			
 			@Override
@@ -48,7 +48,7 @@ public class PIDGyroCalibration extends OurLinearOpMode {
 	protected void run() {
 		while (opModeIsActive()) {
 			if (a.pressed()) {
-				drive.goTurn((double) 45, DEGREES, (double) 1);
+				drive.thenTurn((double) 45, DEGREES, (double) 1);
 			}
 			if (b.pressed()) shouldComplete = !shouldComplete;
 			if (up.down()) {

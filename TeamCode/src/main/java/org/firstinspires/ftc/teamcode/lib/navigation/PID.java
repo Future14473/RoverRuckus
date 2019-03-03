@@ -103,7 +103,7 @@ public class PID {
 	/**
 	 * Actually does the PID calculations.
 	 *
-	 * @param input       The input value, used to adjust
+	 * @param input       The input value, used to thenAdjust
 	 * @param elapsedTime Elapsed time since last call, for integral and derivative adjustments
 	 * @return The calculated output
 	 */

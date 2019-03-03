@@ -29,16 +29,16 @@ public class MecDriveBetterTest extends OurLinearOpMode {
 	protected void run() {
 		while (opModeIsActive()) {
 			if (a.pressed()) {
-				drive.goMove(20, 0, INCH, 0.8)
-				     .goMove(0, 20, INCH, 0.8, true)
-				     .goMove(-20, -30, 0.8)
+				drive.thenMove(20, 0, INCH, 0.8)
+				     .thenMove(0, 20, INCH, 0.8, true)
+				     .thenMove(-20, -30, 0.8)
 				     .move(20, 10, INCH, 0.8).turn(90, DEGREES, 0.8).go()
 				     .turn(-90, DEGREES, 0.5).move(-20, 0, INCH, 0.4).go(true);
 			}
 			if (b.pressed()) {
-				drive.goMove(-40, 0, 1)
+				drive.thenMove(-40, 0, 1)
 				     .turn(-45, DEGREES, 0.8).move(-20, -0.4, 0.7).go(false)
-				     .goMove(-10, -50, 1);
+				     .thenMove(-10, -50, 1);
 			}
 			telemetry.addData("Done:", drive.isDone());
 		}

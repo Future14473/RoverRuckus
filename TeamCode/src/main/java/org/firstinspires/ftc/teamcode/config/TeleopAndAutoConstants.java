@@ -14,7 +14,7 @@ public final class TeleopAndAutoConstants {
 	public static final int SCORE_ARM_INITIAL_EXTENSION   = SCORE_ARM_MAX - 50;
 	public static final int HOOK_MAX                      = 11000;
 	public static final int HOOK_NULLIFY                  = 1000;
-	public static final int HOOK_INITIAL                  = 1300;
+	public static final int HOOK_INITIAL                  = 1000;
 	//following is negative
 	public static final int HOOK_TURN_START_LOOK          = -7000;
 	public static final int HOOK_TURN_END                 = -11000;

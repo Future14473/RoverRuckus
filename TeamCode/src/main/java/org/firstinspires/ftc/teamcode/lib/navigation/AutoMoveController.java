@@ -153,6 +153,10 @@ public class AutoMoveController {
 		timer.reset();
 	}
 	
+	public void stopRobot() {
+		robot.getWheels().stop();
+	}
+	
 	private static double modAngleTowards(double currentAngle, double targetAngle) {
 		return Math.round((targetAngle - currentAngle) / (2 * Math.PI)) * 2 * Math.PI +
 		       currentAngle;

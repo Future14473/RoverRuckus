@@ -25,7 +25,7 @@ public class GyroTurnTest extends OurLinearOpMode {
 		org.firstinspires.ftc.teamcode.lib.robot.IRobot robot1 = robot;
 		drive = new MecanumDrive(robot1, new MecanumDrive.Parameters()) {
 			public MecanumDrive moveXY(double x, double y, double speed) {
-				return goMove(x * 36, y * 36, speed);
+				return thenMove(x * 36, y * 36, speed);
 			}
 			
 			@Override
@@ -39,7 +39,7 @@ public class GyroTurnTest extends OurLinearOpMode {
 	protected void run() {
 		while (opModeIsActive()) {
 			if (gp1a.pressed()) {
-				drive.goTurn((double) 180, DEGREES, 0.7);
+				drive.thenTurn((double) 180, DEGREES, 0.7);
 			}
 			double speed = 0.05;
 			telemetry.addData("SPEED", speed);

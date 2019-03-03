@@ -41,7 +41,7 @@ public class MecanumDrive extends TaskProgram {
 				new MoveTaskBuilder().considerMove(1)
 				                     .considerTurn(1)
 				                     .build(true));
-		super.addOnDoneTask(robot.getWheels()::stop);
+		super.addOnDoneTask(autoMoveController::stopRobot);
 	}
 	
 	private XY toOurUnit(double x, double y, DistanceUnit distanceUnit) {
@@ -74,41 +74,46 @@ public class MecanumDrive extends TaskProgram {
 		return new MoveTaskBuilder().move(x, y, maxSpeed);
 	}
 	
-	public MecanumDrive goMove(double x, double y, DistanceUnit unit, double maxSpeed,
-	                           boolean fine) {
+	public MecanumDrive thenMove(double x, double y, DistanceUnit unit, double maxSpeed,
+	                             boolean fine) {
 		return move(x, y, unit, maxSpeed).go(fine);
 	}
 	
-	public MecanumDrive goTurn(double angle, AngleUnit unit, double maxSpeed, boolean fine) {
+	public MecanumDrive thenTurn(double angle, AngleUnit unit, double maxSpeed, boolean fine) {
 		return turn(angle, unit, maxSpeed).go(fine);
 	}
 	
-	public MecanumDrive goTurn(double angle, double maxSpeed, boolean fine) {
+	public MecanumDrive thenTurn(double angle, double maxSpeed, boolean fine) {
 		return turn(angle, maxSpeed).go(fine);
 	}
 	
-	public MecanumDrive goTurn(double angle, AngleUnit unit, double maxSpeed) {
+	public MecanumDrive thenTurn(double angle, AngleUnit unit, double maxSpeed) {
 		return turn(angle, unit, maxSpeed).go();
 	}
 	
-	public MecanumDrive goTurn(double angle, double maxSpeed) {
+	public MecanumDrive thenTurn(double angle, double maxSpeed) {
 		return turn(angle, maxSpeed).go();
 	}
 	
-	public MecanumDrive goMove(double x, double y, double maxSpeed, boolean fine) {
+	public MecanumDrive thenMove(double x, double y, double maxSpeed, boolean fine) {
 		return move(x, y, maxSpeed).go(fine);
 	}
 	
-	public MecanumDrive goMove(double x, double y, DistanceUnit unit, double maxSpeed) {
+	public MecanumDrive thenMove(double x, double y, DistanceUnit unit, double maxSpeed) {
 		return move(x, y, unit, maxSpeed).go();
 	}
 	
-	public MecanumDrive goMove(double x, double y, double maxSpeed) {
+	public MecanumDrive thenMove(double x, double y, double maxSpeed) {
 		return move(x, y, maxSpeed).go();
 	}
 	
-	public MecanumDrive adjust() {
-		return new MoveTaskBuilder().considerMove(1).considerTurn(1).go(true);
+	public MecanumDrive thenAdjust() {
+		new MoveTaskBuilder().considerMove(1).considerTurn(1).go(true);
+		return thenStopRobot();
+	}
+	
+	public MecanumDrive thenStopRobot() {
+		return then(autoMoveController::stopRobot);
 	}
 	
 	@Override
@@ -235,6 +240,11 @@ public class MecanumDrive extends TaskProgram {
 		
 		public MoveTaskBuilder phantomTurn(double toTurn, AngleUnit unit) {
 			toMove = toMove.addToAngle(toOurUnit(toTurn, unit));
+			return this;
+		}
+		
+		public MoveTaskBuilder phantomMove(double x, double y, DistanceUnit unit) {
+			this.toMove = this.toMove.addToXY(toOurUnit(x, y, unit).rotate(this.toMove.angle));
 			return this;
 		}
 		

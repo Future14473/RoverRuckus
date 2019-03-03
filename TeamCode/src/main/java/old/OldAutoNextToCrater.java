@@ -21,7 +21,7 @@
 //		knockOffGold();
 //		robot.hooke.setPower(-1);
 //		putMarkerInDepot();
-//		parkInCrater();
+//		goToCrater();
 //		while (Math.abs(robot.hooke.getCurrentPosition()) > 50) idle();
 //		robot.hooke.setPower(0);
 //	}
@@ -79,7 +79,7 @@
 //		robot.flicker.setPosition(0.65);
 //	}
 //
-//	private void parkInCrater() throws InterruptedException {
+//	private void goToCrater() throws InterruptedException {
 //		robot.drive.moveXY(0, 1.7, 10);
 //		robot.arm.setPower(1);
 //		robot.rotation.setPower(1);
