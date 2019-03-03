@@ -88,9 +88,9 @@
 //		robot.drive.waitForDone();
 //		//deposit
 //		robot.marker.setPosition(0.9);
-//		sleep(1000);
+//		thenSleep(1000);
 //		robot.flicker.setPosition(0.65);
-//		sleep(1000);
+//		thenSleep(1000);
 //	}
 //
 //	public void extra() throws InterruptedException {
@@ -101,10 +101,10 @@
 //		robot.rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //		robot.rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //		robot.rotation.setPower(0.6);
-//		sleep(1000);
+//		thenSleep(1000);
 //		robot.rotation.setPower(0);
 //		robot.arm.setPower(-1);
-//		sleep(1000);
+//		thenSleep(1000);
 //		robot.arm.setPower(0);
 //		robot.drive.waitForDone();
 //	}

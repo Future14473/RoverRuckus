@@ -228,7 +228,7 @@ public class TheTeleop extends OurLinearOpMode {
 	private boolean onTransfer() {
 		if (transferTimer.getMillis() < TRANSFER_SLEEP_TIME) return false;
 		double triggerSum = getTriggerSum();
-		scooper.setPower(1 + triggerSum); //PUSH THINGS UP!
+		scooper.setPower(1 + 2 * triggerSum); //PUSH THINGS UP!
 		//keep in, allow wiggle
 		collectArm.setPowerLimited(
 				COLLECT_ARM_IN_POWER - gamepad2.right_stick_x);
@@ -241,7 +241,7 @@ public class TheTeleop extends OurLinearOpMode {
 	}
 	
 	private boolean onToTransfer() {
-		scooper.setPower(SCOOPER_IDLE_POWER);
+		scooper.setPower(unDump.down() ? -SCOOPER_IDLE_POWER : SCOOPER_IDLE_POWER);
 		collectArm.setPowerLimited(
 				COLLECT_ARM_IN_POWER - gamepad2.right_stick_x); //bring IN!!
 		//keep door closed;
@@ -249,9 +249,7 @@ public class TheTeleop extends OurLinearOpMode {
 		//keep in, allow wiggle
 		scoreArm.setPowerLimited(SCORE_ARM_IN_POWER * (1 + 2 * gamepad2.right_stick_y));
 		scoreDump.setPosition(SCORE_DUMP_HOME);
-		collectDoor.setPosition(collectArm.getLastPosition() < COLLECT_ARM_INITIAL_EXTENSION &&
-		                        scoreArm.getLastState() == LOWER ?
-		                        COLLECT_DOOR_OPEN : COLLECT_DOOR_CLOSED);
+		collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 		//CHANGED:
 		// moved outside
 		boolean autoAdvance =

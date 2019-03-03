@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.lib.navigation;
 /**
  * Represents a position. with both coordinates
  * and rotation.
- * note that this <i>__IS__</i> mutable
  */
 public final class XYR {
 	public static final XYR ZERO = new XYR(XY.ZERO, 0);

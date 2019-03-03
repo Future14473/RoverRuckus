@@ -40,6 +40,7 @@ public abstract class BaseAuto extends OurLinearOpMode {
 	protected abstract void putMarkerInDepot();
 	
 	protected void flickMarkerOut() {
+		robot.wheels.stop();
 		robot.flicker.setPosition(FLICKER_OUT);
 		sleep(400);
 	}
@@ -52,7 +53,7 @@ public abstract class BaseAuto extends OurLinearOpMode {
 	protected void initialize() throws InterruptedException {
 		robot = new CurRobot(hardwareMap);
 		robot.initIMU();
-		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, COLLECT_ARM_MAX - 100,
+		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, COLLECT_ARM_MAX * 4 / 5,
 		                              true);
 		lookAndHook = new TaskProgram();
 		driveAndStuff = new MecanumDrive(robot, new MecanumDrive.Parameters());
@@ -108,23 +109,27 @@ public abstract class BaseAuto extends OurLinearOpMode {
 		             .thenTurn(10, DEGREES, 10, true);
 	}
 	
-	private void waitFor25() {
-		int millis = (int) ((25 - time) * 1000);
+	private void waitFor24() {
+		int millis = (int) ((24 - time) * 1000);
 		if (millis > 0)
 			sleep(millis);
 	}
 	
-	private void extendArm() {
-		while (collectArm.getLastState() != LimitedMotor.State.UPPER) {
-			collectArm.setPowerLimited(1);
-			if (sleep(20)) return;
+	protected void extendArm() {
+		try {
+			while (collectArm.getLastState() != LimitedMotor.State.UPPER) {
+				collectArm.setPowerLimited(1);
+				sleep(30);
+			}
+		} finally {
+			collectArm.setPowerLimited(0);
 		}
 	}
 	
 	protected int getGoldLook() throws InterruptedException {
 		int look = 0;
 		try {
-			look = goldLook.get(4, SECONDS);
+			look = goldLook.get(5, SECONDS);
 		} catch (ExecutionException e) {
 			e.getCause().printStackTrace();
 			RobotLog.setGlobalWarningMsg(
@@ -145,9 +150,9 @@ public abstract class BaseAuto extends OurLinearOpMode {
 		return look;
 	}
 	
-	protected void parkInCrater() {
+	protected void laterExtendArm() {
 		driveAndStuff.thenAdjust()
-		             .then(this::waitFor25)
+		             .then(this::waitFor24)
 		             .then(this::extendArm);
 	}
 }

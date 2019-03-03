@@ -60,7 +60,7 @@
 //	//State
 //	private int      scoreDoorState = 0;
 //	private ArmState armState       = ArmState.COLLECT;
-//	//pseudo sleep
+//	//pseudo thenSleep
 //	private long     sleepEndTime;
 //
 //	@Override
@@ -133,7 +133,7 @@
 //					collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
 //					// NOW...
 //					sleepEndTime = System.nanoTime() + MILLISECONDS.toNanos(TRANSFER_SLEEP_TIME);
-//					//pseudo sleep.
+//					//pseudo thenSleep.
 //				}
 //				userAdvance = false;
 //				break;

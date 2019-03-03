@@ -28,7 +28,6 @@ public class AutoMoveController {
 		this.positionTracker = positionTracker;
 		this.rampedMoveController = rampedMoveController;
 		this.timer = timer;
-		//todo: maybe change.
 		autoMoveCalculator =
 				USE_XY_PID ? new WorldAxesXYPIDMoveCalc() : new WorldAxesDualPIDMoveCalc();
 	}

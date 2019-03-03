@@ -16,10 +16,10 @@
 //		robot.init(hardwareMap);
 //		robot.drive.move(0, 2f, 1f);
 //		robot.rotation.setPower(-1);
-//		sleep(1000);
+//		thenSleep(1000);
 //		robot.rotation.setPower(0);
 //		robot.arm.setPower(1);
-//		sleep(1000);
+//		thenSleep(1000);
 //		robot.arm.setPower(0);
 //	}
 //}

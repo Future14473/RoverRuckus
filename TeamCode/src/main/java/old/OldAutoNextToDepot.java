@@ -75,7 +75,7 @@
 //		robot.drive.waitForDone();
 //		//deposit
 //		robot.marker.setPosition(0.9);
-//		sleep(500);
+//		thenSleep(500);
 //		robot.flicker.setPosition(0.65);
 //	}
 //
@@ -83,9 +83,9 @@
 //		robot.drive.moveXY(0, 1.7, 10);
 //		robot.arm.setPower(1);
 //		robot.rotation.setPower(1);
-//		sleep(500);
+//		thenSleep(500);
 //		robot.arm.setPower(0);
-//		sleep(1000);
+//		thenSleep(1000);
 //		robot.rotation.setPower(0);
 //		robot.drive.waitForDone();
 //	}

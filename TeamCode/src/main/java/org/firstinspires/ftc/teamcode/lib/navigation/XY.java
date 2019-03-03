@@ -17,6 +17,7 @@ public final class XY {
 		this.y = y;
 	}
 	
+	@Contract(value = "null -> this; !null -> new", pure = true)
 	public XY add(XY other) {
 		if (other == null) return this;
 		return new XY(this.x + other.x, this.y + other.y);

@@ -5,9 +5,9 @@ import org.firstinspires.ftc.teamcode.lib.navigation.Magnitudes;
 public final class TeleopAndAutoConstants {
 	// Encoder limits ------------------------------------------------------------
 	public static final int MOTOR_MIN                     = 20;
-	public static final int COLLECT_ARM_MAX               = 1300;
-	public static final int COLLECT_ARM_INITIAL_EXTENSION = 600;
-	public static final int COLLECT_ARM_AWAY              = 30;
+	public static final int COLLECT_ARM_MAX               = 4600;
+	public static final int COLLECT_ARM_INITIAL_EXTENSION = 2300;
+	public static final int COLLECT_ARM_AWAY              = 100;
 	public static final int SCORE_ARM_MAX                 = 1800;
 	public static final int AUTO_DUMP_MIN_POSITION        = SCORE_ARM_MAX * 4 / 5;
 	public static final int DUMP_ALLOW_POSITION           = SCORE_ARM_MAX / 2;
@@ -15,14 +15,12 @@ public final class TeleopAndAutoConstants {
 	public static final int HOOK_MAX                      = 11000;
 	public static final int HOOK_NULLIFY                  = 1000;
 	public static final int HOOK_INITIAL                  = 1000;
-	//following is negative
-	public static final int HOOK_TURN_START_LOOK          = -7000;
 	public static final int HOOK_TURN_END                 = -11000;
 	
 	// Powers -----------------------------------------------------------------
 	public static final double SCOOPER_IDLE_POWER   = 0.2;
 	public static final double SCORE_ARM_IN_POWER   = -0.6;
-	public static final double COLLECT_ARM_IN_POWER = -0.35;
+	public static final double COLLECT_ARM_IN_POWER = -1;
 	public static final double BUMPER_POWER         = 0.75;
 	
 	//Servo positions

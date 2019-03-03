@@ -109,8 +109,8 @@
 //	private void putMarkerInDepot() {
 //		//deposit
 //		robot.markerDoor.setPosition(0.9);
-//		sleep(1000);
+//		thenSleep(1000);
 //		robot.flicker.setPosition(0);
-//		sleep(500);
+//		thenSleep(500);
 //	}
 //}

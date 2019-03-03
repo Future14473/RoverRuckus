@@ -114,6 +114,7 @@ public abstract class OurLinearOpMode extends LinearOpMode {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 			return true;
 		}
 		return false;

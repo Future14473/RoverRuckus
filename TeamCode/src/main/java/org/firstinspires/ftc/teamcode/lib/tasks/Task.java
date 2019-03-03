@@ -10,7 +10,7 @@ package org.firstinspires.ftc.teamcode.lib.tasks;
 public interface Task extends Runnable {
 	/**
 	 * This interface is for use for lambdas that throw InterruptedException (i.e {@code Thread
-	 * .sleep()}. This also extends Task, and will simply return if InterruptedException is caught.
+	 * .thenSleep()}. This also extends Task, and will simply return if InterruptedException is caught.
 	 */
 	@FunctionalInterface
 	interface WithInterrupt extends Task {

@@ -21,7 +21,7 @@
 //		do {
 //			pastPos = robot.hooke.getCurrentPosition();
 //			idle();
-//			sleep(100);
+//			thenSleep(100);
 //		} while (robot.hooke.getCurrentPosition() > pastPos &&
 //		         opModeIsActive());
 //		robot.hooke.setPower(0);
@@ -31,7 +31,7 @@
 //		do {
 //			pastPos = robot.arm.getCurrentPosition();
 //			idle();
-//			sleep(100);
+//			thenSleep(100);
 //		} while (robot.rotation.getCurrentPosition() > pastPos + 20 &&
 //		         opModeIsActive());
 //		robot.arm.setPower(0);

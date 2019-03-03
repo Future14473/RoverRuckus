@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
  * A framework around the base TaskExecutor that provides extra functionality.
  */
 public class TaskProgram implements OpModeLifetimeRegistrar.Stoppable {
+	private final String       name;
 	private final TaskExecutor taskExecutor;
 	private final boolean      autoStart;
 	private       boolean      started = false;
@@ -25,6 +26,7 @@ public class TaskProgram implements OpModeLifetimeRegistrar.Stoppable {
 	}
 	
 	public TaskProgram(String name, boolean autoStart) {
+		this.name = name;
 		this.autoStart = autoStart;
 		taskExecutor = new TaskExecutor(name);
 //		taskExecutor.addOnDoneTask(() -> {
@@ -104,7 +106,7 @@ public class TaskProgram implements OpModeLifetimeRegistrar.Stoppable {
 	}
 	
 	/** Adds a task that sleeps some number of millis. */
-	public TaskProgram sleep(long millis) {
+	public TaskProgram thenSleep(long millis) {
 		add((Task.WithInterrupt) () -> Thread.sleep(millis));
 		return this;
 	}
@@ -117,6 +119,6 @@ public class TaskProgram implements OpModeLifetimeRegistrar.Stoppable {
 	@NotNull
 	@Override
 	public String toString() {
-		return "Unspecific TaskProgram";
+		return "TaskProgram: " + name;
 	}
 }

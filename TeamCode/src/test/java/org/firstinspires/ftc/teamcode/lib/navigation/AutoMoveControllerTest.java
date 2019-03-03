@@ -58,9 +58,9 @@
 //		System.out.printf("Near count:%d%n", nearCount);
 //	}
 //
-//	private void sleep(int millis) {
+//	private void thenSleep(int millis) {
 //		try {
-//			Thread.sleep(millis);
+//			Thread.thenSleep(millis);
 //		} catch (InterruptedException ignored) {
 //		}
 //	}

@@ -12,7 +12,7 @@ public abstract class NormalAuto extends BaseAuto {
 		knockOffGold();
 		putMarkerInDepot();
 		goToCrater();
-		parkInCrater();
+		laterExtendArm();
 		
 		lookAndHook.waitUntilDone();
 		driveAndStuff.waitUntilDone();
@@ -20,10 +20,10 @@ public abstract class NormalAuto extends BaseAuto {
 	
 	private void knockOffGold() throws InterruptedException {
 		int look = getGoldLook();
-		driveAndStuff.turn(-5, DEGREES, 10).move(-12 + 18 * look, 16, 10).go()
+		driveAndStuff.turn(-5, DEGREES, 10).move(-10 + 16 * look, 16, 10).go()
 		             .thenMove(0, 6, 10, true)
 		             .thenMove(0, -8, 0.8, true)
-		             .thenMove(-18 - 18 * look, 0, 10);
+		             .thenMove(-20 - 16 * look, 0, 10);
 	}
 	
 }

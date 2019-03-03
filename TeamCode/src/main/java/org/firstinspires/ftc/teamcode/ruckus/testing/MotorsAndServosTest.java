@@ -18,7 +18,7 @@ public class MotorsAndServosTest extends OpMode {
 	@Override
 	public void init() {
 		CurRobot robot = new CurRobot(hardwareMap);
-		motor = robot.scoreArm;
+		motor = robot.collectArm;
 		//motor.setDirection(DcMotorSimple.Direction.REVERSE);
 		//servo = robot.scoreDump;
 		//crServo = hardwareMap.get(CRServo.class, "Collector");

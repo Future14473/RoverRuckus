@@ -18,9 +18,9 @@
 //			//robot.drive.move(260f, 1f, 2f);
 //			//robot.drive.turn(90, 0.5f);
 //			robot.marker.setPosition(0.84);
-//			sleep(2000);
+//			thenSleep(2000);
 //			robot.flicker.setPosition(0.65);
-//			sleep(5000);
+//			thenSleep(5000);
 //		}
 //	}
 //}

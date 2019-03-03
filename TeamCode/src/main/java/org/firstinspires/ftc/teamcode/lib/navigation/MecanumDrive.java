@@ -79,20 +79,20 @@ public class MecanumDrive extends TaskProgram {
 		return move(x, y, unit, maxSpeed).go(fine);
 	}
 	
-	public MecanumDrive thenTurn(double angle, AngleUnit unit, double maxSpeed, boolean fine) {
-		return turn(angle, unit, maxSpeed).go(fine);
+	public MecanumDrive thenTurn(double toTurn, AngleUnit unit, double maxSpeed, boolean fine) {
+		return turn(toTurn, unit, maxSpeed).go(fine);
 	}
 	
-	public MecanumDrive thenTurn(double angle, double maxSpeed, boolean fine) {
-		return turn(angle, maxSpeed).go(fine);
+	public MecanumDrive thenTurn(double toTurn, double maxSpeed, boolean fine) {
+		return turn(toTurn, maxSpeed).go(fine);
 	}
 	
-	public MecanumDrive thenTurn(double angle, AngleUnit unit, double maxSpeed) {
-		return turn(angle, unit, maxSpeed).go();
+	public MecanumDrive thenTurn(double toTurn, AngleUnit unit, double maxSpeed) {
+		return turn(toTurn, unit, maxSpeed).go();
 	}
 	
-	public MecanumDrive thenTurn(double angle, double maxSpeed) {
-		return turn(angle, maxSpeed).go();
+	public MecanumDrive thenTurn(double toTurn, double maxSpeed) {
+		return turn(toTurn, maxSpeed).go();
 	}
 	
 	public MecanumDrive thenMove(double x, double y, double maxSpeed, boolean fine) {
@@ -130,15 +130,9 @@ public class MecanumDrive extends TaskProgram {
 	}
 	
 	@Override
-	public MecanumDrive sleep(long millis) {
-		super.sleep(millis);
+	public MecanumDrive thenSleep(long millis) {
+		super.thenSleep(millis);
 		return this;
-	}
-	
-	@NotNull
-	@Override
-	public String toString() {
-		return "MecanumDrive";
 	}
 	
 	/**
@@ -276,21 +270,27 @@ public class MecanumDrive extends TaskProgram {
 			return this;
 		}
 		
+		/**
+		 * Adds movement to this move task.
+		 */
+		public MoveTaskBuilder move(double x, double y, double maxSpeed) {
+			return move(x, y, ourDistanceUnit, maxSpeed);
+		}
+		
+		/**
+		 * Requires position to be correct enough to continue.
+		 */
 		public MoveTaskBuilder considerMove(double maxTranslationalSpeed) {
 			this.maxTranslationSpeed = maxTranslationalSpeed;
 			return this;
 		}
 		
+		/**
+		 * Requires angle to be correct enough to continue
+		 */
 		public MoveTaskBuilder considerTurn(double maxAngularSpeed) {
 			this.maxAngularSpeed = maxAngularSpeed;
 			return this;
-		}
-		
-		/**
-		 * adds movement to this move task.
-		 */
-		public MoveTaskBuilder move(double x, double y, double maxSpeed) {
-			return move(x, y, ourDistanceUnit, maxSpeed);
 		}
 		
 		/**
