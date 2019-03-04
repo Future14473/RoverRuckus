@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.ruckus.real.disabled;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.teamcode.ruckus.real.auto.NormalAuto;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 
 @Autonomous(name = "Crater", group = "Autonomous")
-@Disabled
 public class AutoCrater extends NormalAuto {
 	@Override
 	protected void putMarkerInDepot() {

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.ruckus.real.auto;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 
 public abstract class NormalAuto extends BaseAuto {
-	
 	protected abstract void goToCrater();
 	
 	@Override
@@ -12,10 +11,21 @@ public abstract class NormalAuto extends BaseAuto {
 		knockOffGold();
 		putMarkerInDepot();
 		goToCrater();
-		laterExtendArm();
-		
+		prepareInitialCollect();
+		initialCollect();
 		lookAndHook.waitUntilDone();
 		driveAndStuff.waitUntilDone();
+	}
+	
+	private void initialCollect() throws InterruptedException {
+		startInitialCollect.awaitInterruptibility();
+		extendArm();
+		try {
+			robot.scooper.setPower(1);
+			Thread.sleep(3000);
+		} finally {
+			robot.scooper.setPower(0);
+		}
 	}
 	
 	private void knockOffGold() throws InterruptedException {
@@ -26,4 +36,9 @@ public abstract class NormalAuto extends BaseAuto {
 		             .thenMove(-20 - 16 * look, 0, 10);
 	}
 	
+	@Override
+	protected void prepareInitialCollect() {
+		driveAndStuff.thenAdjust()
+		             .then(startInitialCollect::signal);
+	}
 }

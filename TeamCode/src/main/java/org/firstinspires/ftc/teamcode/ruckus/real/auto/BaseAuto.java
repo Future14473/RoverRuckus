@@ -26,18 +26,21 @@ import static org.firstinspires.ftc.teamcode.config.TeleopAndAutoConstants.*;
  */
 public abstract class BaseAuto extends OurLinearOpMode {
 	/** for looks */
-	private final AtomicLong      detectTime    = new AtomicLong();
+	private final AtomicLong      detectTime          = new AtomicLong();
 	protected     CurRobot        robot;
 	/** Moves bot, does most of the auto */
 	protected     MecanumDrive    driveAndStuff;
 	/** Does look and hook retraction */
 	protected     TaskProgram     lookAndHook;
+	protected     SimpleCondition startInitialCollect = new SimpleCondition();
 	private       LimitedMotor    collectArm;
 	private       Future<Integer> goldLook;
-	private       SimpleCondition startGoldLook = new SimpleCondition();
-	private       SimpleCondition unHooked      = new SimpleCondition();
+	private       SimpleCondition startGoldLook       = new SimpleCondition();
+	private       SimpleCondition unHooked            = new SimpleCondition();
 	
 	protected abstract void putMarkerInDepot();
+	
+	protected abstract void prepareInitialCollect();
 	
 	protected void flickMarkerOut() {
 		robot.wheels.stop();
@@ -53,7 +56,7 @@ public abstract class BaseAuto extends OurLinearOpMode {
 	protected void initialize() throws InterruptedException {
 		robot = new CurRobot(hardwareMap);
 		robot.initIMU();
-		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, COLLECT_ARM_MAX * 4 / 5,
+		collectArm = new LimitedMotor(robot.collectArm, MOTOR_MIN, COLLECT_ARM_MAX * 5 / 6,
 		                              true);
 		lookAndHook = new TaskProgram();
 		driveAndStuff = new MecanumDrive(robot, new MecanumDrive.Parameters());
@@ -109,12 +112,6 @@ public abstract class BaseAuto extends OurLinearOpMode {
 		             .thenTurn(10, DEGREES, 10, true);
 	}
 	
-	private void waitFor24() {
-		int millis = (int) ((24 - time) * 1000);
-		if (millis > 0)
-			sleep(millis);
-	}
-	
 	protected void extendArm() {
 		try {
 			while (collectArm.getLastState() != LimitedMotor.State.UPPER) {
@@ -150,9 +147,4 @@ public abstract class BaseAuto extends OurLinearOpMode {
 		return look;
 	}
 	
-	protected void laterExtendArm() {
-		driveAndStuff.thenAdjust()
-		             .then(this::waitFor24)
-		             .then(this::extendArm);
-	}
 }

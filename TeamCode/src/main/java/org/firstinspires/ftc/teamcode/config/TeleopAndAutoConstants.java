@@ -5,8 +5,8 @@ import org.firstinspires.ftc.teamcode.lib.navigation.Magnitudes;
 public final class TeleopAndAutoConstants {
 	// Encoder limits ------------------------------------------------------------
 	public static final int MOTOR_MIN                     = 20;
-	public static final int COLLECT_ARM_MAX               = 4600;
-	public static final int COLLECT_ARM_INITIAL_EXTENSION = 2300;
+	public static final int COLLECT_ARM_MAX               = 4400;
+	public static final int COLLECT_ARM_INITIAL_EXTENSION = 2200;
 	public static final int COLLECT_ARM_AWAY              = 100;
 	public static final int SCORE_ARM_MAX                 = 1800;
 	public static final int AUTO_DUMP_MIN_POSITION        = SCORE_ARM_MAX * 4 / 5;

@@ -231,7 +231,7 @@ public class TheTeleop extends OurLinearOpMode {
 		scooper.setPower(1 + 2 * triggerSum); //PUSH THINGS UP!
 		//keep in, allow wiggle
 		collectArm.setPowerLimited(
-				COLLECT_ARM_IN_POWER - gamepad2.right_stick_x);
+				COLLECT_ARM_IN_POWER - 1.5 * gamepad2.right_stick_x);
 		collectDoor.setPosition(COLLECT_DOOR_OPEN); //OPEN DOOR
 		//keep in, allow wiggle
 		scoreArm.setPowerLimited(SCORE_ARM_IN_POWER * (1 + 2 * gamepad2.right_stick_y));
@@ -243,7 +243,7 @@ public class TheTeleop extends OurLinearOpMode {
 	private boolean onToTransfer() {
 		scooper.setPower(unDump.down() ? -SCOOPER_IDLE_POWER : SCOOPER_IDLE_POWER);
 		collectArm.setPowerLimited(
-				COLLECT_ARM_IN_POWER - gamepad2.right_stick_x); //bring IN!!
+				COLLECT_ARM_IN_POWER - 1.5 * gamepad2.right_stick_x); //bring IN!!
 		//keep door closed;
 		collectDoor.setPosition(COLLECT_DOOR_CLOSED);
 		//keep in, allow wiggle
@@ -261,7 +261,7 @@ public class TheTeleop extends OurLinearOpMode {
 	private boolean onCollect() {
 		double triggerSum = getTriggerSum();
 		scooper.setPower(triggerSum);
-		collectArm.setPowerLimited(Math.max(-gamepad2.right_stick_y, -0.5) /*+
+		collectArm.setPowerLimited(-gamepad2.right_stick_y /*+
 		                           (double) collectArm.getLastPosition() / COLLECT_ARM_MAX *
 		                           COLLECT_ARM_MAX_IDLE_POWER*/,
 		                           gamepad2.x);
